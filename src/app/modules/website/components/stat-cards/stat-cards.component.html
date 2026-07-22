@@ -1,0 +1,57 @@
+<section class="stat-cards-section" aria-labelledby="stat-cards-heading">
+  <h2 id="stat-cards-heading" class="visually-hidden">Application Statistics</h2>
+  
+  <div class="row g-3 g-xl-3 row-cols-1 row-cols-md-2 row-cols-xl-3 ">
+    
+    @for (card of statCards; track card.id) {
+      <div class="col px-2">
+        
+        <article
+          class="bg-white p-2 rounded-2 shadow-sm h-100 hover-lift"
+          [attr.aria-label]="card.label + ': ' + card.count + ' total'">
+
+          <div class="rounded-2 p-3 text-white h-100 d-flex flex-column {{ card.themeClass }}">
+            
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              
+              <div class="border border-2 border-white rounded-circle p-2 d-inline-flex align-items-center justify-content-center hover-zoom mt-1">
+                <i class="bi {{ card.icon }} fs-2 lh-1 " aria-hidden="true"></i>
+              </div>
+              
+              <div class="d-flex flex-column align-items-center">
+                <h3 class="mb-1 fw-bold fs-4 lh-1">{{ card.count }}</h3>
+                <span class="badge bg-white text-dark rounded-pill px-3 py-1 shadow-sm fw-bold mt-1">
+                  {{ card.label }}
+                </span>
+              </div>
+
+            </div>
+
+            <div class="mt-auto d-flex flex-column">
+              
+              <div class="d-flex justify-content-between align-items-center border-bottom border-white border-opacity-25 py-1">
+                <span class="fw-medium small">Approved</span>
+                <span class="fw-bold small">{{ card.approved }}</span>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center border-bottom border-white border-opacity-25 py-1">
+                <span class="fw-medium small">In-Process</span>
+                <span class="fw-bold small">{{ card.inProcess }}</span>
+              </div>
+              
+              <div class="d-flex justify-content-between align-items-center pt-1">
+                <span class="fw-medium small">Rejected</span>
+                <span class="fw-bold small">{{ card.rejected }}</span>
+              </div>
+              
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+    }
+    
+  </div>
+</section>

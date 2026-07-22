@@ -1,0 +1,147 @@
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm p-0 " role="navigation" aria-label="Main navigation">
+
+  <div class="container-fluid p-0 mx-xl-3  mx-lg-2 flex-wrap">
+
+    <button
+      type="button"
+      class="navbar-toggler border-white text-white ms-3 my-2"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-controls="main-nav-menu"
+      aria-label="Toggle navigation menu">
+      <i class="bi bi-list fs-4" aria-hidden="true"></i>
+    </button>
+
+    <div class="d-flex d-lg-none flex-row justify-content-end gap-2 mt-3 mb-3 mb-lg-0 px-3">
+        @if ((isAuthenticated$ | async) === false) {
+          
+          <a routerLink="/auth/login" class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="closeMenu()">
+            Login
+          </a>
+          <a routerLink="/auth/register" class="btn btn-outline-light rounded-3 px-4 py-2 fw-bold w-100" (click)="closeMenu()">
+            Register
+          </a>
+        } @else {
+          
+          <button class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="navigateDashboard() ">
+            Dashboard
+          </button>
+          <button class="btn bg-primary btn-outline-light text-danger rounded-3 px-4 py-2 fw-medium w-100" (click)="logout()">
+            Logout
+          </button>
+        }
+      </div>
+
+    <div 
+      id="main-nav-menu" 
+      class="collapse navbar-collapse" 
+      [class.show]="isMenuOpen">
+      
+      <ul class="navbar-nav px-3 px-lg-0 me-auto mb-0 align-items-stretch " role="menubar">
+        
+        @for (item of navItems; track item.label) {
+          <li class="nav-item dropdown" role="none">
+            
+            @if (!item.children) {
+              <a
+                [routerLink]="item.route"
+                routerLinkActive="bg-warning text-dark active"
+                [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center link-light h-100"
+                role="menuitem"
+                (click)="closeMenu()">
+                
+                @if (item.icon) {
+                  <i class="bi {{ item.icon }} fs-5 lh-1 mb-1 d-none d-lg-inline-block" aria-hidden="true" [title]="item.label"></i>
+                  <span class="d-lg-none">{{ item.label }}</span>
+                  <span class="visually-hidden d-none d-lg-inline-block">{{ item.label }}</span>
+                } @else {
+                  <span>{{ item.label }}</span>
+                }
+
+              </a>
+
+            } @else {
+              <button
+                type="button"
+                class="nav-link px-3 px-lg-2 px-xl-4 py-3 rounded-0 d-flex align-items-center gap-1 text-nowrap border-0 link-light h-100 w-100"
+                [class.bg-warning]="item.isOpen"
+                [class.text-black]="item.isOpen"
+                [class.active]="item.isOpen"              
+                (click)="toggleSubmenu(item); $event.stopPropagation()"
+                role="menuitem"
+                aria-haspopup="true"
+                [attr.aria-expanded]="item.isOpen">
+                <span>{{ item.label }}</span>
+                <i class="bi small opacity-75" 
+                   [class.bi-chevron-down]="!item.isOpen" 
+                   [class.bi-chevron-up]="item.isOpen" 
+                   aria-hidden="true"></i>
+              </button>
+
+              @if (item.isOpen) {
+                <ul class="dropdown-menu show bg-white border border-light-subtle rounded-0 shadow-lg py-1 m-0 list-unstyled z-3 border-top-0" 
+                    role="menu" 
+                    [attr.aria-label]="item.label + ' submenu'">
+                  <ng-container *ngTemplateOutlet="recursiveSubmenu; context: { $implicit: item.children }"></ng-container>
+
+                </ul>
+              }
+            }
+
+          </li>
+        }
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+<ng-template #recursiveSubmenu let-childrenList>
+  @for (child of childrenList; track child.label) {
+    <li class="position-relative w-100" role="none">
+      
+      @if (!child.children) {
+       @if (child.externalUrl) {
+          <a [href]="child.externalUrl" 
+             target="_blank" rel="noopener noreferrer"
+             class="dropdown-item py-2 px-3 text-secondary-emphasis fs-6 border-bottom border-light-subtle d-block w-100 text-wrap lh-base"
+             role="menuitem" (click)="closeMenu()">
+            <span class="d-lg-none">{{ child.label }}</span>
+            <span class="d-none d-lg-inline text-nowrap">{{ child.label }}</span>
+          </a>
+        } @else {
+          <a [routerLink]="child.route"
+             class="dropdown-item py-2 px-3 text-secondary-emphasis fs-6 border-bottom border-light-subtle d-block w-100 text-wrap lh-base"
+             role="menuitem" (click)="closeMenu()">
+            <span class="d-lg-none">{{ child.label }}</span>
+            <span class="d-none d-lg-inline text-nowrap">{{ child.label }}</span>
+          </a>
+        }
+
+      } @else {
+        <button type="button"
+                class="dropdown-item py-2 px-3 d-flex align-items-center justify-content-between gap-3 border-0 w-100 text-start text-secondary-emphasis fs-6 text-wrap lh-base"
+                (click)="toggleSubmenu(child, childrenList); $event.stopPropagation()"
+                role="menuitem" aria-haspopup="true" [attr.aria-expanded]="child.isOpen">
+          <span class="d-lg-none">{{ child.label }}</span>
+            <span class="d-none d-lg-inline text-nowrap">{{ child.label }}</span>
+          
+          <i class="bi d-lg-none small text-muted" [class.bi-chevron-down]="!child.isOpen" [class.bi-chevron-up]="child.isOpen" aria-hidden="true"></i>
+          <i class="bi d-none d-lg-inline small text-muted" [class.bi-chevron-right]="!child.isOpen" [class.bi-chevron-left]="child.isOpen" aria-hidden="true"></i>
+        </button>
+
+        @if (child.isOpen) {
+          <ul class="dropdown-menu show position-static border-0 shadow-none ps-4 py-0 m-0 list-unstyled d-lg-none bg-light" role="menu">
+            <ng-container *ngTemplateOutlet="recursiveSubmenu; context: { $implicit: child.children }"></ng-container>
+          </ul>
+
+          <ul class="dropdown-menu show position-absolute top-0 start-100 bg-white border border-light-subtle rounded-0 shadow-lg py-1 ms-1 list-unstyled z-3 d-none d-lg-block" 
+              role="menu" [attr.aria-label]="child.label + ' submenu'">
+            <ng-container *ngTemplateOutlet="recursiveSubmenu; context: { $implicit: child.children }"></ng-container>
+          </ul>
+        }
+      }
+    </li>
+  }
+</ng-template>

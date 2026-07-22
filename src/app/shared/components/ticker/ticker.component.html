@@ -1,0 +1,35 @@
+<div class="d-flex align-items-center bg-warning-subtle border-bottom border-warning-subtle" role="region" aria-label="Important announcements">
+
+  <button
+    type="button"
+    class="btn btn-secondary border-0 rounded-0 px-3 py-2 d-flex align-items-center justify-content-center z-1"
+    (click)="togglePause()"
+    [attr.aria-label]="isPaused ? 'Resume ticker' : 'Pause ticker'"
+    [attr.title]="isPaused ? 'Resume' : 'Pause'">
+    <i [class]="isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'" aria-hidden="true"></i>
+  </button>
+
+  <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1" aria-hidden="true">
+    Attention:
+  </div>
+
+  <div class="overflow-hidden flex-grow-1 py-2 position-relative d-flex align-items-center" aria-live="off">
+    
+    <div class="d-flex text-nowrap ticker-animation-track" [class.ticker-animation-paused]="isPaused">
+      
+      <div class="text-dark fw-medium small pe-5 ticker-text-item ">
+        All fresh GW applications shall be submitted exclusively through the PWRDA online portal.
+        <span class="mx-3 text-muted" aria-hidden="true">|</span>
+        New fee structure for Water Tanker permissions effective from April 2025.
+        <span class="mx-3 text-muted" aria-hidden="true">|</span>
+        Deadline for renewal of existing GW extraction permits: 30 June 2025.
+        <span class="mx-3 text-muted" aria-hidden="true">|</span>
+      </div>
+
+     
+
+    </div>
+    
+  </div>
+
+</div>

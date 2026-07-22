@@ -1,0 +1,37 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Users"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+
+<app-modal-form 
+    #createUserModal
+    [title]="'Create User'"
+    [schema]="userSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>
+
+<app-modal-form 
+    #viewProfileModal
+    [title]="'View Profile'"
+    [schema]="isProfileLoading ? null : viewProfileSchema"
+    [initialValue]="profileInitialData"
+    [isLoading]="isProfileLoading">
+</app-modal-form>
+
+<app-modal-form 
+    #updateEmailModal
+    [title]="'Update Profile'"
+    [schema]="updateProfileSchema"
+    [initialValue]="updateEmailInitialValue"
+    size="xl"
+    (submitForm)="onUpdateEmailSubmit($event)">
+</app-modal-form>

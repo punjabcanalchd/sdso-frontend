@@ -1,0 +1,38 @@
+
+<!-- Bootstrap -->
+
+
+
+<div class="mb-3">
+
+  <!-- CAPTCHA AREA -->
+  <div class="d-flex align-items-center gap-3 p-2 bg-light border">
+
+    <!-- CAPTCHA IMAGE -->
+    <img
+      *ngIf="captchaImage"
+      [src]="captchaImage"
+      alt="Captcha"
+      class="img-fluid "
+      style="height: 48px;" />
+
+    <!-- RELOAD BUTTON -->
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm"
+      (click)="reloadCaptcha.emit()">
+
+      <i class="bi bi-arrow-clockwise"></i>
+
+    </button>
+
+  </div>
+
+  <!-- INPUT -->
+  <input
+    type="text"
+    class="form-control mt-3"
+    [formControl]="control"
+    placeholder="Enter Captcha" />
+
+</div>

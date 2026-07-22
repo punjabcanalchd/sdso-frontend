@@ -1,0 +1,91 @@
+<app-accessibility-bar></app-accessibility-bar>
+<app-header></app-header>
+<app-navbar></app-navbar>
+<app-ticker></app-ticker>
+
+<main class="py-5 my-4 bg-white  d-flex align-items-center" aria-labelledby="brand-heading">
+  <div class="container">
+
+    <div class="row justify-content-center" *ngIf="showSelectionScreen">
+      <div class="col-lg-7 col-md-9">
+        <div class="card border border-light-subtle rounded-3 shadow-sm overflow-hidden bg-white p-md-5">
+
+          <div class="card-body p-4 text-center">           
+            <!-- Heading -->
+            <h2 class="fw-bold text-secondary"> Applicant Registration Form </h2>
+            <p class="text-muted">  Select your application status to proceed.</p>
+
+            <!-- Buttons -->
+            <div class="row justify-content-center g-3 mt-2">
+              <div class="col-auto" *ngFor="let btn of buttonSchema; let i = index">
+                <button
+                 [type]="btn.type || 'button'"            
+                  [ngClass]="[
+                    btn.className,
+                    selectedButton === i ? 'btn-selected' : ''
+                  ]"           
+                  (click)="handleAction(btn.action,i)">
+                  {{ btn.label }}
+                  <i class="bi  ms-2" [ngClass]="btn.icon"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Note -->
+            <div *ngIf="appliedNote" class="mt-3">
+              <small class="text-dark">
+                <strong>Note:</strong>If you already have an account, Please click here to
+                <a routerLink="/auth/login"
+                  class="fw-bold text-decoration-none font_color">
+                  Login
+                </a>
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+   
+@if(showMobileVerification ){
+   <div *ngIf="showMobileVerification && !isOtpVerified">
+    <app-mobile-verification
+          (verified)="onMobileVerified($event)"
+          (cancelled)="showMobileVerification  = false">
+        </app-mobile-verification>
+        </div>
+}   
+
+    <!-- Registration Form -->
+    <div class="row justify-content-center mt-4"
+         *ngIf="showRegistrationForm && isOtpVerified">
+      <div class="col-xl-10">
+        
+        <div class="card border border-light-subtle rounded-3 shadow-sm overflow-hidden bg-white p-md-5">
+          <div class="card-body">
+            <h2 class="fw-bold text-secondary text-center mb-4">
+              Applicant Registration Form
+            </h2>
+
+            
+            <app-dynamic-form
+              [schema]="registerSchema"
+              (submitForm)="onRegisterSubmit($event)">
+            </app-dynamic-form>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+<app-footer></app-footer>
+
+
+
+

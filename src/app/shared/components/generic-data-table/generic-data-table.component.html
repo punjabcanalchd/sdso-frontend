@@ -1,0 +1,12 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th *ngFor="let col of columns">{{ col }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of data" (click)="onRowClick(row)">
+      <td *ngFor="let col of columns">{{ row[col] }}</td>
+    </tr>
+  </tbody>
+</table>

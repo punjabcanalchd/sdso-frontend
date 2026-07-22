@@ -1,0 +1,24 @@
+<div class="flex-1 px-4 py-4 space-y-4 overflow-y-auto bg-white">
+  <ng-container *ngFor="let msg of messages">
+
+    <!-- Assistant -->
+    <div *ngIf="msg.role === 'assistant'" class="flex gap-2">
+      <div class="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-xs">
+        🤖
+      </div>
+      <div class="bg-gray-100 px-4 py-2 rounded-lg text-sm text-gray-700 max-w-[80%]">
+        {{ msg.text }}
+      </div>
+    </div>
+
+    <!-- User -->
+    <div *ngIf="msg.role === 'user'" class="flex justify-end">
+      <div
+        class="px-4 py-2 rounded-lg text-sm text-white max-w-[80%]"
+        style="background-color: var(--primary)">
+        {{ msg.text }}
+      </div>
+    </div>
+
+  </ng-container>
+</div>

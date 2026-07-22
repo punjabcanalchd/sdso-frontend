@@ -1,0 +1,51 @@
+<div class="range_container">
+  <label *ngIf="label">{{ label }}</label>
+
+  <div #track class="track">
+    <div #selectedRange class="selected_range" ></div>
+
+    <div
+      #minHandle
+      class="handle"
+      (mousedown)="onHandleDrag($event, 'min')">
+    </div>
+
+    <div
+      #maxHandle
+      class="handle"
+      (mousedown)="onHandleDrag($event, 'max')">
+    </div>
+  </div>
+
+  <div class="number_inputs">
+    <div>
+      <label>Min</label>
+      <input
+        type="number"
+        [value]="minControl.value"
+        [min]="min"
+        [max]="max"
+        [step]="step"
+        (input)="onMinInputChange($event)"
+      />
+    </div>
+
+    <div>
+      <label>Max</label>
+      <input
+        type="number"
+        [value]="maxControl.value"
+        [min]="min"
+        [max]="max"
+        [step]="step"
+        (input)="onMaxInputChange($event)"
+      />
+    </div>
+  </div>
+</div>
+
+
+
+
+
+

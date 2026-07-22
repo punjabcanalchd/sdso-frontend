@@ -1,0 +1,311 @@
+<div class="card shadow-sm border border-secondary-subtle mw-100">
+
+  @if (isAdmin) {
+  <!-- New Admin Header with Create Button on the Left -->
+  <div class="card-header border-1 py-3 ps-3   bg-white d-flex justify-content-between align-items-center gap-4">
+    <h1
+      class="fs-4 fw-bold text-uppercase pb-1 ps-0 pe-0  mb-0 border-bottom border-warning border-3 d-inline-block text-dark">
+      {{ title }}
+    </h1>
+
+    @if (showCreateButton) {
+    <button type="button" class="btn btn-primary-govt btn-sm d-inline-flex align-items-center gap-1 px-3"
+      (click)="onCreate()">
+      <i class="bi bi-plus-lg "></i> Create
+    </button>
+    }
+
+  </div>
+  } @else {
+
+  <div class="card-header border-0 text-center py-3 bg-primary">
+    <h2 class="card-title text-white fs-5 fw-semibold mb-0">{{ title }}</h2>
+  </div>
+
+
+  }
+
+
+  <div class="card-body p-3 mw-100">
+    <div class="row g-3 align-items-center justify-content-between mb-3">
+      <div class="col-sm-auto">
+        <label for="doc-page-size" class="d-inline-flex align-items-center gap-2 text-secondary small">
+          <select id="doc-page-size" class="form-select form-select-sm d-inline-block w-auto" [value]="pageSize"
+            (change)="onPageSizeChange($event)" aria-label="Entries per page">
+            @for (opt of pageSizeOptions; track opt) {
+            <option [value]="opt" [selected]="opt === pageSize">{{ opt }}</option>
+            }
+          </select>
+          entries per page
+        </label>
+      </div>
+
+
+
+      <div class="col-sm-auto d-flex align-items-center gap-3">
+        <label for="doc-search" class="d-inline-flex align-items-center gap-2 text-secondary small">
+          Search:
+          <input type="search" id="doc-search" class="form-control form-control-sm" [value]="searchTerm"
+            (input)="onSearchChange($event)" aria-label="Search items" />
+        </label>
+        @if (showCreateButton && !isAdmin) {
+        <button type="button" class="btn btn-primary-govt btn-sm d-inline-flex align-items-center gap-1 px-3 "
+          (click)="onCreate()">
+          <i class="bi bi-plus-lg "></i> Create
+        </button>
+        }
+      </div>
+    </div>
+
+    <div class="table-responsive w-100 mw-100 dropdown-safe-table">
+      <table
+        class="table table-hover text-nowrap align-middle border-top border-bottom border-secondary-subtle mb-0 small"
+        [attr.aria-label]="title + ' list'">
+        <thead class="table-light">
+          <tr>
+            <th class="text-center text-dark fw-semibold py-3 col-1" scope="col"
+              [attr.aria-sort]="activeSortColumn === 'orignalSeq' ? (activeSortDirection === 'asc' ? 'ascending' : 'descending') : 'none'">
+
+              <div class="d-flex align-items-center justify-content-center">
+                <span>#</span>
+
+                <div class="sort-arrows">
+                  <i class="bi bi-caret-up-fill" role="button" tabindex="0"
+                    [class.text-muted]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc'"
+                    [class.opacity-25]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc'"
+                    [class.font_color]="!(activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc')"
+                    (click)="sortData('orignalSeq', 'asc')" (keydown.enter)="sortData('orignalSeq', 'asc')"
+                    aria-label="Sort Number Ascending"></i>
+
+                  <i class="bi bi-caret-down-fill" role="button" tabindex="0"
+                    [class.text-muted]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc'"
+                    [class.opacity-25]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc'"
+                    [class.font_color]="!(activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc')"
+                    (click)="sortData('orignalSeq', 'desc')" (keydown.enter)="sortData('orignalSeq', 'desc')"
+                    aria-label="Sort Number Descending"></i>
+                </div>
+              </div>
+            </th>
+
+            @for (col of columns; track col.key) {
+            <th class="text-dark fw-semibold py-3 {{ col.widthClass || '' }}" [ngClass]="{
+                    'text-center': ['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || ''), 
+                    'text-start': !['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || '')
+                  }"
+              [attr.aria-sort]="activeSortColumn === col.key ? (activeSortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
+              scope="col">
+
+              <div class="d-flex align-items-center"
+                [class.justify-content-center]="['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || '')">
+                <span>{{ col.label }}</span>
+
+                <div class="sort-arrows">
+                  <i class="bi bi-caret-up-fill" role="button" tabindex="0"
+                    [class.text-muted]="activeSortColumn === col.key && activeSortDirection === 'asc'"
+                    [class.opacity-25]="activeSortColumn === col.key && activeSortDirection === 'asc'"
+                    [class.font_color]="!(activeSortColumn === col.key && activeSortDirection === 'asc')"
+                    (click)="sortData(col.key, 'asc')" (keydown.enter)="sortData(col.key, 'asc')"
+                    [attr.aria-label]="'Sort ' + col.label + ' Ascending'"></i>
+
+                  <i class="bi bi-caret-down-fill" role="button" tabindex="0"
+                    [class.text-muted]="activeSortColumn === col.key && activeSortDirection === 'desc'"
+                    [class.opacity-25]="activeSortColumn === col.key && activeSortDirection === 'desc'"
+                    [class.font_color]="!(activeSortColumn === col.key && activeSortDirection === 'desc')"
+                    (click)="sortData(col.key, 'desc')" (keydown.enter)="sortData(col.key, 'desc')"
+                    [attr.aria-label]="'Sort ' + col.label + ' Descending'"></i>
+                </div>
+              </div>
+
+            </th>
+            }
+
+
+          </tr>
+        </thead>
+        <tbody>
+          @if (pagedData.length === 0) {
+          <tr>
+            <td [attr.colspan]="columns.length + 1" class="text-center text-muted py-4 fst-italic">No records found.
+            </td>
+          </tr>
+          }
+
+          @for (row of pagedData; track row.id || $index; let i = $index) {
+          <tr>
+            <td class="text-center text-secondary py-3 fw-bold">{{ row.orignalSeq }}</td>
+
+
+            @for (col of columns; track col.key) {
+
+            @if (!col.type || col.type === 'text') {
+            <td class="text-start text-dark py-3 fw-normal text-break">
+              {{ row[col.key] }}
+            </td>
+            }
+            @if (col.type === 'html') {
+            <td class="text-start text-dark py-3 fw-normal text-break" [innerHTML]="row[col.key]">
+            </td>
+            }
+
+            @if (col.type === 'download') {
+            <td class="text-center py-3 p-5">
+              <button type="button"
+                class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                (click)="downloadFile(row)" [attr.aria-label]="'Download ' + row.description"
+                [attr.title]="'Download ' + row.description">
+                <i class="bi bi-file-earmark-arrow-down fs-6" aria-hidden="true"></i>
+              </button>
+            </td>
+            }
+
+            @if (col.type === 'edit') {
+            @if(row.canEdit){
+            <td class="text-center">
+              <button type="button"
+                class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                (click)="onCustomAction('edit', row)" [attr.aria-label]="'Edit '"
+                [attr.title]="'Edit ' + row.description">
+                <i class="bi bi-pencil-square fs-6" aria-hidden="true"></i>
+              </button>
+            </td>
+            } @else {
+            <td class="text-center">
+              <span class="text-secondary">-</span>
+            </td>
+            }
+            }
+
+           @if(col.type === 'unlock'){ 
+            <td class="text-center">
+              @if(row.status === false) {
+                <button type="button"
+                 class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                  (click)="onCustomAction('unlock', row)" [attr.aria-label]="'Unlock '"
+                  [attr.title]="'Unlock ' + row.description">
+                  <i class="bi bi-lock fs-6" aria-hidden="true"></i>
+                </button>
+              } @else {
+                <span class="text-secondary">-</span>
+              }
+            </td>
+          }
+
+            <!-- delete -->
+            @if (col.type === 'delete') {
+            <td class="text-center py-3">
+              <button type="button"
+                class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                (click)="onCustomAction('delete', row)" title="Delete">
+                <i class="bi bi-trash fs-6"></i>
+              </button>
+            </td>
+            }
+
+            @if (col.type === 'button' && col.buttonConfig) {
+            <td class="text-center py-3">
+              <button type="button" class="btn btn-no-hover btn-sm {{ col.buttonConfig.class || 'btn-primary' }}"
+                (click)="onCustomAction(col.buttonConfig.actionName, row)">
+                {{ col.buttonConfig.text }}
+              </button>
+            </td>
+            }
+            <!--(Edit + Delete) -->
+            @if (col.type === 'action') {
+            <td class="text-center py-3">
+              <div class="d-flex align-items-center justify-content-center gap-2">
+
+
+                <button type="button"
+                  class="border-0 bg-primary rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                  (click)="onCustomAction('edit', row)" title="Edit">
+                  <i class="bi bi-pencil-square fs-6"></i>
+                </button>
+
+
+                <button type="button"
+                  class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                  (click)="onCustomAction('delete', row)" title="Delete">
+                  <i class="bi bi-trash fs-6"></i>
+                </button>
+
+              </div>
+            </td>
+            }
+
+            <!-- TOGGLE  -->
+            @if (col.type === 'toggle') {
+            <td class="text-center py-3">
+              <div class="form-check form-switch d-inline-flex align-items-center justify-content-center ps-0 mb-0">
+                <input type="checkbox" role="switch"
+                  class="form-check-input ms-0 mt-0 shadow-none cursor-pointer custom-switch-color fs-5"
+                  [checked]="row[col.key] == 1 || row[col.key] === true || row[col.key] === '1'"
+                  (change)="onCustomAction('toggle_' + col.key, row)" />
+              </div>
+            </td>
+            }
+
+
+            @if (col.type === 'dropdown' && col.dropdownConfig) {
+            <td class="text-center py-3">
+              <div class="dropdown d-inline-block">
+                <button class="btn btn-no-hover btn-sm btn-secondary dropdown-toggle" type="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  {{ col.dropdownConfig.label }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                  <!-- @for (item of col.dropdownConfig.items; track item.actionName) { -->
+                  @for ( item of ( typeof col.dropdownConfig.items === 'function' ?
+                  col.dropdownConfig.items(row) : col.dropdownConfig.items); track item.actionName) {
+                  <li>
+                    <button type="button" class="dropdown-item small {{ item.class || '' }}"
+                      (click)="onCustomAction(item.actionName, row)">
+                      {{ item.label }}
+                    </button>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
+            }
+            }
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-3 pt-2">
+      <span class="text-secondary small">
+        Showing {{ filteredData.length === 0 ? 0 : (currentPage - 1) * pageSize + 1 }}
+        to {{ getMathMin(currentPage * pageSize, filteredData.length) }}
+        of {{ filteredData.length }} entries
+      </span>
+
+      <nav aria-label="Pagination Navigation">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button type="button" class="page-link text-dark" (click)="goToPage(currentPage - 1)"
+              [disabled]="currentPage === 1" aria-label="Previous page">Previous</button>
+          </li>
+
+          @for (page of pageNumbers; track page) {
+          <li class="page-item" [class.active]="page === currentPage">
+            <button type="button" class="page-link text-dark" [class.bg-primary]="page === currentPage"
+              [class.text-white]="page === currentPage" [class.border-primary]="page === currentPage"
+              (click)="goToPage(page)" [attr.aria-label]="'Page ' + page"
+              [attr.aria-current]="page === currentPage ? 'page' : null">
+              {{ page }}
+            </button>
+          </li>
+          }
+
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button type="button" class="page-link text-dark" (click)="goToPage(currentPage + 1)"
+              [disabled]="currentPage === totalPages" aria-label="Next page">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+  </div>
+</div>

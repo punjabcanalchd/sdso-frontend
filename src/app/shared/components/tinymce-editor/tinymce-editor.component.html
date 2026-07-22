@@ -1,0 +1,9 @@
+<textarea #editor></textarea>
+
+<input
+  #fileInput
+  type="file"
+  hidden
+  accept=".pdf,.doc,.docx"
+  (change)="onFileSelected($event)"
+>

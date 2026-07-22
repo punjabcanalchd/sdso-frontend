@@ -1,0 +1,108 @@
+<header class="bg-white border-bottom py-2" role="banner">
+  <div class="container-fluid px-md-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+      <!-- Logo + Title -->
+      <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center justify-content-center text-center text-muted p-3"  role="img"
+          aria-label="emblem">
+
+          <img  [src]="APP_ASSETS.LOGO" alt="Logo" class="logo">
+
+        </div>
+
+        <div class="d-flex flex-column">
+
+          <span class="fw-bold lh-sm fs-5 text-primary-emphasis">
+            Punjab Water Regulation &amp; Development Authority
+          </span>
+
+          <span class="text-secondary small d-none d-sm-block mt-1">
+            A Statutory Authority established under the Punjab Water Resources
+            (Management &amp; Regulation) Act, 2020
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- Right Section -->
+      <div class="d-none d-lg-flex align-items-center gap-4">
+
+        @if ((isAuthenticated$ | async) === false) {
+
+          <!-- Login -->
+          <a
+            routerLink="/auth/login"
+            class="d-flex flex-column align-items-center text-decoration-none text-dark"
+            aria-label="Login">
+
+            <div class="border border-secondary-subtle rounded-circle d-flex btn_circle align-items-center justify-content-center text-primary-emphasis p-2 mb-1">
+              <i class="bi bi-person-circle fs-4"></i>
+            </div>
+
+            <small class="fw-bold text-body-secondary">
+              Login
+            </small>
+
+          </a>
+
+          <!-- Register -->
+          <a
+            routerLink="/auth/register"
+            class="d-flex flex-column align-items-center text-decoration-none text-dark"
+            aria-label="Register">
+
+            <div class="border border-secondary-subtle rounded-circle d-flex btn_circle align-items-center justify-content-center text-primary-emphasis p-2 mb-1">
+              <i class="bi bi-person-plus fs-4"></i>
+            </div>
+
+            <small class="fw-bold text-body-secondary">
+              Register
+            </small>
+
+          </a>
+
+        } @else {
+
+          <!-- Dashboard -->
+          <button
+            type="button"
+            class="border-0 bg-transparent d-flex flex-column align-items-center text-decoration-none text-dark"
+            (click)="navigateDashboard()">
+
+            <div class="border border-secondary-subtle rounded-circle d-flex btn_circle align-items-center justify-content-center text-success p-2 mb-1">
+              <i class="bi bi-speedometer2 fs-4"></i>
+            </div>
+
+            <small class="fw-bold text-body-secondary">
+              Dashboard
+            </small>
+
+          </button>
+
+          
+
+          <!-- Logout -->
+          <button
+            type="button"
+            class="border-0 bg-transparent d-flex flex-column align-items-center text-decoration-none text-dark"
+            (click)="logout()">
+
+            <div class="border border-secondary-subtle rounded-circle d-flex btn_circle align-items-center justify-content-center text-danger p-2 mb-1">
+              <i class="bi bi-box-arrow-right fs-4"></i>
+            </div>
+
+            <small class="fw-bold text-body-secondary">
+              Logout
+            </small>
+
+          </button>
+
+        }
+
+      </div>
+
+    </div>
+  </div>
+</header>

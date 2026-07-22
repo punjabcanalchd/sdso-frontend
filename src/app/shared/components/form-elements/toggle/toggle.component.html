@@ -1,0 +1,13 @@
+<div class="form-check form-switch d-flex ps-0 gap-2">
+  
+  <input type="checkbox" role="switch" [formControl]="control" class="form-check-input toggle cursor-pointer custom-switch-color fs-4 m-0" />
+  
+  <span 
+    class="fw-bold user-select-none" 
+    [ngClass]="control.value ? 'font_color' : 'text-secondary'" 
+    style="cursor: pointer;" 
+    (click)="control.setValue(!control.value)">
+    {{ label }}
+  </span>
+
+</div>

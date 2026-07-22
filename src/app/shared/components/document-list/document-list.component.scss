@@ -1,0 +1,13 @@
+.sort-arrows {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 0.4; 
+  margin-left: 6px;
+   
+  i {
+    font-size: 0.6rem; /* Perfect size, bigger than default but not too huge */
+    cursor: pointer;
+    transition: color 0.1s ease-in-out;
+    // color: var(--color-primary) !important;
+  }
+}

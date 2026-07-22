@@ -1,0 +1,39 @@
+<div class="card shadow-sm border-0 w-100 h-100 p-2 ">
+
+    <!-- Header -->
+    <div class="card-header p-1 bg-white d-flex align-items-center justify-content-between border-0">
+        <h6 class="mb-0">{{ title }}</h6>
+        <a [href]="linkHref" class="card-link" (click)="onLinkClick($event)" *ngIf="linkLabel">
+            {{ linkLabel }}
+        </a>
+    </div>
+
+    <!-- Rows -->
+    <div class="card-body p-0">
+        <div class="summary-row" *ngFor="let item of items; let last = last" [class.no-border]="last && !progress">
+            <div class="icon-badge" [style.background]="item.iconBg">
+                <span [style.color]="item.iconColor" [innerHTML]="item.icon"></span>
+            </div>
+            <span class="row-label">{{ item.label }}</span>
+            <span class="row-value" [style.color]="item.valueColor || '#111827'">{{ item.value }}</span>
+        </div>
+
+        <!-- Optional progress row -->
+        <ng-container *ngIf="progress">
+            <div class="summary-row progress-row no-border">
+                <span class="row-label progress-label">{{ progress.label }}</span>
+                <span class="progress-display">
+                    {{ progress.displayValue ?? (progress.value + '%') }}
+                    <span class="chevron" *ngIf="progress.showChevron">&#8964;</span>
+                </span>
+            </div>
+            <div class="progress-bar-wrapper">
+                <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="progress.value"
+                        [style.background]="progress.barColor || 'linear-gradient(90deg, #3B82F6, #6366F1)'"></div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+</div>

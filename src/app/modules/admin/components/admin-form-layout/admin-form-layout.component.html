@@ -1,0 +1,43 @@
+<div class="container-fluid p-0 p-3 p-xl-5">
+    <!-- Main Card -->
+    <div class="card shadow-sm border border-secondary-subtle">
+        
+        <!-- Header -->
+        <div class="card-header border-1 border-light-subtle bg-white pb-0 pt-3 m-2">
+          <div class="d-flex align-items-center">
+            
+            <!-- Title -->
+            <div class="flex-grow-1">
+               <h4 class="fs-4 fw-bold text-uppercase border-bottom border-warning border-3 d-inline-block pb-1 text-dark">
+                  {{ title }}
+              </h4>
+            </div>
+           
+            <!-- Back Button -->
+            <a class="text-decoration-none text-secondary d-flex align-items-center me-3 pb-3" href="javascript:void(0)" (click)="goBack()">
+                <i class="bi bi-arrow-left me-1 small"></i> <span class="fw-medium small">Back</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body p-4">
+
+            <!-- Dynamic Loading State -->
+            <div *ngIf="isLoading" class="text-center py-5 font_color">
+                <div class="spinner-border mb-2" role="status"></div>
+                <div class="small fw-medium">Loading form layout...</div>
+            </div>
+
+            <!-- The Reusable Dynamic Form -->
+            <app-dynamic-form 
+                *ngIf="!isLoading" 
+                [schema]="schema" 
+                [initialValue]="initialValue"
+                (buttonClick)="handleFormEvent($event)"
+                (submitForm)="handleFormEvent($event)">
+            </app-dynamic-form>
+
+        </div>
+    </div>
+</div>

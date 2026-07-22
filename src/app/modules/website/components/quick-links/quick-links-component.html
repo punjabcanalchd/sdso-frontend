@@ -1,0 +1,31 @@
+<section class="py-4 py-md-5" aria-labelledby="quick-links-heading">
+  <h2 id="quick-links-heading" class="visually-hidden">Quick Links</h2>
+  <div class="container">
+  <div class="row g-4 justify-content-center lh-1">
+    
+    @for (link of quickLinks; track link.id) {
+      <div class="col-6 col-md-3">
+        
+        <a
+          [routerLink]="link.route"
+          class="text-decoration-none d-flex flex-column align-items-center text-center "
+          [attr.aria-label]="link.label">
+          
+          <div class="rounded-circle bg-light border border-2 border-secondary-subtle p-2 mb-3 shadow-sm hover-lift">
+            
+            <div 
+              class="rounded-circle d-inline-flex align-items-center justify-content-center p-4 {{ link.bgClass }} " 
+              aria-hidden="true">
+              <i class="bi {{ link.icon }} fs-1 {{ link.textClass }}"></i>
+            </div>
+            
+          </div>
+          
+          <span class="fw-bold text-dark">{{ link.label }}</span>
+        </a>
+        
+      </div>
+    }
+  </div>
+  </div>
+</section>

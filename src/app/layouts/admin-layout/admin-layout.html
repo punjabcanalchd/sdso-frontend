@@ -1,0 +1,26 @@
+<div class="vh-100 d-flex flex-grow-1 overflow-hidden">
+
+    <div id="sidebar" class="bg-primary flex-shrink-0" [class.offcanvas]="isMobile" [class.offcanvas-start]="isMobile" [style.width]="isMobile ? null : (isSidebarCollapsed ? '70px' : '280px')">
+
+        <app-sidebar [collapsed]="isSidebarCollapsed">
+        </app-sidebar>
+
+    </div>
+
+    <!-- Page Content -->
+
+    <main class="flex-grow-1 overflow-auto d-flex flex-column bg-light">
+        <app-admin-header class="flex-shrink-0" (menuClick)="toggleSidebar()" [config]="headerConfig" (menuAction)="handleHeaderAction($event)">
+        </app-admin-header>
+        <router-outlet></router-outlet>
+
+        <!-- The Footer! -->
+        <footer class="bg-white border-top border-light-subtle text-center py-3 mt-auto flex-shrink-0">
+            <span class="text-secondary small fw-medium">
+                &copy; PWRDA {{ currentYear }}
+            </span>
+        </footer>
+
+    </main>
+ 
+</div>

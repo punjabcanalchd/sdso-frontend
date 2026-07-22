@@ -1,0 +1,67 @@
+<div class="permission-manager-container">
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6 col-12" *ngFor="let cat of filteredPermissionsList">
+            <div class="card h-100 shadow-sm border-0 overflow-visible">
+
+                <div class="card-header bg-white border-0 pt-3 pb-0 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span
+                            class="rounded-circle bg-primary d-flex align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1">
+                            <i class="bi text-white" [ngClass]="cat.icon"></i>
+                        </span>
+                        <h6 class="mb-0 fw-bold text-dark">{{ cat.category }}</h6>
+                    </div>
+                </div>
+
+                <div class="card-body w-100 overflow-visible">
+                    <div class="d-flex flex-column gap-2 w-100">
+
+                        <div class="d-flex align-items-center justify-content-between w-100"
+                            *ngFor="let perm of cat.permissions">
+                            <div class="form-check mb-0 me-2 flex-grow-1">
+                                <input type="checkbox" class="form-check-input" [id]="'perm_' + perm.id"
+                                    [checked]="selectedPermissionIds.includes(perm.id)"
+                                    (change)="togglePermission(perm.id)">
+                                <label class="form-check-label text-secondary small" [for]="'perm_' + perm.id">
+                                    {{ perm.name }}
+                                </label>
+                            </div>
+
+                            @if (selectedPermissionIds.includes(perm.id)) {
+                            <div class="position-relative">
+                                <button type="button"
+                                    class="btn btn-sm btn-link text-decoration-none border-0 p-1 lh-1 text-muted"
+                                    (click)="toggleCrudPopover(perm)">
+                                    <i class="bi bi-gear-fill small"></i>
+                                </button>
+
+                                @if (perm.showCrudPopover) {
+                                <div class="position-absolute  end-0 bg-white border shadow p-3 px-4 z-3 small" (focusout)="onBlurDismiss($event, perm)">
+                                    <div class="d-flex flex-column gap-2">
+                                        <span class="fw-bold text-dark border-bottom pb-1" >
+                                            Permissions
+                                        </span>
+
+                                        <div class="form-check mb-0" *ngFor="let action of perm.allowedActions">
+                                            <input type="checkbox" class="form-check-input"
+                                                [id]="'crud_' + action + '_' + perm.id"
+                                                [checked]="perm.crudActions?.[action]"
+                                                (change)="toggleCrudAction(perm, action)">
+                                            <label class="form-check-label text-secondary"
+                                                [for]="'crud_' + action + '_' + perm.id">
+                                                {{ action }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

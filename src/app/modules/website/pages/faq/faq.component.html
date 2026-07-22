@@ -1,0 +1,32 @@
+<div class="container py-4 py-lg-5">
+
+  <div class="mb-4 pb-2">
+    <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+  </div>
+
+  <h1 class="text-uppercase fw-bold fs-5 text-dark mb-4 pb-1 border-bottom border-4 border-warning d-inline-block text-dark align-self-start">
+    Frequently Asked Questions
+  </h1>
+
+  <div class="d-flex flex-column gap-1" role="list">
+    
+   <app-accordion-group>
+  
+  @for (faq of faqs; track faq.number) {
+    <app-accordion-item
+      [number]="faq.number"
+      [question]="faq.question">
+      
+      <p class="mb-0 text-secondary lh-lg">
+        <span class="fw-bold text-primary me-1">Ans.</span>
+        <span class="text-dark">{{ faq.answer }}</span>
+      </p>
+      
+    </app-accordion-item>
+  }
+  
+</app-accordion-group>
+    
+  </div>
+
+</div> 

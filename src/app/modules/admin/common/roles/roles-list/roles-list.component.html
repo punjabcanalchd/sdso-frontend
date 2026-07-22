@@ -1,0 +1,20 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Roles" 
+        [isAdmin]="true"
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        (createClick)="openCreateModal()" 
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+
+<app-modal-form 
+    [title]="isEditMode ? 'Edit Role' : 'Create Role'"
+    [schema]="roleSchema"
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)"
+    (modalClosed)="onModalClosed()">
+</app-modal-form>

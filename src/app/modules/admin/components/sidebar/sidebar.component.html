@@ -1,0 +1,100 @@
+<div class="sidebar h-100 d-flex flex-column bg-primary text-white ">
+    
+    <div class=" sidebar-header p-2 border-bottom d-flex align-items-center justify-content-between gap-2">
+    
+        <div class="d-flex align-items-center gap-2 px-2  ">
+    
+            <img [src]="APP_ASSETS.LOGO" alt="Logo" width="40" (click)="directToHome()">
+    
+            <div *ngIf="!collapsed">
+                <span class="fw-bold text-white text-break small">
+                    Punjab Water Regulation &
+                    Development Authority
+                </span>
+            </div>
+    
+        </div>
+    
+        <button *ngIf="mobile" type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas">
+        </button>
+    
+    </div>
+
+
+    <div class="flex-grow-1 overflow-auto">
+
+        <ul class="nav flex-column p-2 gap-1">
+
+            <ng-container *ngFor="let item of menuItems; let i = index">
+
+
+                <li *ngIf="!item.children">
+
+                    <a [routerLink]="item.routerLink" [routerLinkActive]="['bg-warning','text-dark','fw-semibold']"
+                        [routerLinkActiveOptions]="{exact:true}" [class.justify-content-center]="collapsed"
+                        class="nav-link d-flex align-items-center py-2 px-3 text-white small">
+
+                        <i *ngIf="item.icon" [class]="item.icon + ' fs-5'" [class.me-3]="!collapsed"></i>
+                       
+
+                        <span *ngIf="!collapsed">
+                            {{ item.title }}
+                        </span>
+
+                    </a>
+
+                </li>
+
+
+                <li *ngIf="item.children">
+
+                    <div class="accordion accordion-flush bg-transparent">
+
+                        <div class="accordion-item bg-transparent border-0">
+
+                            <h2 class="accordion-header">
+
+                                <button class="accordion-button bg-transparent text-white shadow-none px-3 py-2"
+                                  [class.collapsed]="!item.isExpanded" [class.no-arrow]="collapsed" type="button" data-bs-toggle="collapse"
+                                    [attr.data-bs-target]="'#menu-' + i">
+
+                                        <i *ngIf="item.icon" [class]="item.icon + ' fs-5'" [class.me-3]="!collapsed"></i>
+                                    
+
+                                    <span *ngIf="!collapsed" class="small">
+                                        {{ item.title }}
+                                    </span>
+
+                                </button>
+
+                            </h2>
+
+                            <div [id]="'menu-' + i" class="accordion-collapse collapse " [class.show]="item.isExpanded">
+
+                                <div *ngIf="!collapsed" class=" ms-3 border-start">
+
+                                    <a *ngFor="let child of item.children" [routerLink]="child.routerLink"
+                                        [routerLinkActive]="['bg-warning','text-dark','fw-semibold']"
+                                        class="nav-link text-white py-2 px-3 small">
+
+                                        {{ child.title }}
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </li>
+
+            </ng-container>
+
+        </ul>
+
+    </div>
+
+</div>

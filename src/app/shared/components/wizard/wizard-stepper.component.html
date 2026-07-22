@@ -1,0 +1,27 @@
+<!-- WIZARD HEADER -->
+<div class="wizard-container mb-4" *ngIf="steps.length">
+
+  <div class="wizard-steps">
+
+    <div *ngFor="let step of steps; let i = index" class="wizard-step"   [class.clickable]="i < currentStep"
+  (click)="i < currentStep && onStepClick(i)">
+
+      <!-- STEP CIRCLE -->
+      <div class="wizard-circle" [ngClass]="{ 'active': i === currentStep, 'completed': i < currentStep }">
+
+        <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
+
+        <i *ngIf="i < currentStep" class="bi bi-check-lg"></i>
+
+      </div>
+
+      <!-- TITLE -->
+      <div class="wizard-title">
+        {{ step.title || ('Step ' + (i + 1)) }}
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

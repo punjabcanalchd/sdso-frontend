@@ -1,0 +1,31 @@
+<app-content-page 
+  title="Division-Wise Allocation of Work" 
+  [breadcrumbs]="breadcrumbs">
+  
+  <p class="mb-4">
+    In partial modification of Authority's order dated 18.11.2024. The work of the Authority is hereby assigned amongst various Divisions as follows:
+  </p>
+
+  <ol type="1" class="fw-bold fs-5 ps-3 mb-4">
+    
+    @for (division of divisions; track division.title) {
+      <li class="mb-4 text-dark">
+        {{ division.title }}
+        
+        <p class="fw-normal fs-6 text-secondary-emphasis mt-2 mb-3">
+          This Division is assigned the following duties and responsibilities:
+        </p>
+        
+        <ol type="i" class="fw-normal fs-6 ps-4 d-flex flex-column gap-3 text-secondary-emphasis">
+          
+          @for (duty of division.duties; track duty) {
+            <li>{{ duty }}</li>
+          }
+
+        </ol>
+      </li>
+    }
+
+  </ol>
+
+</app-content-page>

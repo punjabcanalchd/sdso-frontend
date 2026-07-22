@@ -1,0 +1,33 @@
+<div class="mb-3 border rounded shadow-sm overflow-hidden bg-white">
+  
+  <button
+    type="button"
+    class="w-100 d-flex justify-content-between align-items-center text-start border-0 p-3"
+    [class.bg-warning]="isOpen"
+    [class.bg-white]="!isOpen"
+    (click)="onToggle()"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-controls]="'acc-panel-' + number">
+    
+    <div class="d-flex align-items-baseline gap-2 pe-3">
+      <span class="fw-bold text-dark">{{ number }}</span>
+      <span class="fw-medium text-dark">{{ question }}</span>
+    </div>
+    
+    <i
+      class="bi text-dark fs-6"
+      [class.bi-chevron-up]="isOpen"
+      [class.bi-chevron-down]="!isOpen"
+      aria-hidden="true"></i>
+      
+  </button>
+
+  <div [@smoothCollapse]="isOpen ? 'open' : 'closed'">
+    
+    <div class="p-3 bg-white border-top border-secondary-subtle">
+     <ng-content></ng-content>
+    </div>
+    
+  </div>
+
+</div>

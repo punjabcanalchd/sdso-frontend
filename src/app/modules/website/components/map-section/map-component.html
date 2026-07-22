@@ -1,0 +1,50 @@
+<section class="card border border-light-subtle shadow-sm p-2 d-flex flex-column hover-lift notice-board" aria-labelledby="map-section-heading">
+  
+  <div class="flex-grow-1 w-100 d-flex h-100">
+    <button 
+      type="button"
+      class="border-0 bg-transparent p-0 w-100 h-100 cursor-zoom d-flex align-items-center justify-content-center" 
+      (click)="openModal()"
+      aria-label="View larger map of Groundwater Assessment Areas">
+      
+      <img 
+        src="https://pwrda.punjab.gov.in/uploads/1693629824-Status-of-Groundwater-Assessment-Areas-in-Punjab-9-Year-2022-1086x1536.png" 
+        class="img-fluid w-100 h-100 object-fit-contain" 
+        alt="Status of Groundwater Assessment Areas in Punjab">
+    </button>
+  </div>
+  
+</section>
+
+<div 
+  class="modal fade" 
+  [class.show]="isModalOpen" 
+  [class.d-block]="isModalOpen" 
+  tabindex="-1" 
+  aria-modal="true" 
+  role="dialog">
+  
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content bg-transparent border-0">
+      
+      <div class="position-fixed top-0 end-0 p-4 z-3">
+        <button type="button" class="btn-close btn-close-white" (click)="closeModal()" aria-label="Close map"></button>
+      </div>
+      
+      <div class="modal-body text-center p-0">
+        <div class="bg-white p-2 d-inline-block rounded-1 shadow-lg">
+          <img 
+            src="https://pwrda.punjab.gov.in/uploads/1693629824-Status-of-Groundwater-Assessment-Areas-in-Punjab-9-Year-2022-1086x1536.png" 
+            class="img-fluid object-fit-contain lightbox-img" 
+            loading="lazy"
+            alt="Detailed Status of Groundwater Assessment Areas in Punjab">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@if (isModalOpen) {
+  <div class="modal-backdrop fade show bg-black opacity-75" (click)="closeModal()"></div>
+}

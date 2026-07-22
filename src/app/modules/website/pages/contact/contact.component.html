@@ -1,0 +1,67 @@
+
+
+<ng-template #contactCard>
+  <div class="card shadow-lg border-0 rounded-2 p-2 p-md-3 bg-white bg-opacity-75">
+    <div class="card-body bg-white">
+      <h1 class="h5 fw-bold mb-4 text-dark border-bottom border-warning border-3 pb-2 d-inline-block">Contact Us</h1>
+
+      <div class="d-flex align-items-start gap-3 mb-3">
+        <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+        <address class="mb-0 text-secondary small lh-lg">
+          <span class="fw-bold text-dark">Punjab Water Regulation & Development Authority</span><br>
+          S.C.O No. 42-45 (3rd Floor)<br>
+          Sector-17-E, Chandigarh – 160017
+        </address>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <i class="bi bi-telephone-fill font_color fs-5"></i>
+        <a href="tel:01722727411" class="font_color text-decoration-none fw-medium small text-break">
+          0172-2727411
+        </a>
+      </div>
+
+      <div class="d-flex align-items-start gap-3">
+        <i class="bi bi-envelope-fill font_color fs-5"></i>
+        <div class="d-flex flex-column gap-1">
+          <a href="mailto:permission.pwrda@punjab.gov.in" class="font_color text-decoration-none text-break small fw-medium">
+            permission.pwrda[at]punjab[dot]gov[dot]in
+          </a>
+          <a href="mailto:gwbilling.pwrda@punjab.gov.in" class="font_color text-decoration-none text-break small fw-medium">
+            gwbilling.pwrda[at]punjab[dot]gov[dot]in
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="position-relative w-100 mx-auto notice-board p-3">
+  
+  @if (useMapApi) {
+    <div #mapContainer id="bharatMapContainer" class="w-100 border-0 d-block bg-light" style="height: 500px;"></div>
+  } @else {
+    <iframe 
+      class="w-100 border-0 d-block shadow-sm rounded" 
+      height="500" 
+      src="https://www.openstreetmap.org/export/embed.html?bbox=76.78013%2C30.73507%2C76.78613%2C30.74107&amp;layer=mapnik&amp;marker=30.738078%2C76.783131" 
+      allowfullscreen>
+    </iframe>
+  }
+
+  <!-- The Contact Info Card Overlay -->
+  <div class="position-absolute top-0 start-0 w-100 pe-none d-none d-md-block pt-4 pt-lg-5">
+    <div class="container h-100 py-3">
+      <div class="row h-100">
+        <div class="col-md-6 col-lg-5 col-xl-5 pe-auto">
+          <ng-container *ngTemplateOutlet="contactCard"></ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Layout  -->
+<div class="container d-block d-md-none py-4">
+  <ng-container *ngTemplateOutlet="contactCard"></ng-container>
+</div>

@@ -1,0 +1,139 @@
+<footer class="bg-footer text-white border-top border-secondary" role="contentinfo">
+<!-- link stipe -->
+  <div class="bg-primary py-2 px-md-5">
+    <div class="container-fluid">
+      <ul class="list-unstyled d-flex flex-wrap justify-content-center gap-4 m-0 small" role="list">
+        
+        @for (link of policyLinks; track link.path) {
+          <li>
+            <a [routerLink]="link.path" class="text-decoration-none text-white d-flex align-items-center gap-1">
+              <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>{{ link.label }}
+            </a>
+          </li>
+        }
+
+      </ul>
+    </div>
+  </div>
+<!-- footer content -->
+  <div class="bg-footer py-4 px-md-4">
+    <div class="container-sm">
+      <div class="row g-5 align-items-start">
+
+       <div class="col-lg-3 col-md-3">
+          <h3 class="fs-5 fw-bold pb-2 mb-3 border-bottom border-warning border-2 d-inline-block text-warning">
+            About Us
+          </h3>
+          <ul class="list-unstyled d-flex flex-column gap-2 m-0" role="list">
+            @for (link of aboutLinks; track link.path) {
+              <li>
+                <a [routerLink]="link.path" class="text-decoration-none a link-light small">
+                  {{ link.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="col-lg-5 col-md-5">
+          <h3 class="fs-5 fw-bold pb-2 mb-3 border-bottom border-warning border-2 d-inline-block text-warning">
+            Services
+          </h3>
+          <ul class="list-unstyled d-flex flex-column gap-2 m-0" role="list">
+             @for (service of serviceLinks; track service.path) {
+              <li>
+                <a [routerLink]="service.path" class="text-decoration-none link-light small">
+                  {{ service.label }}
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-8 d-flex justify-content-lg-end justify-content-center">
+          <div class=" bg-card border border-secondary p-3 d-flex flex-column align-items-center text-center gap-3 style-csp-card">
+            
+            <div class="bg-body-secondary border border-secondary rounded p-0 p-md-0 d-flex align-items-center justify-content-center w-50 mx-auto" 
+                 role="img" aria-label="QR code to download PWRDA Mobile App">    
+              <img [src]="qrCodeLogo" alt="QR Scanner Image" class=" img-thumbnail w-100 rounded  "> 
+            </div>
+            
+            <p class="small text-white fw-medium mb-1">Download PWRDA Mobile App</p>
+            
+            <div class="d-flex gap-1 justify-content-center">
+              <a href="https://apps.apple.com/in/app/pwrda/id6736641682" class="  btn-sm text-decoration-none text-center px-2 px-lg-4 py-1 px-md-0 font-monospace" 
+                 aria-label="Download on App Store" target="_blank" rel="noopener noreferrer">            
+                <img [src]="imgappStore" alt="App Store" class="img-fluid ">                 
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=in.nic.pwrda&amp;hl=en_IN" class="  btn-sm text-decoration-none text-center px-3 py-1 font-monospace" 
+                 aria-label="Get it on Google Play" target="_blank" rel="noopener noreferrer">             
+              <img [src]="imgGooglePlay" alt="Google Play" class="img-fluid"> 
+            
+              </a>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="py-2">
+    <div class="container text-center text-body-secondary small">
+      <p class="mb-1 text-white">&copy; {{ currentYear }} Punjab Water Regulation &amp; Development Authority</p>
+      <p class="mb-0 mx-auto text-white lh-base max-width-lg">
+        Website Designed and Developed by National Informatics Centre, Punjab, 
+        Ministry of Electronics &amp; Information Technology, Government of India
+      </p>
+    </div>
+  </div>
+
+<div class="bg-black">
+    <div class="container">
+      <ul class="list-unstyled d-flex flex-wrap align-items-center justify-content-center gap-3 m-0 py-2" 
+          role="list" aria-label="Partner logos">
+        <li>
+          <div class="text-dark  rounded px-4 py-2 small fw-medium font-monospace" 
+               aria-label="Digital India" >
+              <img [src]="digitalIndiaLogo" alt="Digital India" class="footer_icons">        
+               
+          
+              </div>
+        </li>
+        <li>
+          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
+               aria-label="data.gov.in" >           
+              <img [src]="dataGovLogo" alt="data.gov.in" class="footer_icons">        
+              
+              </div>
+        </li>
+        <li>
+          <div class=" rounded px-4 py-2 small fw-medium font-monospace" 
+               aria-label="india.gov.in" >              
+               <img [src]="indiaGovLogo" alt="indiaGovLogo" class="footer_icons">  
+              </div>
+        </li>
+        <li>
+          <div class="text-dark rounded px-5 py-2 small fw-medium font-monospace" 
+               aria-label="MyGov" >
+               <img [src]="myGovFooterLogo" alt="MyGov" class="footer_icons"> 
+              </div>
+        </li>
+        <li>
+          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
+               aria-label="MeitY" >
+               <img [src]="meityLogo" alt="MeitY" class="footer_icons">            
+              </div>
+        </li>
+        <li>
+          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
+               aria-label="PMIndia" >
+               <img [src]="pmIndiaLogo" alt="india.gov.in" class="footer_icons">                       
+              
+              </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>

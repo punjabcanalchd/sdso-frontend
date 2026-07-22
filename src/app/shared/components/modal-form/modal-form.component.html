@@ -1,0 +1,31 @@
+<div class="modal fade" [id]="modalId" tabindex="-1"  #modalElement>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-0 border-0 shadow-lg">
+      
+      <!-- Modal Header -->
+      <div class="modal-header border-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fs-5 fw-bold text-uppercase border-bottom border-warning border-3 d-inline-block text-dark">
+          {{ title }}
+        </h5>
+        <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body p-4">
+        
+        <div *ngIf="isLoading" class="text-center mb-3 text-primary">
+          <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+          <span class="small fw-medium">Processing...</span>
+        </div>
+
+        <app-dynamic-form
+          *ngIf="schema"
+          [schema]="schema"
+          [initialValue]="initialValue"
+          (submitForm)="onSubmit($event)"
+          (buttonClick)="onButtonClick($event)">
+        </app-dynamic-form>
+
+      </div>
+    </div>
+  </div>
+</div>

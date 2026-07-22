@@ -1,0 +1,15 @@
+<app-content-page 
+  [title]="pageTitle" 
+  [breadcrumbs]="breadcrumbs">
+  
+  <div class="d-flex rounded-3 flex-column gap-3 shadow p-3 text-secondary-emphasis lh-lg pb-4">
+    
+    @for (paragraph of aboutParagraphs; track $index) {
+        <p class="mb-0 text-justify para-text">
+        {{ paragraph }}
+      </p>
+    }
+
+  </div>
+
+</app-content-page>

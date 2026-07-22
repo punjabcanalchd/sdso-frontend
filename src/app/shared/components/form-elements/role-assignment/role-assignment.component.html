@@ -1,0 +1,133 @@
+<div class="card shadow-sm border border-secondary-subtle overflow-hidden w-100">
+  <div class="row g-0">
+
+    <!-- 1. CHOOSE ROLE CATEGORY -->
+    <div class="col-md-4 border-end  p-3">
+      <div class="fw-bold text-dark  small "> 1. Choose Role Category</div>
+      <p class="text-secondary small mb-3">Select only one category.</p>
+
+      <div class="d-flex flex-column gap-2">
+        <button *ngFor="let category of categories" type="button"
+          class=" bg-white  text-start p-1 border d-flex align-items-center justify-content-between shadow-none w-100"
+          [class.border-light-sutle]="activeCategory === category" [class.hover-lift]="activeCategory === category"
+          [class.text-dark]="activeCategory !== category" [class.border-secondary-subtle]="activeCategory !== category"
+          [class.border-primary-subtle]="activeCategory == category" (click)="selectCategory(category)">
+
+          <div class="d-flex align-items-center gap-2 text-truncate">
+            <div class="rounded m-1 d-flex align-items-center justify-content-center flex-shrink-0"
+              [class.bg-light]="activeCategory !== category" [class.text-white]="activeCategory !== category">
+              <i class=" rounded p-2 lh-1 text-white bg-primary" [class]="getCategoryIcon(category) + ' fs-6'"></i>
+            </div>
+            <span class="fw-semibold small text-truncate">{{ category }}</span>
+          </div>
+
+          <i class="bi bi-chevron-right opacity-50 flex-shrink-0" [class.text-dark]="activeCategory === category"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. SELECT ROLES -->
+    <div class="col-md-4 border-end p-3 d-flex flex-column">
+      <div class="fw-bold text-dark mb-1 small ">2. Select Roles</div>
+      <p class="text-secondary small mb-3">Select roles under {{ activeCategory }}.</p>
+
+      <div class="flex-grow-1 overflow-y-auto mb-3">
+        <div *ngIf="getRolesByCategory(activeCategory).length === 0" class="text-center py-4 text-muted small">
+          <i class="bi bi-info-circle me-1"></i> No roles found.
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+          <div *ngFor="let role of getRolesByCategory(activeCategory)"
+            class="border border-1 p-2  d-flex align-items-center gap-3 cursor-pointer w-100 "
+            [class.bg-light]="value.selected_roles.includes(role.public_id)"
+            [class.bg-white]="!value.selected_roles.includes(role.public_id)"
+            [class.border-secondary-subtle]="!value.selected_roles.includes(role.public_id)"
+            (click)="onRoleToggle(role.public_id, !value.selected_roles.includes(role.public_id))">
+
+            <div class="form-check mb-0">
+              <input type="checkbox" class="form-check-input text-primary shadow-none cursor-pointer"
+                [checked]="value.selected_roles.includes(role.public_id)" [disabled]="disabled"
+                (change)="onRoleToggle(role.public_id, $any($event.target).checked); $event.stopPropagation()"
+                (click)="$event.stopPropagation()" [id]="'role-' + role.public_id" />
+            </div>
+
+            <label class="form-check-label fw-medium text-dark small flex-grow-1 cursor-pointer mb-0 text-wrap lh-sm"
+              [for]="'role-' + role.public_id" (click)="$event.stopPropagation()">
+              {{ role.name }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-top pt-3 d-flex align-items-center justify-content-between mt-auto">
+        <span class="small fw-semibold text-secondary">
+          {{ value.selected_roles.length }} role(s) selected
+        </span>
+        <button *ngIf="value.selected_roles.length > 0" type="button"
+          class="border-0 bg-transparent text-decoration-none p-0 small fw-bold font_color shadow-none"
+          (click)="clearSelection()">
+          Clear all
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. SELECTED SUMMARY -->
+    <div class="col-md-4 p-3  d-flex flex-column bg-light-subtle">
+      <div class="fw-bold text-dark mb-1 small text-uppercase">Summary</div>
+      <p class="text-secondary small mb-3">Review & designate primary role.</p>
+
+      <!-- Primary Role Selector -->
+      <div class="mb-4">
+        <label class="form-label small fw-semibold text-dark mb-1">Primary Role</label>
+
+        <select class="form-select form-select-sm p-2 shadow-none border-secondary-subtle"
+          [disabled]="disabled || value.selected_roles.length === 0" [(ngModel)]="value.role_id"
+          (ngModelChange)="onPrimaryRoleSelect($event)">
+
+          <option [ngValue]="null" disabled>
+            Choose Primary Role...
+          </option>
+
+          <option *ngFor="let roleVal of value.selected_roles; trackBy: trackByRole" [ngValue]="roleVal">
+            {{ getRoleLabel(roleVal) }}
+          </option>
+
+        </select>
+        <div *ngIf="value.selected_roles.length > 0 && !value.role_id" class="text-warning small mt-1">
+          <i class="bi bi-exclamation-triangle me-1"></i> Please choose a primary role.
+        </div>
+      </div>
+
+      <!-- Selected Roles List -->
+      <div class="flex-grow-1">
+        <label class="form-label small fw-semibold text-dark mb-2">Selected Roles ({{ value.selected_roles.length
+          }})</label>
+
+        <div *ngIf="value.selected_roles.length === 0"
+          class="border border-secondary-subtle  p-4 text-center text-muted small bg-white">
+          No roles selected yet.
+        </div>
+
+        <div class="d-flex flex-column gap-2 mb-2">
+          <div *ngFor="let roleVal of value.selected_roles"
+            class="d-flex align-items-center justify-content-between p-2 px-3 border  bg-white shadow-sm hover-lift"
+            [class.border-warning]="value.role_id === roleVal"
+            [class.border-secondary-subtle]="value.role_id !== roleVal">
+
+            <div class="d-flex align-items-center gap-2 text-truncate">
+              <span class="small fw-semibold text-dark text-wrap lh-sm">{{ getRoleLabel(roleVal) }}</span>
+              <span *ngIf="value.role_id === roleVal"
+                class="badge bg-warning text-dark fw-bold px-2 py-1">Primary</span>
+            </div>
+
+            <button type="button" class="btn-close border-0 small bg-transparent p-1 shadow-none flex-shrink-0"
+              [disabled]="disabled" (click)="removeRole(roleVal)" aria-label="Remove role">
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

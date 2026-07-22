@@ -1,0 +1,69 @@
+<div class="py-4 py-lg-5">
+  <div class="container-lg">
+
+    <div class="mb-4">
+      <app-breadcrumb [items]="breadcrumb"></app-breadcrumb>
+    </div>
+
+    <div class="mb-4">
+      <h1 class="fs-4 fw-bold text-uppercase pb-2 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">
+        Screen Reader
+      </h1>
+    </div>
+
+    <p class="text-secondary-emphasis mb-4 lh-lg">
+      PWRDA platform will enable people with visual impairments access the website
+      using assistive technologies, such as screen readers. The information of the
+      website is accessible with different screen readers, such as NVDA.
+    </p>
+
+    <div class="card border border-secondary-subtle rounded-3 shadow-sm overflow-hidden">
+      
+      <div class="table-responsive mb-0">
+        
+        <table class="table table-hover table-bordered mb-0 align-middle" aria-label="Screen reader software list">
+          
+          <thead class="table-light">
+            <tr>
+              <th scope="col" class="text-uppercase small fw-bold text-secondary py-3 px-4">Screen Reader</th>
+              <th scope="col" class="text-uppercase small fw-bold text-secondary py-3 px-4">Website</th>
+              <th scope="col" class="text-uppercase small fw-bold text-secondary py-3 px-4 text-center">Availability</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            @for (reader of readers; track reader.name) {
+              <tr>
+                
+                <td class="py-3 px-4 fw-medium text-dark">
+                  {{ reader.name }}
+                </td>
+                
+                <td class="py-3 px-4">
+                  <a [href]="reader.url" 
+                     class="text-decoration-none text-primary d-inline-flex align-items-center gap-1" 
+                     target="_blank" 
+                     rel="noopener noreferrer">
+                    {{ reader.website }}
+                    <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>
+                  </a>
+                </td>
+                
+                <td class="py-3 px-4 text-center">
+                  <span class="badge rounded-0 px-3 py-2 fw-medium" 
+                        [ngClass]="reader.free ? ' text-dark fs-6' : 'bg-secondary-subtle text-secondary'">
+                    {{ reader.free ? 'Free' : 'Paid' }}
+                  </span>
+                </td>
+                
+              </tr>
+            }
+          </tbody>
+          
+        </table>
+        
+      </div>
+    </div>
+
+  </div>
+</div>

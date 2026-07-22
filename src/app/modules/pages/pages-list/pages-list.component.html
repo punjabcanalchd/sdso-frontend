@@ -1,0 +1,21 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Pages" 
+        [isAdmin]="true"
+         [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+         (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)"     
+        >
+    </app-document-list>
+</div>
+<!-- <app-dynamic-form></app-dynamic-form> -->
+
+<app-modal-form 
+    [title]="isEditMode ? 'Edit Page' : 'Create Page'"
+    [schema]="pageSchema"
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

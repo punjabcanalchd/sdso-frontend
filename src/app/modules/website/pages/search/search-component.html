@@ -1,0 +1,46 @@
+ <!-- Massive On-Page Search Bar -->
+  <div class="row mb-5 py-5">
+    <div class="col-12 col-md-8 mx-auto">
+      <form class="d-flex shadow-sm" (ngSubmit)="onLocalSearch(localSearchInput.value)">
+        <input #localSearchInput 
+               class="form-control form-control-lg  rounded-start-2 rounded-end-0" 
+               type="search" 
+               placeholder="Search for documents, services, rules..." 
+               [value]="searchQuery" 
+               aria-label="Search">
+        <button class="btn btn-primary-govt btn-sm rounded-start-0 rounded-end-2 px-4" type="submit">
+          <i class="bi bi-search"></i> Search
+        </button>
+      </form>
+    </div>
+  </div>
+<app-content-page [title]="'Search Results'">
+ 
+
+  <!-- Results Section -->
+  <div class="row">
+    <div class="col-12">
+    
+      
+      @if (searchQuery) {
+        <p class="text-secondary mb-4">
+          Showing results for: <strong class="text-dark">"{{ searchQuery }}"</strong>
+        </p>
+        
+        <!-- Results Container -->
+        <div class="alert alert-info border-0 shadow-sm d-flex align-items-center">
+          <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
+          <div>
+            <strong>!!</strong><br>
+            Connect backend to display the results.
+          </div>
+        </div>
+      } @else {
+        <div class="alert alert-warning border-0 shadow-sm d-flex align-items-center">
+          <i class="bi bi-exclamation-triangle-fill text-warning fs-4 me-3"></i>
+          <div>Please enter a search term above to begin.</div>
+        </div>
+      }
+    </div>
+  </div>
+</app-content-page>

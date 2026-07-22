@@ -1,0 +1,76 @@
+<div class="container py-4 py-lg-3">
+    <!-- KPI Cards -->
+    <div class="row mb-3">
+        <app-kpi-cards [kpiCards]="kpiCards" [statusTypes]="statusTypes"></app-kpi-cards>
+    </div>
+
+    <div class="row g-4">
+        <!-- Ground Water -->
+        <div class="col-12 col-lg-5 d-flex align-items-stretch">
+            <app-grouped-bar-chart-component title="Ground Water Extraction Applications Status"
+                [series]="groundWaterSeries" [categories]="statusCategories">
+            </app-grouped-bar-chart-component>
+        </div>
+
+        <!-- Applications by Unit Type -->
+        <div class="col-12 col-lg-4  d-flex align-items-stretch">
+            <app-horizontal-bar-chart [series]="unitSeries" [categories]="unitCategories"
+                title="Applications by Unit Type" xAxisLabel="Applications" barHeight="60%">
+            </app-horizontal-bar-chart>
+        </div>
+
+        <!-- Applications by Area -->
+        <div class="col-12 col-lg-3 d-flex align-items-stretch">
+            <app-donut-chart-component title="Applications by Area" [series]="areaSeries" [labels]="areaLabels">
+            </app-donut-chart-component>
+        </div>
+
+        <!-- Officer-wise pendencies -->
+        <div class="col-12 col-lg-5 d-flex align-items-stretch">
+            <app-grouped-bar-chart-component title="Officer-wise Pendencies" [series]="officerPendenciesSeries"
+                [categories]="officerPendenciesCategories">
+            </app-grouped-bar-chart-component>
+        </div>
+
+        <!-- Telemetry Status -->
+        <div class="col-12 col-lg-4 d-flex align-items-stretch">
+            <app-donut-chart-component title="Telemetry Meters Status" [series]="telemetrySeries"
+                [labels]="telemetryLabels">
+            </app-donut-chart-component>
+        </div>
+
+        <!-- Tubewell Specifications -->
+        <div class="col-12 col-lg-3 d-flex align-items-stretch">
+            <app-donut-chart-component title="Tubewell Specifications" [series]="tubewellSeries"
+                [labels]="tubewellLabels">
+            </app-donut-chart-component>
+        </div>
+
+        <!-- Monthly Payment Overview -->
+        <div class="col-12 col-lg-6 d-flex align-items-stretch">
+            <app-area-chart [series]="areaChatSeries" [categories]="areaChartCategories"
+                title="Monthly Payment Overview" insightMessage="Payments are mostly successful."
+                selectedFilter="Last 6 Months">
+            </app-area-chart>
+        </div>
+
+        <!-- Payment Gateway Overview -->
+        <div class="col-12 col-lg-6 d-flex align-items-stretch">
+            <app-area-chart [series]="paymentSeries" [categories]="paymentLabels" title="Payment Gateway Overview"
+                insightMessage="Payments are mostly successful." selectedFilter="Last 6 Months">
+            </app-area-chart>
+        </div>
+
+        <!-- Summary Cards Row -->
+        <div class="col-12 col-lg-6 d-flex align-items-stretch">
+            <app-summary-card title="Credit Summary" linkLabel="View Details" [items]="creditItems"
+                [progress]="{ label: 'Utilization Rate', value: 68, showChevron: true }">
+            </app-summary-card>
+        </div>
+
+        <div class="col-12 col-lg-6 d-flex align-items-stretch">
+            <app-summary-card title="Application Summary" linkLabel="View Details" [items]="applicationItems">
+            </app-summary-card>
+        </div>
+    </div>
+</div>

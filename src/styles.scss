@@ -1,0 +1,267 @@
+// ============================================================
+// PWRDA – Global Stylesheet
+// ============================================================
+
+
+// Bootstrap
+@use 'bootstrap/scss/bootstrap';
+
+// Bootstrap Icons
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
+// ============================================================
+// CSS Custom Properties (Design Tokens)
+// ============================================================
+:root {
+  // Brand colours (PWRDA / Punjab Govt palette)
+  --color-primary:        #1a5276;   
+  --color-primary-dark:   #154360;
+  --color-primary-light:  #2e86c1;
+  --color-accent:         #f0a500;   
+  --color-accent-dark:    #c87f00;
+
+  // Semantic status colours (stat cards)
+  --color-stat-gw:        #17a2b8;   
+  --color-stat-drill:     #28a745;   
+  --color-stat-tanker:    #dc3545;   
+  --color-stat-amend:     #fd7e14;   
+  --color-stat-intim:     #6f42c1;  
+  --color-stat-offline:   #6c757d;   
+
+  // Approved / In-Process / Rejected row colours
+  --color-approved:       #17a2b8;
+  --color-inprocess:      #6c757d;
+  --color-rejected:       #dc3545;
+
+  // Neutral
+  --color-bg:             #f5f7fa;
+  --color-surface:        #ffffff;
+  --color-border:         #dee2e6;
+  --color-card:           #212529;
+  --color-text: #2B2B2E;
+  --color-text-muted:     #6c757d;
+
+  // Accessibility bar
+  --color-a11y-bg:        #f8f9fa;
+  --color-a11y-border:    #dee2e6;
+
+  // Footer
+  --color-footer-bg:      #1a1a2e;
+  --color-footer-text:    #cccccc;
+  --color-footer-heading: #f0a500;
+  --color-footer-link:    #adb5bd;
+  --color-footer-link-hover: #ffffff;
+
+  // Sub-footer (policy bar)
+  --color-subfooter-bg:   #1a5276;
+  --color-subfooter-text: #ffffff;
+
+  // Typography
+  --font-family-base:     'Noto Sans', 'Segoe UI', Arial, sans-serif;
+  --font-size-base:       0.9375rem;   // 15px
+  --line-height-base:     1.6;
+
+ 
+
+  // Ticker / marquee
+  --color-ticker-bg:      #ffffff;
+  --color-ticker-border:  #dee2e6;
+  --color-ticker-label:   #dc3545;
+
+  
+  //text 
+  //paragraph->
+   --p-fs: 1rem;
+   --align: justify;
+   --font-w: 400;
+   // button
+   --fs-btn:.9rem;
+   --fw-btn: 500;
+}
+
+// Base Reset & Typography
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+// CUSTOM CSS FOR ALL WEBSITE
+.btn 
+{
+   border-radius: 0px !important;
+  
+}
+.btn:disabled
+{
+   background-color: var(--color-primary);
+   border-color :  var(--color-primary);
+}
+
+//below are used in login and register
+.btn-primary-govt
+{
+   color: var(--color-ticker-bg);
+   background-color: var(--color-primary);
+   font-size: 0.875rem;
+   font-weight: 500; 
+}
+//  remove hover from bootstarp btn class
+.btn-no-hover:hover {
+    border-color: transparent !important;
+}
+
+.form-control
+{
+   font-size: 0.875rem;
+   border-radius: 0px;
+}
+.theme_bg_color{
+  background-color: var(--color-primary);
+}
+
+.font_color
+{
+  color: var(--color-primary);
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.btn-selected {
+  background-color: var(--bs-warning) !important;
+  color: var(--bs-dark) !important;
+}
+
+.btn-selected:hover {
+  background-color: var(--bs-warning) !important;
+  color: var(--bs-dark) !important;
+}
+a.link-light:hover,
+a:hover 
+{
+  color: var(--bs-warning) !important;
+}
+
+//  Remove arrow up and down from number input type
+/* Chrome, Safari, Edge, Opera */
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+//theme color
+.bg-primary{ 
+    background-color: var(--color-primary) !important;
+};
+.bg-footer{
+  background-color: var(--color-text);
+}
+.btn-outline-primary{
+  border-color: var(--color-primary) !important;
+}
+// hover
+.nav-item:hover > .nav-link, .nav-tabs .nav-links.active,
+.nav-link:hover,
+.nav-link:focus,
+.dropdown-item:hover,
+.dropdown-item:focus,
+.btn:hover,
+.btn:focus-within{
+  background-color: var(--bs-warning) !important;
+  color: var(--bs-dark) !important;
+  // border-color: var(--color-primary) !important; 
+  
+}
+.hover-primary:hover{
+  background-color: var(--color-primary) !important;
+  color:var(--color-white) !important;
+  // border-color: var(--bs-warning) !important;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--color-primary) !important;
+  color: #fff !important;
+}
+
+//hover lift effect
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  will-change: transform, box-shadow;
+}
+
+.hover-lift:hover,
+.hover-lift:focus-within {
+  transform: translateY(-3px) !important;
+  
+  /* 5px  = Pushes shadow righ
+     5px  = Pushes shadow down
+     7px = Softens the blur
+     -3px = Pulls shadow inward for a more subtle effect
+  */
+  box-shadow: 5px 5px 7px -3px rgba(4, 10, 78, 0.377) !important;
+}
+
+// hover zoom
+.hover-zoom {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  will-change: transform, box-shadow;
+}
+
+.hover-zoom:hover,
+.hover-zoom:focus-within {
+  /* translateY(-5px) lifts it up */
+  /* scale(1.15) zooms it in by 15% */
+  transform: translateY(-5px) scale(1.09) !important;  
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.notice-board { height: 520px; }
+
+//paragraph text
+.para-text{
+   text-align: var(--align) !important;
+}
+
+.btn:disabled, .btn.disabled, fieldset:disabled .btn
+ {
+  color: var(--color-bg);
+ }
+ .dropdown-safe-table {
+  min-height: 220px;
+}
+.custom-switch-color:checked {
+  background-color: var(--color-primary); 
+  border-color: var(--color-primary);
+}
+.avatar-circle {
+  width: 50px;
+  height: 50px;
+}

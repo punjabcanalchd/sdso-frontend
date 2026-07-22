@@ -1,0 +1,95 @@
+.modal_title_font_size
+{
+font-size: 1.6rem;
+}
+
+.font_p
+{
+font-size: 0.95rem;
+}
+
+
+.modal-content {
+    border-radius: 0 !important;
+}
+
+
+.span_m_content
+{
+font-size: 0.7rem; color: #5b7894;
+}
+
+
+.icon_m_color
+{
+  color: #3273b3;
+}
+// // Mobile Verification Component Styles
+.icon-shield {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef6ff;
+  width: 56px;
+  height: 56px;
+  border-radius: 40px;
+  color: #1a4d8f;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.go-back-link {
+  color: #4d6f94;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.go-back-link:hover {
+  color: #0b2c4f;
+  text-decoration: underline;
+}
+
+.go-back-link i {
+  font-size: 1.1rem;
+}
+
+.badge-security {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.8rem;
+  border-top: 1px solid #e4edf5;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #1d3b5c;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  i {
+    font-size: 1.3rem;
+    color: #1f6bb8;
+  }
+}
+
+
+.mobile-verification-dialog {
+  max-width: 500px !important;
+}
+
+@media (max-width: 576px) {
+  .mobile-verification-dialog {
+    max-width: calc(100vw - 32px) !important;
+  }
+}

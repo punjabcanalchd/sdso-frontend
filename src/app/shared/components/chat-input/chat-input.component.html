@@ -1,0 +1,15 @@
+<div class="border-t px-4 py-3 flex gap-3 bg-gray-50">
+  <input
+    [(ngModel)]="message"
+    (keydown.enter)="submit()"
+    type="text"
+    placeholder="Ask about agriculture statistics…"
+    class="flex-1 px-4 py-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+  />
+  <button
+    (click)="submit()"
+    class="px-4 py-2 rounded-md text-xs font-semibold uppercase text-white"
+    style="background-color: var(--primary)">
+    Send
+  </button>
+</div>

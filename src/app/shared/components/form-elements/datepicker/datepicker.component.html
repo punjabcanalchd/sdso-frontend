@@ -1,0 +1,20 @@
+<div class="mb-3">
+  <input
+    type="date"
+    class="form-control"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [attr.min]="min"
+    [attr.max]="max"
+    [readonly]="readonly"
+    [disabled]="disabled"
+    (change)="onChange($event)" />
+
+  <div
+    class="text-danger mt-1"
+    *ngIf="control.invalid && (control.touched || control.dirty)">
+
+   
+  </div>
+
+</div>

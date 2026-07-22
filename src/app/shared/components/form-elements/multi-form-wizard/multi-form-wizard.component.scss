@@ -1,0 +1,78 @@
+/* ---------------- Wizard Stepper ---------------- */
+
+.wizard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin: 18px 16px;
+  padding: 0 20px;
+}
+
+/* Background line */
+.wizard-header::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 45px;
+  right: 45px;
+  height: 2px;
+  background: #dee2e6;
+  z-index: 0;
+}
+
+.wizard-step {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.custom-circle {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid #dee2e6;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 600;
+  transition: all .3s ease;
+}
+
+/* Current Step */
+.custom-circle.active,
+.custom-circle.bg-primary {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff !important;
+}
+
+/* Completed Step */
+.custom-circle.completed,
+.custom-circle.bg-success {
+  background: #198754;
+  border-color: #198754;
+  color: #fff !important;
+}
+
+/* Upcoming Step */
+.custom-circle.bg-light {
+  background: #fff !important;
+  color: #adb5bd !important;
+}
+
+.step-title {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
+  max-width: 120px;
+  word-break: break-word;
+}

@@ -1,0 +1,16 @@
+@if (currentSchema) {
+<app-calculator-template [calculatorTitle]="calculatorTitle" [resultTitle]="resultTitle" [schema]="currentSchema"
+  [resultRows]="resultRows" [totalAmount]="totalAmount" [initialData]="initialFormData" [showResults]="showResults"
+  (back)="goBack()" (calculate)="onCalculate($event)"     [addedItems]="addedItemsList"    [addedItemsHeaders]="listHeaders"
+      [addedItemsKeys]="listKeys"
+      [addedItemsHeaders]="['Operation Date', 'Zone', 'Trips/Month', 'Capacity (m3)']"
+      [addedItemsKeys]="['wtOperationDate', 'zone', 'tripsPerMonth', 'capacity']"
+      (customAction)="onCustomAction($event)">
+  
+</app-calculator-template>
+} @else {
+<div class="container py-5 text-center">
+  <h3 class="text-danger">Invalid Calculator Type</h3>
+  <p>Please select a valid calculator from the menu.</p>
+</div>
+}

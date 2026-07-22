@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-1" class="slider">
+  <label *ngIf="label">{{ label }}</label>
+  <input
+    type="range"
+    [formControl]="control"
+    [min]="min"
+    [max]="max"
+    [step]="step"
+    class="w-full form-element-slider"
+   
+  />
+  <div class="text-sm text-slate-600">
+    Current Value: {{ control.value }}
+  </div>
+</div>

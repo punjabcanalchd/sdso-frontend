@@ -1,0 +1,38 @@
+<app-content-page [title]="pageTitle" [breadcrumbs]="breadcrumbs">
+  
+  <p class="mb-4 text-dark fw-medium">
+    The duties of the important functionaries of the Authority are as under:
+  </p>
+
+  <div class="d-flex flex-column gap-5">
+    
+    @for (role of staffRoles; track role.roleTitle) {
+      <section>
+        <h2 class="fs-6 fw-bold text-dark mb-3">
+          {{ role.roleTitle }}:
+        </h2>
+        
+        <ol type="1" class="text-secondary-emphasis ps-3 d-flex flex-column gap-2 mb-0">
+          
+          @for (duty of role.duties; track duty.text) {
+            <li>
+              {{ duty.text }}
+              
+              @if (duty.subDuties && duty.subDuties.length > 0) {
+                <ul class="mt-2 mb-1 ps-4 d-flex flex-column gap-2" style="list-style-type: square;">
+                  @for (subDuty of duty.subDuties; track subDuty) {
+                    <li>{{ subDuty }}</li>
+                  }
+                </ul>
+              }
+
+            </li>
+          }
+
+        </ol>
+      </section>
+    }
+
+  </div>
+
+</app-content-page>

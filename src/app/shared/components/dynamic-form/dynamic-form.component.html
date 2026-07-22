@@ -1,0 +1,360 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" [ngClass]="[
+    getFormClasses(),
+    schema.layoutStyle === 'popup' ? 'w-100' : 'container py-4',
+    isWizard ? 'd-flex flex-column wizard-form' : '' 
+  ]">
+
+
+  <app-wizard-stepper *ngIf="isWizard" [steps]="steps" [currentStep]="currentStep" i [canGoNext]="isCurrentStepValid()"
+    (next)="nextStep()" (prev)="prevStep()" (stepClick)="goToStep($event)">
+  </app-wizard-stepper>
+
+
+  <!-- HEADER -->
+  <div class="">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <!-- LEFT -->
+      <div class="flex-grow-1">
+        <img *ngIf="schema.logoUrl" [src]="schema.logoUrl" class="img-fluid mb-3" />
+
+
+        <h2 class="mb-2" [ngClass]="{
+          'fs-3 fw-bold': schema.layoutStyle === 'modern' || !schema.layoutStyle,
+          'fs-1 fst-italic': schema.layoutStyle === 'creative',
+          'fs-5 fw-semibold text-uppercase': schema.layoutStyle === 'minimal',
+          'fs-5 fw-bold': schema.layoutStyle === 'compact'
+        }">
+          {{ schema.title }}
+        </h2>
+
+        <p class="text-muted mb-0" [innerHTML]="schema.description">
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FIELDS -->
+  <div class="row g-4 flex-grow-1">
+    <ng-container *ngFor="let field of (isWizard ? currentFields : schema.fields)">
+      <div *ngIf="isFieldVisible(field)" class="col-12" [ngClass]="getFieldClass(field)">
+      <!-- LABEL -->
+      <label class="form-label fw-semibold f_font_size">
+        {{ field.label }}
+        <span *ngIf="field.required  && field.type !== 'checkbox'" class="text-danger">*</span>
+      </label>
+
+      <div *ngIf="field.type === 'html'" [innerHTML]="field.html"></div>
+
+      <ng-container [ngSwitch]="field.type">
+        <!-- TEXT -->
+        <input *ngSwitchCase="'text'" appClearGlobalErrorOnFocus type="text" class="form-control"
+          [formControlName]="field.name" [attr.minlength]="field.min || null" [attr.maxlength]="field.max || null"
+          [readOnly]="isReadOnly(field)" [placeholder]="field.placeholder || ''" (focus)="onFocus($event, field)"
+          (blur)="onBlur($event, field)" (input)="forceNumericText($event, field)" />
+
+        <!-- NUMBER -->
+        <input *ngSwitchCase="'number'" appClearGlobalErrorOnFocus type="number" class="form-control"
+          [formControlName]="field.name" [placeholder]="field.placeholder || ''"
+          (input)="limitMobileLength($event, field)" />
+
+
+        <div *ngSwitchCase="'email'" class="position-relative">
+          <i *ngIf="field.icon" [class]="field.icon"
+            class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
+          </i>
+          <!-- EMAIL -->
+          <input *ngSwitchCase="'email'" appClearGlobalErrorOnFocus type="email" class="form-control"
+            [ngClass]="field.inputClass || ''" [formControlName]="field.name" [readOnly]="isReadOnly(field)"
+            [placeholder]="field.placeholder || ''" />
+        </div>
+
+        <!-- PASSWORD -->
+        <div *ngSwitchCase="'password'" class="position-relative">
+          <i *ngIf="field.icon" [class]="field.icon"
+            class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted">
+          </i>
+          <input appClearGlobalErrorOnFocus [type]="field.show ? 'text' : 'password'" [ngClass]="field.inputClass || ''"
+            class="form-control" [formControlName]="field.name" [placeholder]="field.placeholder || ''" 
+            [attr.minlength]="field.min || null" 
+            [attr.maxlength]="field.max || null"/>
+
+          <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+            (click)="field.show = !field.show">
+
+            <i class="bi" [ngClass]="field.show ? 'bi-eye-slash' : 'bi-eye'"></i>
+
+          </button>
+
+        </div>
+
+        <!-- SELECT -->
+        <select *ngSwitchCase="'select'" appClearGlobalErrorOnFocus class="form-select" [formControlName]="field.name">
+
+          <option value="" disabled selected hidden>
+            {{ field.placeholder || 'Select...' }}
+          </option>
+
+          <option *ngFor="let opt of field.options" [value]="opt.value">
+
+            {{ opt.label }}
+
+          </option>
+
+        </select>
+
+        <!-- TEXTAREA -->
+        <textarea *ngSwitchCase="'textarea'" class="form-control" rows="3" [formControlName]="field.name">
+      </textarea>
+
+
+        <!-- TINYMCE EDITOR -->
+      <app-tinymce-editor
+          *ngSwitchCase="'editor'"
+          [value]="form.get(field.name)?.value || ''"
+          (valueChange)="form.get(field.name)?.setValue($event)">
+      </app-tinymce-editor>
+
+        <!-- CHECKBOX -->
+        <div *ngSwitchCase="'checkbox'" class="form-check mt-1 mb-3 d-flex align-items-start gap-2">
+
+          <input type="checkbox" class="form-check-input shadow-none  mt-1" [formControlName]="field.name"
+            [id]="field.name" />
+
+          <label class="form-check-label" [for]="field.name">
+            <span *ngIf="field.required" class="text-danger">*</span>
+            {{ field.text }}
+
+          </label>
+
+        </div>
+        <!-- <div *ngSwitchCase="'checkbox'" class="form-check">
+
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [formControlName]="field.name"
+          [id]="field.name" />
+
+        <label
+          class="form-check-label"
+          [for]="field.name">
+
+          {{ field.text || field.label }}
+
+        </label>
+
+      </div> -->
+
+        <!-- RADIO -->
+        <div *ngSwitchCase="'radio'" class="d-flex flex-wrap gap-3">
+
+          <div class="form-check" *ngFor="let opt of field.options">
+
+            <input type="radio" class="form-check-input" [formControlName]="field.name" [value]="opt.value"
+              [id]="field.name + opt.value" />
+
+            <label class="form-check-label" [for]="field.name + opt.value">
+
+              {{ opt.label }}
+
+            </label>
+
+          </div>
+
+        </div>
+
+        <!-- MULTI CHECKBOX -->
+        <div *ngSwitchCase="'multi-checkbox'" class="border rounded p-3">
+
+          <div class="row g-3">
+
+            <div class="col-md-6" *ngFor="let opt of field.options">
+
+              <div class="form-check">
+
+                <input type="checkbox" class="form-check-input"
+                  [checked]="(form.get(field.name)?.value || []).includes(opt.value)"
+                  (change)="onMultiCheckboxChange(field.name, opt.value, $event)" [id]="field.name + opt.value" />
+
+                <label class="form-check-label" [for]="field.name + opt.value">
+
+                  {{ opt.label }}
+
+                </label>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+
+        <!-- CUSTOM PERMISSION GRID -->
+        <app-custom-permission *ngSwitchCase="'custom-permission'" [formControlName]="field.name">
+        </app-custom-permission>
+
+        <!-- ROLE ASSIGNMENT GRID -->
+        <app-role-assignment *ngSwitchCase="'role-assignment'" [formControlName]="field.name" [roles]="field.options || []">
+        </app-role-assignment>
+
+        <!-- CAPTCHA -->
+        <ng-container *ngSwitchCase="'captcha'">
+          <app-captcha *ngIf="schema.captcha?.enabled" [control]="getControl(field.name)!" [captchaImage]="captchaImage"
+            (reloadCaptcha)="reloadCaptcha.emit()">
+          </app-captcha>
+        </ng-container>
+
+        <!-- DATE PICKER -->
+        <app-datepicker
+      *ngSwitchCase="'datepicker'"
+      [control]="getControl(field.name)"
+      [label]="field.label"
+      [placeholder]="field.placeholder || 'Select Date'"
+      [min]="field.minDate || ''"
+      [max]="field.maxDate || ''"
+      [required]="field.required || false"
+      [readonly]="field.readonly || false"
+      [disabled]="field.disabled || false">
+    </app-datepicker>
+
+        <!-- FILE -->
+        <!-- <app-file-upload *ngSwitchCase="'file'" [control]="getControl(field.name)">
+        </app-file-upload> -->
+
+          <app-file-upload
+         *ngSwitchCase="'file'" 
+         [control]="getControl(field.name)"
+          [label]="field.label" >
+        </app-file-upload>
+
+        <!-- TOGGLE -->
+        <app-toggle *ngSwitchCase="'toggle'" [control]="getControl(field.name)!"
+          [label]="form.get(field.name)?.value ? (field.options?.[0]?.label || 'On') : (field.options?.[1]?.label || 'Off')">
+        </app-toggle>
+
+        <!-- SLIDER -->
+        <app-slider *ngSwitchCase="'slider'" [control]="getControl(field.name)" [min]="field.min ?? 0"
+          [max]="field.max ?? 100" [step]="field.step ?? 1">
+        </app-slider>
+
+        <!-- RANGE -->
+        <app-range *ngSwitchCase="'range'" [min]="field.min ?? 0" [max]="field.max ?? 100" [step]="field.step ?? 1"
+          [minControl]="$any(form.get(field.name + '_min'))" [maxControl]="$any(form.get(field.name + '_max'))">
+        </app-range>
+
+
+
+      </ng-container>
+
+      <!-- VALIDATION -->
+      <div *ngIf="isInvalid(field.name)" class="text-danger small mt-1">
+
+        {{ getErrorMessage(field.name) }}
+
+      </div>
+
+      </div>
+    </ng-container>
+
+  </div>
+
+
+
+  <!-- GLOBAL ERROR -->
+  <div *ngIf="generalErrorMessage" class="alert alert-danger d-flex align-items-start gap-2 mt-4">
+
+    <span>{{ generalErrorMessage }}</span>
+
+  </div>
+
+  <!-- SLOT -->
+  <ng-content select="[before-submit]"></ng-content>
+
+  <!-- FORGOT PASSWORD -->
+<div *ngIf="schema.forgotPassword as forgotPassword" class="text-end mb-3">
+  <a
+    *ngIf="forgotPassword.enabled"
+    [routerLink]="forgotPassword.route"
+    [class]="forgotPassword.class">
+    {{ forgotPassword.text }}
+  </a>
+</div>
+
+  <!-- SUBMIT -->
+  <!-- WIZARD NAVIGATION -->
+
+  <div class="mt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+    <!-- PREVIOUS BUTTON -->
+
+    <button *ngIf="isWizard && currentStep > 0" type="button"
+      class="btn btn-secondary px-4 btn-primary-govt btn-no-hover" (click)="prevStep()">
+      <i class="bi bi-arrow-left me-2"></i>
+      Previous
+    </button>
+
+    <!-- NEXT BUTTON -->
+
+    <button *ngIf="isWizard && currentStep < steps.length - 1" type="button"
+      class="btn px-4 ms-auto btn-primary-govt btn-no-hover" [disabled]="!isCurrentStepValid()" (click)="nextStep()">
+      Next
+      <i class="bi bi-arrow-right ms-2"></i>
+    </button>
+
+
+
+    <!-- CUSTOM SCHEMA BUTTONS -->
+
+    <div *ngIf="schema.showCustomButtons && schema.buttons?.length" [ngClass]="schema.buttonContainerClass ? schema.buttonContainerClass : (schema.layoutStyle === 'popup' ? 'mt-4 d-flex gap-2 w-100' : 'mt-4 d-flex justify-content-end align-items-center flex-wrap gap-2')">
+
+      <ng-container *ngFor="let btn of schema.buttons">
+        <button *ngIf="btn.visible !== false" [type]="btn.type || 'button'"
+                [class]="btn.overrideClasses ? btn.class : (btn.class + ' px-4 btn-primary-govt btn-no-hover')"
+          
+          [class.w-100]="schema.layoutStyle === 'popup' && hasSingleButton"
+          [class.flex-fill]="schema.layoutStyle === 'popup' && hasMultipleButtons" [disabled]="
+      btn.disabled ||
+      loading ||
+      (!btn.ignoreFormValidation && form.invalid)
+    " (click)="handleButtonClick(btn)">
+          <span [innerHTML]="btn.label"></span>
+        </button>
+      </ng-container>
+
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+
+    <button *ngIf="shouldShowSubmitButton()" type="submit" class="btn px-4 ms-auto btn-primary-govt btn-no-hover"
+      [disabled]="isWizard && (loading || form.invalid)">
+      <ng-container *ngTemplateOutlet="submitContent"></ng-container>
+
+    </button>
+
+  </div>
+
+  <!--  PLACE IT HERE (IMPORTANT) -->
+  <ng-template #submitContent>
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+
+    <i *ngIf="schema.submitIcon" [ngClass]="schema.submitIcon" class="me-2"></i>
+
+    {{ loading ? 'Processing...' : (schema.submitLabel || 'Submit') }}
+  </ng-template>
+
+  <!-- FOOTER -->
+  <p *ngIf="schema.footerText" class="text-center text-muted small mt-4">
+
+    {{ schema.footerText }}
+
+  </p>
+
+
+</form>

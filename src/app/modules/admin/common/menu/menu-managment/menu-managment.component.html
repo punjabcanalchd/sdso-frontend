@@ -1,0 +1,20 @@
+<div class="p-3">
+  <div class="card shadow-sm border-0 rounded-2">
+    <div class="card-body p-0">
+
+      <!-- The Table List Component -->
+      <app-document-list title="Menu Management" [data]="menus" [columns]="tableColumns" [showCreateButton]="true"
+        (createClick)="openCreateModal()" (actionClick)="handleTableAction($event)" [isAdmin]="true">
+      </app-document-list>
+
+    </div>
+  </div>
+</div>
+
+<!-- modal for Menu Form -->
+<app-modal-form
+  [title]="isEditMode ? 'Edit Menu' : 'Create Menu'"
+  [schema]="menuFormSchema"
+  [initialValue]="formInitialData"
+  (submitForm)="handleFormSubmit($event)">
+</app-modal-form>

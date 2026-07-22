@@ -1,0 +1,105 @@
+
+
+/* WIZARD */
+
+.wizard-container {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.wizard-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* LINE */
+
+.wizard-steps::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: #d6d6d6;
+  z-index: 0;
+}
+
+/* EACH STEP */
+
+.wizard-step {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  flex: 1;
+  // padding: 1rem;
+}
+
+/* CIRCLE */
+.wizard-circle {
+  // width: 32px;
+  // height: 32px;
+  // border-radius: 34px;
+  // background: var(--color-bg);
+  // border: 1px solid var( --color-primary-dark);
+  // color: var(--color-dark);
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  // margin: auto;
+  // font-size: 14px;
+  // font-weight: 600;
+  // transition: 0.3s ease;
+  width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid #dee2e6;
+    background: #fff;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+
+    font-weight: 600;
+    transition: all .3s ease;
+}
+
+/* ACTIVE */
+
+.wizard-circle.active {
+  background: var(--color-primary);
+  border: 1px solid var( --color-primary-dark);
+  color: var(--color-bg);
+}
+
+/* COMPLETED */
+
+.wizard-circle.completed {
+  background: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+
+/* TITLE */
+
+.wizard-title {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+
+// Clickable functionality
+.wizard-step.clickable {
+  cursor: pointer;
+}
+
+.wizard-step.clickable:hover .wizard-title {
+  text-decoration: none;
+}
+
+.wizard-step.clickable:hover .wizard-circle {
+  transform: scale(1.05);
+}

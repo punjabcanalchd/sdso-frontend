@@ -1,0 +1,42 @@
+<!-- Highly Compact Details Card -->
+<div class="border rounded mb-3 bg-white">
+  
+  <!-- COMPACT HEADER -->
+  <div class="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center rounded-top">
+    <span class="fw-semibold text-secondary" style="font-size: 0.85rem;">
+      <i class="bi bi-check2-circle text-success me-1"></i> {{ title }}
+    </span>
+    <ng-content select="[actions]"></ng-content>
+  </div>
+
+  <!-- COMPACT BODY -->
+  <div class="p-2">
+    
+    <!-- DETAILS -->
+    <div *ngIf="details.length">
+      <div class="row g-2">
+        <div class="col-6 col-md-3" *ngFor="let item of details">
+          <div class="px-2 py-1">
+            <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.65rem;">
+              {{ item.label }}
+            </small>
+            <span class="text-dark fw-medium" style="font-size: 0.85rem;">
+              {{ item.value || 'N/A' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONDITIONAL DYNAMIC FORM (For updates / inputs later) -->
+    <div *ngIf="showForm && formSchema" class="mt-3 border-top pt-3 px-2">
+      <h6 class="text-muted mb-2" style="font-size: 0.85rem;">Update Information</h6>
+      <app-dynamic-form 
+        [schema]="formSchema"
+        [initialValue]="initialFormValue"
+        (submitForm)="onSubmit($event)">
+      </app-dynamic-form>
+    </div>
+
+  </div>
+</div>

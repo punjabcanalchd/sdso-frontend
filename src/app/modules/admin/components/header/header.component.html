@@ -1,0 +1,73 @@
+<header
+  class="admin-header  bg-white border-bottom d-flex align-items-center justify-content-between px-2 px-sm-3 px-md-4 shadow-sm"
+  role="banner">
+
+  <div class="d-flex align-items-center gap-2 flex-shrink-0">
+    <button class="bg-transparent border-0 p-2 lh-1 " type="button" (click)="onMenuClick()"
+      aria-label="Toggle navigation">
+      <i class="bi bi-list fs-4"></i>
+    </button>
+  </div>
+
+  <div class="navbar navbar-expand-md d-inline-flex align-items-center justify-content-end flex-shrink-1 p-1 gap-4">
+    
+    @if(isMobile) {
+      @if(config.showDateTime) {
+      <div class="flex-column p-2">
+        <i class="bi bi-calendar3 me-2"></i>
+        <span class="small text-muted">
+          {{ currentDateTime | date:'dd MMM yyyy, hh:mm:ss a' }}
+        </span>
+      </div>
+      }
+    
+      @if(config.showPortalLink) {
+      <div class="flex-column">
+        <a [routerLink]="config.portalLink" class="small text-muted text-decoration-none">
+          <i class="bi bi-arrow-up-right-square"></i>
+          {{ config.portalLabel }}
+        </a>
+      </div>
+      }
+    }
+
+    @if (user$ | async; as user) {
+    <div class="dropdown">
+      <button type="button"
+        class="bg-transparent border-0 d-inline-flex align-items-center gap-3 p-1 shadow-none dropdown-toggle no-caret"
+        data-bs-toggle="dropdown" aria-expanded="false">
+
+        <div class="d-none d-sm-flex flex-column text-end justify-content-center">
+          <span class="fw-semibold text-dark lh-sm small">{{ user.name }}</span>
+          <span class="text-muted small lh-1 mt-1">{{ user.roleName || 'Administrator'
+            }}</span>
+        </div>
+
+        <div
+          class="avatar bg-primary text-white d-flex align-items-center justify-content-center fw-bold rounded-circle flex-shrink-0">
+          {{ (user.name ? user.name.substring(0, 1).toUpperCase() : 'A') }}
+        </div>
+      </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow border-secondary-subtle mt-2">
+    
+      @for(item of config.userMenuItems; track item.action) {
+    
+      <li>
+        <button type="button" class="dropdown-item d-flex align-items-center gap-2 py-2 small"
+          [class.text-danger]="item.action === 'logout'" (click)="onMenuAction(item.action)">
+    
+          <i [class]="item.icon"></i>
+    
+          <span>{{ item.label }}</span>
+        </button>
+      </li>
+    
+      }
+    
+    </ul>
+    </div>
+    }
+  </div>
+
+</header>

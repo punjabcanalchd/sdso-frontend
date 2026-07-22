@@ -1,0 +1,45 @@
+/* wrapper label already has flex, so we style only the checkbox*/
+/* .toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 60px;
+  height: 34px;
+  background-color: #ccc;
+  border-radius: 34px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color .4s;
+} */
+
+/* knob */
+/* .toggle::before {
+  content: "";
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform .4s;
+} */
+
+/* checked state */
+/* .toggle:checked {
+  background-color: var(--primary);
+} */
+
+/* .toggle:checked::before {
+  transform: translateX(26px);
+} */
+
+/* focus */
+/* .toggle:focus {
+  box-shadow: 0 0 1px #2196F3;
+} */ 
+
+.custom-switch-color:checked {
+  background-color: var(--color-primary); 
+  border-color: var(--color-primary);
+}

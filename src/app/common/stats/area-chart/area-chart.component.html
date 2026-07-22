@@ -1,0 +1,19 @@
+<div class="card shadow-sm border-0 w-100 h-100 p-2 ">
+    <div class="card-header p-1 d-flex bg-white align-items-center justify-content-between border-0">
+            <h6 class="mb-0">{{ title }}</h6>
+     
+        <div class="filter-select-wrapper"> 
+            <select class="filter-select p-1 text-secondary border rounded small cursor-pointer" [ngModel]="selectedFilter" (ngModelChange)="onFilterChange($event)">
+                <option *ngFor="let opt of filterOptions" [value]="opt">{{ opt }}</option>
+            </select>
+        </div>
+        <i class="bi-info-circle text-muted cursor-pointer mx-1"></i>
+    </div>
+
+    <div class="card-body d-flex flex-column p-0">
+        <apx-chart class="flex-fill" [series]="chartOptions.series" [chart]="chartOptions.chart"
+            [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke" [markers]="chartOptions.markers"
+            [fill]="chartOptions.fill" [xaxis]="chartOptions.xaxis" [yaxis]="chartOptions.yaxis"
+            [tooltip]="chartOptions.tooltip" [grid]="chartOptions.grid" [legend]="chartOptions.legend"></apx-chart>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<app-admin-form-layout 
+  [title]="isEditMode ? 'Edit Menu' : 'Create Menu'"
+  [isLoading]="!isLoaded"
+  [schema]="menuFormSchema"
+  [initialValue]="formInitialData"
+  (formSubmit)="handleFormSubmit($event)">
+</app-admin-form-layout>

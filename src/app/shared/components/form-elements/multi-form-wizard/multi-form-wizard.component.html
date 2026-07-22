@@ -1,0 +1,95 @@
+<div class="wizard-header" *ngIf="steps.length">
+
+  <ng-container *ngFor="let step of steps; let i = index">
+
+    <div
+      class="wizard-step "
+      [class.cursor-pointer]="i < currentFormIndex"
+      (click)="i < currentFormIndex && goToStep(i)">
+
+      <div
+        class="custom-circle"
+        [ngClass]="{
+          'active': i === currentFormIndex,
+          'completed': i < currentFormIndex
+        }">
+
+        <i *ngIf="i < currentFormIndex" class="bi bi-check-lg"></i>
+        <span *ngIf="i >= currentFormIndex">{{ i + 1 }}</span>
+
+      </div>
+
+      <div class="step-title ">
+        {{ step }}
+      </div>
+
+    </div>
+
+  </ng-container>
+
+</div>
+
+<!-- FORM -->
+<div *ngIf="currentSchema" class="card shadow-sm ">
+
+  <div class="card-header d-flex justify-content-between align-items-center ">
+    <h5 class="mb-0 border-bottom border-warning border-3 d-inline-block pb-1">
+      {{ steps[currentFormIndex] || ('Step ' + (currentFormIndex + 1)) }}
+    </h5>
+
+    <span class="badge bg-secondary">
+      Step {{ currentFormIndex + 1 }} of {{ forms.length }}
+    </span>
+  </div>
+
+  <div class="card-body">
+
+    <app-dynamic-form
+      #dynamicForm
+      [schema]="currentSchema"
+      [initialValue]="currentData"
+     (submitForm)="onCurrentStepSubmit($event)">
+    </app-dynamic-form>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <!-- Previous -->
+      <button
+        class="btn btn-primary-govt"
+        (click)="prevForm()"
+        [disabled]="!canGoPrev">
+        <i class="bi bi-arrow-left"></i>
+        Previous
+      </button>
+
+      <div>
+
+        <button
+          *ngIf="canGoNext"
+          class="btn btn-primary-govt"
+          (click)="nextForm()">
+          Next
+          <i class="bi bi-arrow-right"></i>
+        </button>
+
+        <button
+          *ngIf="!canGoNext"
+          class="btn btn-success"
+          (click)="submitAll()">
+          Submit Application
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="!currentSchema" class="alert alert-warning">
+  No form configuration available.
+</div>

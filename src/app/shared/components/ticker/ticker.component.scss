@@ -1,0 +1,25 @@
+.ticker-animation-track {
+  // linear timing so the speed never speeds up or slows down at loop junctions
+  animation: tickerScrollLoop 30s linear infinite; 
+  width: max-content;
+}
+
+// Fixed alignment spacer for individual content streams
+.ticker-text-item {
+  display: inline-block;
+}
+
+// Angular pause trigger mapping hook
+.ticker-animation-paused {
+  animation-play-state: paused !important;
+}
+
+@keyframes tickerScrollLoop {
+  0% {
+    transform: translate3d(70%, 0, 0);
+  }
+  100% {
+    // FIXED: Translating exactly -50% shifts the first half away, snapping the loop invisibly
+    transform: translate3d(-70%, 0, 0);
+  }
+}
