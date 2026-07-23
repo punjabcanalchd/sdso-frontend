@@ -1,116 +1,205 @@
-<div class="bg-light-subtle border-bottom" role="toolbar" aria-label="Accessibility options">
-  <div class="container-fluid px-2 px-md-4">
-    
-    <div class="d-flex flex-wrap justify-content-between justify-content-sm-end align-items-center py-1 gap-2">
+<div class="container-fluid bg-light-subtle border-bottom">
 
-      <a href="#main-content" 
-         (click)="scrollToMainContent($event)"
-         class="btn btn-link text-secondary py-1 px-2 fw-medium order-first text-decoration-none d-flex align-items-center">
-        <span class="d-inline d-lg-none">Skip</span>
-        <span class="d-none d-lg-inline">Skip to Main Content</span>
-      </a>
-  <div class="vr mx-1 text-secondary-subtle my-1 d-none d-sm-block" aria-hidden="true"></div>
-      <div class="d-flex align-items-center gap-1">
+  <!-- Desktop -->
+  <div class="row align-items-center d-none d-md-flex py-2 accessibility_bk">
 
+    <!-- Left -->
+    <div class="col-md-3">
+      <time
+        [attr.datetime]="currentTime()"
+        class="small text-secondary"
+        aria-live="off"
+        aria-atomic="true">
+        {{ currentTime() }}
+      </time>
+    </div>
+
+    <!-- Center -->
+    <div class="col-md-6 text-center">
+      <h2 class="h5 fw-bold text-dark mb-0">
+        State Dam Safety Organization
+      </h2>
+    </div>
+
+    <!-- Right -->
+    <div class="col-md-3">
+
+      <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+
+        <!-- Skip -->
+        <a
+          href="#main-content"
+          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1">
+
+          <i class="bi bi-arrow-down"></i>
+          <span>Skip</span>
+
+        </a>
+
+        <div class="vr"></div>
+
+        <!-- Search -->
         <div class="position-relative">
-          <button 
-            type="button" 
-            class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" 
-            title="Search" 
-            aria-label="Toggle Search Bar"
-            (click)="toggleSearch(); $event.stopPropagation()">
-            <i class="bi bi-search" aria-hidden="true"></i>
-          </button>
 
-                  @if (searchOpen) {
-            <!-- Mobile Search Form -->
-            <form class="d-flex d-sm-none position-absolute start-0 top-100 mt-1 bg-white border border-secondary-subtle rounded shadow-sm p-2 m-0 z-3 align-items-center gap-2 flex-nowrap" 
-                  role="search" 
-                  (click)="$event.stopPropagation()"
-                  (ngSubmit)="executeSearch(mobileSearch.value); mobileSearch.value=''">          
-              <input #mobileSearch class="form-control w-auto" type="search" placeholder="Search..." aria-label="Search" size="15">
-              <button class="btn btn-outline-success text-nowrap" type="submit">Go</button>
-            </form>
-
-            <!-- Desktop Search Form -->
-            <form class="d-none d-sm-flex position-absolute end-0 top-100 mt-1 bg-white border border-secondary-subtle rounded shadow-sm p-2 m-0 z-3 align-items-center gap-2 flex-nowrap" 
-                  role="search" 
-                  (click)="$event.stopPropagation()"
-                  (ngSubmit)="executeSearch(desktopSearch.value); desktopSearch.value=''">          
-              <input #desktopSearch class="form-control w-auto" type="search" placeholder="Search..." aria-label="Search" size="15">
-              <button class="btn btn-outline-success text-nowrap" type="submit">Go</button>
-            </form>
-          }
-
-        </div>
-
-        <div class="vr mx-1 text-secondary-subtle my-1 d-none d-sm-block" aria-hidden="true"></div>
-
-        <div class="position-relative" role="group" aria-label="Text size">
           <button
             type="button"
-            class="btn btn-link text-secondary p-1 d-flex align-items-center gap-1 text-decoration-none"
-            (click)="toggleFontDropdown(); $event.stopPropagation()"
-            [attr.aria-expanded]="fontDropdownOpen"
-            aria-haspopup="true"
-            title="Text size"
-            aria-label="Text size options">
-            <span class="fw-bold small" aria-hidden="true">A</span>
-            <i class="bi bi-caret-down-fill small" aria-hidden="true"></i>
+            class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1"
+            (click)="toggleSearch()">
+
+            <i class="bi bi-search"></i>
+            <span>Search</span>
+
           </button>
 
-          @if (fontDropdownOpen) {
-            <ul class="position-absolute start-0 end-lg-0 bg-white border border-secondary-subtle rounded shadow-sm list-unstyled p-1 m-0 z-3" 
-                role="menu" 
-                aria-label="Text size options" 
-                (click)="$event.stopPropagation()">
-              @for (opt of fontOptions; track opt.value) {
-                <li role="none">
-                  <button
-                    type="button"
-                    class="dropdown-item rounded px-3 py-1 small text-nowrap"
-                    [class.active]="currentFontSize === opt.value"
-                    role="menuitem"
-                    (click)="setFontSize(opt.value)"
-                    [attr.aria-current]="currentFontSize === opt.value ? 'true' : null">
-                    {{ opt.label }}
-                  </button>
-                </li>
-              }
-            </ul>
+          @if (isSearchOpen) {
+          <div class="position-absolute end-0 mt-2 bg-white border rounded shadow p-2" style="min-width:260px; z-index:1050;">
+
+            <form
+              class="d-flex gap-2"
+              (ngSubmit)="onSearch($event)">
+
+              <input
+                class="form-control form-control-sm"
+                type="search"
+                [(ngModel)]="searchQuery"
+                name="searchQuery"
+                placeholder="Search...">
+
+              <button
+                class="btn btn-outline-success btn-sm"
+                type="submit">
+
+                <i class="bi bi-arrow-right"></i>
+
+              </button>
+
+            </form>
+
+          </div>
           }
+
         </div>
 
-        <div class="vr mx-1 text-secondary-subtle my-1 d-none d-sm-block" aria-hidden="true"></div>
+        <div class="vr"></div>
 
-        <a routerLink="/screen-reader" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" title="Screen Reader" aria-label="Screen Reader information">
-          <i class="bi bi-person-raised-hand" aria-hidden="true"></i>
-        </a>
+        <!-- Font Size -->
 
-        <div class="vr mx-1 text-secondary-subtle my-1 d-none d-sm-block" aria-hidden="true"></div>
+        <div class="btn-group btn-group-sm">
 
-        <a routerLink="/cons" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" title="Sitemap" aria-label="Sitemap">
-          <i class="bi bi-diagram-3" aria-hidden="true"></i>
-        </a>
+          <button
+            class="btn btn-outline-secondary"
+            (click)="decreaseFontSize()"
+            [disabled]="currentFontSize===90">
 
-        <div class="vr mx-1 text-secondary-subtle my-1" aria-hidden="true"></div>
+            A-
 
-        <div class="d-flex align-items-center flex-wrap gap-0" aria-label="Social media links">
-          <a href="#" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-facebook" aria-hidden="true"></i>
-          </a>
-          <a href="#" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" aria-label="Twitter / X" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-twitter-x" aria-hidden="true"></i>
-          </a>
-          <a href="#" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" aria-label="YouTube" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-youtube" aria-hidden="true"></i>
-          </a>
-          <a href="https://www.linkedin.com/" class="btn btn-link text-secondary p-1 d-flex align-items-center text-decoration-none" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-linkedin" aria-hidden="true"></i>
-          </a>
+          </button>
+
+          <button
+            class="btn btn-outline-secondary"
+            (click)="increaseFontSize()"
+            [disabled]="currentFontSize===130">
+
+            A+
+
+          </button>
+
         </div>
+
+        <div class="vr"></div>
+
+        <!-- Sitemap -->
+
+        <a
+          href="/sitemap"
+          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1">
+
+          <i class="bi bi-diagram-3"></i>
+          <span>Sitemap</span>
+
+        </a>
 
       </div>
+
     </div>
+
   </div>
+
+  <!-- Mobile -->
+
+  <div class="d-md-none py-2">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+      <h2 class="h6 fw-bold text-dark mb-0">
+        State Dam Safety Organization
+      </h2>
+
+      <div class="d-flex align-items-center gap-1">
+
+        <button
+          class="btn btn-link text-secondary p-1"
+          (click)="toggleSearch()">
+
+          <i class="bi bi-search"></i>
+
+        </button>
+
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="decreaseFontSize()">
+
+          A-
+
+        </button>
+
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          (click)="increaseFontSize()">
+
+          A+
+
+        </button>
+
+        <a
+          href="/sitemap"
+          class="btn btn-link text-secondary p-1">
+
+          <i class="bi bi-diagram-3"></i>
+
+        </a>
+
+      </div>
+
+    </div>
+
+    @if (isSearchOpen) {
+    <div class="mt-2">
+
+      <form
+        class="d-flex gap-2"
+        (ngSubmit)="onSearch($event)">
+
+        <input
+          class="form-control form-control-sm"
+          type="search"
+          [(ngModel)]="searchQuery"
+          name="searchQuery"
+          placeholder="Search...">
+
+        <button
+          class="btn btn-outline-success btn-sm"
+          type="submit">
+
+          <i class="bi bi-arrow-right"></i>
+
+        </button>
+
+      </form>
+
+    </div>
+    }
+
+  </div>
+
 </div>

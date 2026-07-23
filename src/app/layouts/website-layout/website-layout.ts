@@ -22,8 +22,5 @@ import { FooterComponent } from '../../shared/components/footer/footer.component
   styleUrl: './website-layout.scss',
 })
 export class WebsiteLayout {
-
-
-  logoUrl = 'assets/images/front/pwrda-logo.png';
-
+  logoUrl = 'assets/images/front/logo.png';
 }
