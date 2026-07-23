@@ -117,18 +117,17 @@ ngAfterViewInit(): void {
   },
     fields: [      
         {
-          name: 'email',
-          label: 'Username or Email', 
-          type: 'email',
+          name: 'hrmscode',
+          label: 'HRMS CODE', 
+          type: 'text',
           icon: 'bi bi-person',         
-          placeholder: 'Enter username or email', 
+          placeholder: 'Enter HRMS CODE', 
           required: true, 
           inputClass: 'pe-5 ps-5 pe-5',       
           validationMessages: {
-            required: 'Please enter your email address',
-            email: 'Please enter a valid email address'
+            required: 'Please enter your HRMS CODE'
           },
-          validators: [CustomValidators.email()],
+          validators: [CustomValidators.digitsOnly()],
           updateOn: 'change'
         },
 
@@ -198,7 +197,7 @@ onSubmit(value: any): void {
   this.dynamicForm.setLoading(true);
 
   const payload = {
-    email: rawValue.email,
+    hrmscode: rawValue.hrmscode,
     password: encryptPassword,
     captcha_input: rawValue.captcha_input,
     captcha_id: this.captchaId
