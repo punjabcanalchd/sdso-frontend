@@ -1,13 +1,207 @@
-.bg-dark-subtle {
-    background-color: #000000 !important;
-}
-
-.qrScannerImage
+.stats_icon_css
 {
-    width: 100px;
-    height: 100px;
+width:48px;
+height:48px;
 }
 
-img.scanner_Image {
+
+
+/* The track IS the scrollable element */
+/* ===========================
+   Partner Logos Section
+=========================== */
+
+.gov-footer-partners {
+    background: #000;
+    padding: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gov-logo-scroll-wrap {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Scroll Track */
+.gov-logo-track {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
     width: 100%;
+    padding: 0.75rem 0;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.gov-logo-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* Logo Item */
+.gov-logo-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 160px;
+    height: 80px;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.gov-logo-item:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: #ffc107;
+    transform: scale(1.05);
+    text-decoration: none;
+}
+
+.gov-logo-item:focus-visible {
+    outline: 2px solid #ffc107;
+    outline-offset: 3px;
+}
+
+/* Logo Image */
+.gov-logo-img-scroll {
+    max-width: 100%;
+    max-height: 50px;
+    object-fit: contain;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.gov-logo-item:hover .gov-logo-img-scroll {
+    opacity: 1;
+}
+
+/* Placeholder */
+.gov-logo-placeholder-scroll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+/* Fade Effect */
+.gov-logo-fade {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.gov-logo-fade-left {
+    left: 0;
+    background: linear-gradient(to right, rgb(51, 52, 55) 0%, transparent 100%);
+}
+
+.gov-logo-fade-right {
+    right: 0;
+    background: linear-gradient(to left, rgb(51, 52, 55) 0%, transparent 100%);
+}
+
+/* Navigation Arrows */
+.gov-logo-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    z-index: 3;
+    transition: background 0.2s ease,
+                border-color 0.2s ease;
+}
+
+.gov-logo-arrow:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffc107;
+}
+
+.gov-logo-arrow:focus-visible {
+    outline: 2px solid #ffc107;
+    outline-offset: 3px;
+}
+
+.gov-logo-arrow-left {
+    left: 8px;
+}
+
+.gov-logo-arrow-right {
+    right: 8px;
+}
+
+/* Counter */
+.gov-partner-counter {
+    min-height: 1.2rem;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Footer Bottom */
+.gov-footer-bottom {
+    background: #001040;
+    padding: 0.5rem;
+}
+
+.gov-footer-copy {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.gov-footer-copy-link {
+    color: rgba(255, 255, 255, 0.65);
+    text-decoration: underline;
+}
+
+.gov-footer-copy-link:hover {
+    color: #ffc107;
+}
+
+.gov-footer-copy-link:focus-visible {
+    outline: 2px solid #ffc107;
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.gov-footer-compliance {
+    margin: 0;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+    .gov-logo-track {
+        overflow-x: auto;
+        scroll-behavior: auto;
+    }
+
+    .gov-logo-item,
+    .gov-logo-arrow {
+        transition: none;
+    }
 }

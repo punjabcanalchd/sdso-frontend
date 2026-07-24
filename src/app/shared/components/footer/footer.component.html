@@ -1,139 +1,246 @@
-<footer class="bg-footer text-white border-top border-secondary" role="contentinfo">
-<!-- link stipe -->
-  <div class="bg-primary py-2 px-md-5">
-    <div class="container-fluid">
-      <ul class="list-unstyled d-flex flex-wrap justify-content-center gap-4 m-0 small" role="list">
-        
-        @for (link of policyLinks; track link.path) {
-          <li>
-            <a [routerLink]="link.path" class="text-decoration-none text-white d-flex align-items-center gap-1">
-              <i class="bi bi-box-arrow-up-right small" aria-hidden="true"></i>{{ link.label }}
-            </a>
-          </li>
-        }
+<footer class="bg-primary text-white">
 
-      </ul>
-    </div>
-  </div>
-<!-- footer content -->
-  <div class="bg-footer py-4 px-md-4">
-    <div class="container-sm">
-      <div class="row g-5 align-items-start">
+  <!-- Top Section -->
+  <div class="py-5">
+    <div class="container">
 
-       <div class="col-lg-3 col-md-3">
-          <h3 class="fs-5 fw-bold pb-2 mb-3 border-bottom border-warning border-2 d-inline-block text-warning">
-            About Us
-          </h3>
-          <ul class="list-unstyled d-flex flex-column gap-2 m-0" role="list">
-            @for (link of aboutLinks; track link.path) {
-              <li>
-                <a [routerLink]="link.path" class="text-decoration-none a link-light small">
-                  {{ link.label }}
-                </a>
-              </li>
-            }
+      <div class="row text-center">
+
+        <!-- Useful Links -->
+        <div class="col-lg-4 col-md-4 mb-4">
+          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">          
+            Useful Links
+          </h5>
+
+          <ul class="list-unstyled">
+            <li class="mb-2"  *ngFor="let link of usefulLinks">
+              <a
+                [routerLink]="link.url"
+                class="text-white text-decoration-none">
+                {{ link.label }}
+              </a>
+            </li>
           </ul>
+
         </div>
 
-        <div class="col-lg-5 col-md-5">
-          <h3 class="fs-5 fw-bold pb-2 mb-3 border-bottom border-warning border-2 d-inline-block text-warning">
-            Services
-          </h3>
-          <ul class="list-unstyled d-flex flex-column gap-2 m-0" role="list">
-             @for (service of serviceLinks; track service.path) {
-              <li>
-                <a [routerLink]="service.path" class="text-decoration-none link-light small">
-                  {{ service.label }}
-                </a>
-              </li>
-            }
-          </ul>
-        </div>
+        <!-- Policies -->
+        <div class="col-lg-4 col-md-4 mb-4">
+          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">           
+            Policies
+          </h5>
 
-        <div class="col-lg-4 col-md-4 col-8 d-flex justify-content-lg-end justify-content-center">
-          <div class=" bg-card border border-secondary p-3 d-flex flex-column align-items-center text-center gap-3 style-csp-card">
-            
-            <div class="bg-body-secondary border border-secondary rounded p-0 p-md-0 d-flex align-items-center justify-content-center w-50 mx-auto" 
-                 role="img" aria-label="QR code to download PWRDA Mobile App">    
-              <img [src]="qrCodeLogo" alt="QR Scanner Image" class=" img-thumbnail w-100 rounded  "> 
+          <ul class="list-unstyled">
+            <li class="mb-2" *ngFor="let link of policyLinks">
+              <a
+                /* [routerLink]="link.url" */
+                class="text-white text-decoration-none">
+                {{ link.label }}
+              </a>
+            </li>
+          </ul>
+
+        </div>
+     
+    <!-- Site Statistics -->
+      <div class="col-lg-4 col-md-4 mb-4">
+        <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
+          <i class="bi bi-bar-chart-fill me-2"></i>
+          Site Statistics
+        </h5>
+
+        <div class="d-flex align-items-center justify-content-center mb-4">
+
+          <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
+            <i class="bi bi-people-fill fs-4 text-warning"></i>
+          </div>
+
+          <div class="text-start">
+            <div class="small text-uppercase text-light">
+              Total Visitors
             </div>
-            
-            <p class="small text-white fw-medium mb-1">Download PWRDA Mobile App</p>
-            
-            <div class="d-flex gap-1 justify-content-center">
-              <a href="https://apps.apple.com/in/app/pwrda/id6736641682" class="  btn-sm text-decoration-none text-center px-2 px-lg-4 py-1 px-md-0 font-monospace" 
-                 aria-label="Download on App Store" target="_blank" rel="noopener noreferrer">            
-                <img [src]="imgappStore" alt="App Store" class="img-fluid ">                 
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=in.nic.pwrda&amp;hl=en_IN" class="  btn-sm text-decoration-none text-center px-3 py-1 font-monospace" 
-                 aria-label="Get it on Google Play" target="_blank" rel="noopener noreferrer">             
-              <img [src]="imgGooglePlay" alt="Google Play" class="img-fluid"> 
-            
-              </a>
 
+            <div class="fw-bold fs-5 text-white">
+              {{ stats.totalVisitors || '—' }}
             </div>
           </div>
+
+        </div>
+
+        <div class="d-flex align-items-center justify-content-center">
+          <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
+            <i class="bi bi-calendar-check-fill fs-4 text-warning"></i>
+          </div>
+
+          <div class="text-start">
+            <div class="small text-uppercase text-light">
+              Last Updated
+            </div>
+
+            <div class="fw-bold text-white">
+              {{ stats.lastUpdated || '—' }}
+            </div>
+          </div>
+
         </div>
 
       </div>
+     
+      </div>
+
     </div>
   </div>
 
-  <div class="py-2">
-    <div class="container text-center text-body-secondary small">
-      <p class="mb-1 text-white">&copy; {{ currentYear }} Punjab Water Regulation &amp; Development Authority</p>
-      <p class="mb-0 mx-auto text-white lh-base max-width-lg">
-        Website Designed and Developed by National Informatics Centre, Punjab, 
-        Ministry of Electronics &amp; Information Technology, Government of India
-      </p>
+
+
+  
+        <!-- Start Footer -->
+  <!-- ── MIDDLE SECTION: Partner logos — continuous scroll ── -->
+  <div class="gov-footer-partners" aria-labelledby="partners-heading">
+    <div class="container-fluid px-0">
+
+      <h2 id="partners-heading" class="visually-hidden">Partner Logos</h2>
+
+      <!-- Scroll wrapper -->
+      <div class="gov-logo-scroll-wrap position-relative"
+           (mouseenter)="onHover(true)"
+           (mouseleave)="onHover(false)"
+           aria-label="Partner logos. Hover to pause scrolling.">
+
+        <!-- Left fade + arrow -->
+        <div class="gov-logo-fade gov-logo-fade-left" aria-hidden="true"></div>
+        <button class="gov-logo-arrow gov-logo-arrow-left"
+                type="button"
+                (click)="scrollLeft()"
+                aria-label="Scroll partners left">
+          <span class="material-icons" aria-hidden="true">chevron_left</span>
+        </button>
+
+        <!-- Scrolling track -->
+        <div class="gov-logo-track"
+             #logoTrack
+             [class.paused]="isPaused"
+             role="list"
+             aria-label="Partner logos">
+
+          <!-- Logos duplicated for seamless loop -->
+          <a *ngFor="let logo of scrollLogos"
+             [href]="logo.linkUrl"
+             class="gov-logo-item"
+             role="listitem"
+             target="_blank"
+             rel="noopener noreferrer"
+             [attr.aria-label]="logo.name + ' (opens in new tab)'">
+            <img [src]="logo.imageUrl"
+                 [alt]="logo.name"
+                 class="gov-logo-img-scroll"
+                 loading="eager"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+            <!-- Placeholder -->
+            <div class="gov-logo-placeholder-scroll" style="display:none;" aria-hidden="true">
+             <span class="material-icons" aria-hidden="true">business</span>
+              <span>{{ logo.name }}</span>
+            </div>
+          </a>
+
+        </div>
+
+        <!-- Right fade + arrow -->
+        <button class="gov-logo-arrow gov-logo-arrow-right"
+                type="button"
+                (click)="scrollRight()"
+                aria-label="Scroll partners right">
+         <span class="material-icons" aria-hidden="true">chevron_right</span>
+        </button>
+        <div class="gov-logo-fade gov-logo-fade-right" aria-hidden="true"></div>
+
+      </div>
+
+
     </div>
   </div>
 
-<div class="bg-black">
-    <div class="container">
-      <ul class="list-unstyled d-flex flex-wrap align-items-center justify-content-center gap-3 m-0 py-2" 
-          role="list" aria-label="Partner logos">
-        <li>
-          <div class="text-dark  rounded px-4 py-2 small fw-medium font-monospace" 
-               aria-label="Digital India" >
-              <img [src]="digitalIndiaLogo" alt="Digital India" class="footer_icons">        
-               
-          
-              </div>
-        </li>
-        <li>
-          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
-               aria-label="data.gov.in" >           
-              <img [src]="dataGovLogo" alt="data.gov.in" class="footer_icons">        
-              
-              </div>
-        </li>
-        <li>
-          <div class=" rounded px-4 py-2 small fw-medium font-monospace" 
-               aria-label="india.gov.in" >              
-               <img [src]="indiaGovLogo" alt="indiaGovLogo" class="footer_icons">  
-              </div>
-        </li>
-        <li>
-          <div class="text-dark rounded px-5 py-2 small fw-medium font-monospace" 
-               aria-label="MyGov" >
-               <img [src]="myGovFooterLogo" alt="MyGov" class="footer_icons"> 
-              </div>
-        </li>
-        <li>
-          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
-               aria-label="MeitY" >
-               <img [src]="meityLogo" alt="MeitY" class="footer_icons">            
-              </div>
-        </li>
-        <li>
-          <div class="text-dark rounded px-4 py-2 small fw-medium font-monospace" 
-               aria-label="PMIndia" >
-               <img [src]="pmIndiaLogo" alt="india.gov.in" class="footer_icons">                       
-              
-              </div>
-        </li>
-      </ul>
-    </div>
+<!-- Bottom Footer -->
+<div class="bg-dark text-white py-3">
+  <div class="container text-center">
+    <p class="mb-2 small">
+      &copy; {{ currentYear }}
+      State Dam Safety Organization.
+      All Rights Reserved.
+
+      |
+      <a routerLink="/privacy-policy"
+         class="text-white text-decoration-none">
+        Privacy Policy
+      </a>
+
+      |
+
+      <a routerLink="/terms"
+         class="text-white text-decoration-none">
+        Terms of Use
+      </a>
+
+      |
+
+      <a routerLink="/accessibility-statement"
+         class="text-white text-decoration-none">
+        Accessibility
+      </a>
+
+      |
+
+      <a routerLink="/sitemap"
+         class="text-white text-decoration-none">
+        Sitemap
+      </a>
+
+    </p>
+
+    <p class="mb-0 small">
+
+      Follows
+
+      <a
+        href="https://guidelines.india.gov.in"
+        target="_blank"
+        class="text-warning text-decoration-none">
+
+        GIGW 3.0
+
+      </a>
+
+      |
+      WCAG 2.1 AA
+      |
+      DPDP Act
+
+    </p>
+
   </div>
+
+</div>
+        <!-- END Footer -->
+
+
 </footer>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
