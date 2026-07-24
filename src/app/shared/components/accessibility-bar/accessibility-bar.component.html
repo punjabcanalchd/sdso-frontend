@@ -5,19 +5,16 @@
 
     <!-- Left -->
     <div class="col-md-3">
-      <time
-        [attr.datetime]="currentTime()"
-        class="small text-secondary"
-        aria-live="off"
-        aria-atomic="true">
-        {{ currentTime() }}
-      </time>
+        <i class="bi bi-calendar3 me-2"></i>
+        <span class="small text-secondary">
+          {{ currentDateTime | date:'dd MMM yyyy, hh:mm:ss a' }}
+        </span>
     </div>
 
     <!-- Center -->
     <div class="col-md-6 text-center">
       <h2 class="h5 fw-bold text-dark mb-0">
-        State Dam Safety Organization
+        State Dam Safety Organization (SDSO) | Dam Safety Organisation
       </h2>
     </div>
 

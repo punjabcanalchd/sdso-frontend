@@ -9,6 +9,6 @@ export const environment = {
     sessionTimeout: 900,
     maxUploadSize: 10,
     defaultLanguage: 'en',
-    paginationLimit: 20,
+    paginationLimit: 25,
     otpExpiryTime:30,
 };

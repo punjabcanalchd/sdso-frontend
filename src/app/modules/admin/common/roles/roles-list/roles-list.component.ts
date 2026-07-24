@@ -85,6 +85,7 @@ export class Roles implements OnInit {
   }
 
   handleAction(event: any) {
+    console.log('Action event:', event);
     if (event.action === 'edit' || event.actionName === 'edit') {
       this.openEditModal(event.row);
     }

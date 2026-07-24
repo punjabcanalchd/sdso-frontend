@@ -48,107 +48,108 @@ export class DocumentListComponent implements OnChanges {
   
   @Input() columns: TableColumn[] = [];
 
-   @Input() showCreateButton: boolean = false;
+  @Input() showCreateButton: boolean = false;
 
   @Output() actionClick = new EventEmitter<{ action: string, row: any }>();
 
   @Output() createClick = new EventEmitter<void>();
 
+  @Input() currentPage = 1;
+  @Input() totalItems = 0;
+  @Input() pageSize = 25;
+  @Input() lastPage = 1;
+
+  @Output() pageChange = new EventEmitter<number>();
+
+  @Output() pageSizeChange = new EventEmitter<number>();
+
+  @Output() searchChange = new EventEmitter<string>();
+
+  @Output() sortChange = new EventEmitter<{
+    column: string;
+    direction: 'asc' | 'desc';
+  }>();
 
   // ── Internal State 
   activeSortColumn= "";
   activeSortDirection: 'asc' | 'desc' | '' = '';
   searchTerm = '';
-  pageSize = 10;
-  currentPage = 1;
   pageSizeOptions = [5, 10, 25, 50];
 
-  filteredData: any[] = [];
   pagedData: any[] = [];
-  totalPages = 1;
   pageNumbers: number[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] && this.data) {
-      this.data.forEach((item, index) => {
-        item.orignalSeq = index + 1;
-      });
-     
-    }
-      if(changes['data'] || changes['columns']){
-        this.currentPage = 1;
-        this.processDataPipeline();
-      }
-  }
 
-  sortData(columnKey: string, direction: 'asc' | 'desc'): void {
-    if (this.activeSortColumn === columnKey && this.activeSortDirection === direction) {
+    if (
+      changes['data'] ||
+      changes['currentPage'] ||
+      changes['lastPage'] ||
+      changes['pageSize']
+    ) {
+
+      this.pagedData = [...this.data];
+
+      this.pageNumbers = Array.from(
+        { length: this.lastPage },
+        (_, i) => i + 1
+      );
+
+    }
+
+  }
+  
+ sortData(column: string, direction: 'asc' | 'desc') {
+
+    if (
+      this.activeSortColumn === column &&
+      this.activeSortDirection === direction
+    ) {
       this.activeSortColumn = '';
       this.activeSortDirection = '';
     } else {
-      this.activeSortColumn = columnKey;
+      this.activeSortColumn = column;
       this.activeSortDirection = direction;
     }
-    
-    this.currentPage = 1;
-    this.processDataPipeline();
+
+    this.sortChange.emit({
+      column: this.activeSortColumn,
+      direction: this.activeSortDirection || 'asc'
+    });
+
   }
 
-
-
-  processDataPipeline(): void {
-    const term = this.searchTerm.trim().toLowerCase();
-    
-    this.filteredData = term
-      ? this.data.filter(item =>
-          this.columns.some(col => {
-            const val = item[col.key];
-            return val && String(val).toLowerCase().includes(term);
-          })
-        )
-      : [...this.data];
-
-   if (this.activeSortColumn && this.activeSortDirection) {
-      this.filteredData.sort((a, b) => {
-        const valA = a[this.activeSortColumn] || '';
-        const valB = b[this.activeSortColumn] || '';
-        const cmp = typeof valA === 'string' ? valA.localeCompare(valB) : (valA > valB ? 1 : (valA < valB ? -1 : 0));
-        return this.activeSortDirection === 'asc' ? cmp : -cmp;
-      });
-    }
-
-    this.totalPages = Math.max(1, Math.ceil(this.filteredData.length / this.pageSize));
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = 1;
-    }
-
-    this.pageNumbers = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.pagedData = this.filteredData.slice(start, start + this.pageSize);
-  }
 
   onSearchChange(event: Event): void {
-    const inputEl = event.target as HTMLInputElement;
-    this.searchTerm = inputEl?.value ?? '';
-    this.currentPage = 1;
-    this.processDataPipeline();
+
+    this.searchTerm = (event.target as HTMLInputElement).value;
+
+    this.searchChange.emit(this.searchTerm);
+
   }
 
   onPageSizeChange(event: Event): void {
-    const selectEl = event.target as HTMLSelectElement;
-    this.pageSize = Number(selectEl?.value ?? 10);
-    this.currentPage = 1;
-    this.processDataPipeline();
+
+    this.pageSize = Number(
+      (event.target as HTMLSelectElement).value
+    );
+
+    this.pageSizeChange.emit(this.pageSize);
+
   }
 
-  goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
+ goToPage(page: number): void {
+
+    console.log('Page clicked:', page);
+
+    if (page < 1 || page > this.lastPage) {
+        return;
+    }
+
     this.currentPage = page;
-    
-    const start = (this.currentPage - 1) * this.pageSize;
-    this.pagedData = this.filteredData.slice(start, start + this.pageSize);
-  }
+
+    this.pageChange.emit(page);
+}
 
   getSerialNo(index: number): number {
     return (this.currentPage - 1) * this.pageSize + index + 1;

@@ -43,6 +43,13 @@ export class Users implements OnInit {
   profileInitialData: any = {};
   isProfileLoading: boolean = false;
 
+  currentPage = 1;
+  pageSize = 25;
+  pagination: any = {};
+  search = '';
+  sortColumn = '';
+  sortDirection = 'asc';
+
   viewProfileSchema: any = {
     layoutStyle: 'popup',
     fields: [
@@ -205,9 +212,22 @@ export class Users implements OnInit {
     return `${day}-${month}-${year}`;
   }
 
-  loadUsers(): void {
-    this.userService.getUsers({}).subscribe({
+  loadUsers(page: number = this.currentPage): void {
+
+    this.currentPage = page;
+
+    const params = {
+      page: this.currentPage,
+      per_page: this.pageSize,
+      search: this.search,
+      sort_column: this.sortColumn,
+      sort_direction: this.sortDirection
+    };
+
+    this.userService.getUsers(params).subscribe({
+
       next: (response) => {
+
         this.data = response.data.map((user: any) => ({
           id: user.public_id,
           name: user.name,
@@ -225,16 +245,33 @@ export class Users implements OnInit {
           userRole: user.role,
           createdAt: this.formatDate(user.created_at),
           proofType: user.proof_type,
-          proofNumber: user.proof_number ? CustomValidators.maskIdProof(user.proof_number) : '',
+          proofNumber: user.proof_number
+            ? CustomValidators.maskIdProof(user.proof_number)
+            : '',
           unlockUser: '',
-          status: user.status === true || String(user.status) === 'true'
+          status:
+            user.status === true ||
+            String(user.status) === 'true'
         }));
+
+        this.pagination = response.pagination;
+
+        this.currentPage = response.pagination.current_page;
+
+        this.pageSize = response.pagination.per_page;
+
         this.cdr.detectChanges();
+
+        console.log('Users loaded:', response.pagination);
+
       },
+
       error: err => {
-        console.log(err.error);
+        console.log(err);
       }
+
     });
+
   }
 
   tableColumns: TableColumn[] = [
@@ -660,5 +697,29 @@ export class Users implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  changePage(page: number) {
+
+    this.loadUsers(page);
+
+  }
+
+  searchUsers(text: string) {
+    alert(text);
+    this.search = text;
+
+    this.loadUsers(1);
+
+  }
+
+  sortUsers(event: any) {
+
+    this.sortColumn = event.column;
+
+    this.sortDirection = event.direction;
+
+    this.loadUsers(1);
+
   }
 }

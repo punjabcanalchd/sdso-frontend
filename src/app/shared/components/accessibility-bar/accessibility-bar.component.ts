@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, inject } from '@angular/core';
+import { Component, HostListener,ChangeDetectorRef,  OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -24,6 +24,9 @@ export class AccessibilityBarComponent implements OnDestroy {
 
   searchQuery = '';
   currentLangLabel = 'English';
+  currentDateTime = new Date();
+  private intervalId: any;
+  private cdr = inject(ChangeDetectorRef);
 
   fontOptions = [
     { label: 'Decrease (A-)', value: 90 },
@@ -38,6 +41,13 @@ export class AccessibilityBarComponent implements OnDestroy {
 
   get isSearchOpen(): boolean {
     return this.searchOpen;
+  }
+
+  ngOnInit(): void {
+    this.intervalId = setInterval(() => {
+      this.currentDateTime = new Date();
+      this.cdr.detectChanges();
+    }, 1000);
   }
 
   // ==========================================
