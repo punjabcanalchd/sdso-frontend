@@ -4,8 +4,6 @@ import { AuthGuard } from '../../core/guards/auth.guard';
 import { Dashboard } from './dashboard/dashboard.component';
 import { AdminLayout } from '../../layouts/admin-layout/admin-layout';
 import { MenuManagementComponent } from './common/menu/menu-managment/menu-managment.component';
-// import { ApplicationStepperComponent } from '../../common/groundwaterExtraction/application-list/application-stepper.component';
-import { ApplicationStepperComponent } from './groundwaterExtraction/application-list/application-stepper.component';
 import { Users } from './common/users/users-list/users-list.component';
 import { Roles } from './common/roles/roles-list/roles-list.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
@@ -23,13 +21,6 @@ const routes: Routes = [
 
       { path: 'pages', component: PagesComponent, title: 'Pages' },
       { path: 'page', redirectTo: 'pages', pathMatch: 'full' },
-
-      {
-        path: 'groundwaterExtraction/application-list',
-        component: ApplicationStepperComponent,
-        title: 'Application List'
-      },
-      { path: 'groundwater-app', redirectTo: 'groundwaterExtraction/application-list', pathMatch: 'full' },
 
       { path: 'users', component: Users, title: 'Users – Admin' },
       { path: 'user-role', redirectTo: 'roles', pathMatch: 'full' },

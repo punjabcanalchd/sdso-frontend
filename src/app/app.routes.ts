@@ -18,20 +18,6 @@ export const routes: Routes = [
       import('./modules/admin/admin-module').then((m) => m.AdminModule),
   },
   {
-    path: 'applicant',
-    loadChildren: () =>
-      import('./modules/applicant/applicant-module').then(
-        (m) => m.ApplicantModule
-      ),
-  },
-  {
-    path: 'officers',
-    loadChildren: () =>
-      import('./modules/officers/officers-module').then(
-        (m) => m.OfficersModule
-      ),
-  },
-  {
     path: 'reports',
     loadChildren: () =>
       import('./modules/reports/reports-module').then((m) => m.ReportsModule),

@@ -213,7 +213,7 @@ onSubmit(value: any): void {
   this.auth.login(payload).subscribe({
     next: (response: any) => {
       this.dynamicForm.setLoading(false);
-      
+      console.log('response', response);
       
       this.toast.show('success', response?.message || 'Login successful');      
     
@@ -222,7 +222,8 @@ onSubmit(value: any): void {
         if (this.setcaptchaFromAdmin) {
           this.dynamicForm.form.patchValue({ captcha_input: '' });
         }
-      
+      console.log('Login successful', this.auth);
+      console.log('Login successful', this.auth.getDashboardRoute());
       this.router.navigateByUrl(this.auth.getDashboardRoute());
     },
   error: (error: any) => {

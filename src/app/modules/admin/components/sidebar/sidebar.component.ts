@@ -48,15 +48,6 @@ export class SidebarComponent implements OnInit {
         this.menuItems = this.mapBackendMenuToFrontend(response.data || response);
         this.menuItems = [
           { title: 'Dashboard', icon: 'bi bi-speedometer2', routerLink: '/admin/dashboard', isExpanded: false },
-          {
-            title: 'Groundwater Extraction',
-            routerLink: '',
-            icon: 'bi bi-card-list',
-            isExpanded: false,
-            children: [      
-              { title: 'Application List', routerLink: '/admin/groundwaterExtraction/application-list' }      
-            ]
-          },
           ...dynamicItems
         ];
         this.checkActiveRoute();
