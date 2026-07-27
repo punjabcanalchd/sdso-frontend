@@ -13,6 +13,7 @@ export interface TableColumn {
   label: string;         // The Table Header text ('Description', 'Email Address')
   type?: 'text' | 'html' | 'download' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete'; // How to render the cell
   widthClass?: string;   // Bootstrap column classes ( 'col-7', 'col-2')
+  sortable?: boolean;
 
   buttonConfig?: {
     text: string;
@@ -90,25 +91,26 @@ export class DocumentListComponent implements OnChanges {
 
       this.pagedData = [...this.data];
 
-      this.pageNumbers = Array.from(
-        { length: this.lastPage },
-        (_, i) => i + 1
-      );
+      this.pageNumbers = this.getPageNumbers();
 
     }
 
   }
   
- sortData(column: string, direction: 'asc' | 'desc') {
+  sortData(column: TableColumn, direction: 'asc' | 'desc') {
+
+    if (!column.sortable) {
+      return;
+    }
 
     if (
-      this.activeSortColumn === column &&
+      this.activeSortColumn === column.key &&
       this.activeSortDirection === direction
     ) {
       this.activeSortColumn = '';
       this.activeSortDirection = '';
     } else {
-      this.activeSortColumn = column;
+      this.activeSortColumn = column.key;
       this.activeSortDirection = direction;
     }
 
@@ -116,8 +118,8 @@ export class DocumentListComponent implements OnChanges {
       column: this.activeSortColumn,
       direction: this.activeSortDirection || 'asc'
     });
-
   }
+  
 
 
   onSearchChange(event: Event): void {
@@ -196,4 +198,23 @@ export class DocumentListComponent implements OnChanges {
       window.open(row.fileUrl, '_blank', 'noopener,noreferrer');
     }
   }
+
+  private getPageNumbers(): number[] {
+  const pages: number[] = [];
+  const maxVisiblePages = 5;
+
+  let start = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+  let end = start + maxVisiblePages - 1;
+
+  if (end > this.lastPage) {
+    end = this.lastPage;
+    start = Math.max(1, end - maxVisiblePages + 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+
+  return pages;
+}
 }

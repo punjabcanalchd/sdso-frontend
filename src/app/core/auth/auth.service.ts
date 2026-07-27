@@ -190,7 +190,7 @@ export class AuthService {
   }
 
   updateUser(publicId: string, payload: any): Observable<any> {
-    return this.api.post<any>(`/admin/users/${publicId}/update`, payload);
+    return this.api.post<any>(`/admin/users/${publicId}/updateStatus`, payload);
   }
 
   updateEmailAndPhone(publicId: string, payload: FormData): Observable<any> {

@@ -228,26 +228,15 @@ export class Users implements OnInit {
 
       next: (response) => {
 
-        this.data = response.data.map((user: any) => ({
+        this.data = response.data.map((user: any, index: number) => ({
+          orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
+          hrmscode: user.hrmscode,
           id: user.public_id,
           name: user.name,
           email: user.email,
-          mobileNumber: null,
-          roleId: null,
-          roleName: user.role,
-          roleSlug: null,
-          currentUserRole: null,
-          applicantType: null,
-          fatherName: null,
-          designation: null,
-          idProof: user.proof_type,
-          idProofNumber: user.proof_number,
           userRole: user.role,
-          createdAt: this.formatDate(user.created_at),
-          proofType: user.proof_type,
-          proofNumber: user.proof_number
-            ? CustomValidators.maskIdProof(user.proof_number)
-            : '',
+          office: user.office,
+          created_at: this.formatDate(user.created_at),
           unlockUser: '',
           status:
             user.status === true ||
@@ -262,8 +251,6 @@ export class Users implements OnInit {
 
         this.cdr.detectChanges();
 
-        console.log('Users loaded:', response.pagination);
-
       },
 
       error: err => {
@@ -275,14 +262,13 @@ export class Users implements OnInit {
   }
 
   tableColumns: TableColumn[] = [
-    { key: 'name', label: 'Name', widthClass: 'col-2' },
-    // { key: 'applicantType', label: 'Applicant Type', widthClass: 'col-1' },
-    { key: 'userRole', label: 'User Role', widthClass: 'col-1' },
-    { key: 'email', label: 'Email', widthClass: 'col-2' },
-    { key: 'createdAt', label: 'Created At', widthClass: 'col-1' },
-    { key: 'proofType', label: 'Proof Type', widthClass: 'col-1' },
-    { key: 'proofNumber', label: 'Proof Number', widthClass: 'col-1' },
-    { key: 'unlockUser', type: 'unlock', label: 'Unlock User', widthClass: 'col-1' },
+    { key: 'hrmscode', label: 'HRMS Code', widthClass: 'col-1', sortable: true },
+    { key: 'name', label: 'Name', widthClass: 'col-2', sortable: true },
+    { key: 'email', label: 'Email', widthClass: 'col-2', sortable: true },
+    { key: 'userRole', label: 'User Role', widthClass: 'col-2', sortable: false },
+    { key: 'office', label: 'Office', widthClass: 'col-1', sortable: false },
+    { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
+    { key: 'unlockUser', type: 'unlock', label: 'Unlock User', widthClass: 'col-1', sortable: false },
     {
       key: 'action',
       type: 'dropdown',
@@ -292,19 +278,10 @@ export class Users implements OnInit {
         label: 'Choose Action',
         items: (row: any) => {
           const actions = [
-            { label: 'View', actionName: 'VIEW', class: 'text-secondary' },
-            { label: 'Legacy Data', actionName: 'LEGACY_DATA', class: 'text-secondary' },
-            { label: 'Update Email', actionName: 'UPDATE', class: 'text-secondary' },
-            { label: 'Bypass PSPCL', actionName: 'BYPASS_PSPCL', class: 'text-secondary' }
+            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
           ];
-
-          if (row.userRole === 'Applicant Users') {
-            return actions;
-          }
-
-          return actions.filter(
-            action => !['VIEW', 'BYPASS_PSPCL'].includes(action.actionName)
-          );
+          return actions;
+          
         }
       }
     }
@@ -398,6 +375,7 @@ export class Users implements OnInit {
   }
   
   handleAction(event: any): void {
+    console.log('Action Event:', event);
     if (event.action === 'VIEW' || event.actionName === 'VIEW') {
       this.openViewProfileModal(event.row.id);
     } else if (event.action === 'unlock') {
@@ -423,7 +401,7 @@ export class Users implements OnInit {
       next: (res) => {
         if (res.data) {
           const profile = res.data;
-          const detailsHtml = this.generateApplicantDetailHtml(profile);
+          const detailsHtml = "test";
           this.updateProfileSchema.fields.find((f: any) => f.name === 'applicantDetailHtml').html = detailsHtml;
 
           this.updateEmailInitialValue = {
@@ -435,7 +413,7 @@ export class Users implements OnInit {
           this.userService.getEmailAndPhoneLogs(userId).subscribe({
             next: (resLogs) => {
               const logs = resLogs.data || [];
-              const logsHtml = this.generateLogsHtml(logs);
+              const logsHtml = "test";
               this.updateProfileSchema.fields.find((f: any) => f.name === 'logsHtml').html = logsHtml;
               this.cdr.detectChanges();
             }
@@ -474,99 +452,6 @@ export class Users implements OnInit {
         this.toast.show('error', err.error?.message || 'Failed to update email and phone');
       }
     });
-  }
-
-  generateApplicantDetailHtml(profile: any): string {
-    const fullName = (profile.first_name || profile.last_name)
-      ? `${profile.first_name || ''} ${profile.middle_name ? profile.middle_name + ' ' : ''}${profile.last_name || ''}`.trim()
-      : (profile.name || 'N/A');
-
-    return `
-      <div class="border rounded mb-4 bg-white shadow-sm border border-secondary-subtle">
-        <div class="bg-light px-3 py-2 border-bottom d-flex justify-content-between align-items-center rounded-top">
-          <span class="fw-semibold text-secondary" style="font-size: 0.85rem;">
-            <i class="bi bi-person-fill p-1 text-white bg-primary rounded-circle lh-1  me-1"></i> Applicant Detail
-          </span>
-        </div>
-        <div class="p-3">
-          <div class="row g-2">
-            <div class="col-6 col-md-3">
-              <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.65rem;">Name</small>
-              <span class="text-dark fw-medium" style="font-size: 0.85rem;">${fullName}</span>
-            </div>
-            <div class="col-6 col-md-3">
-              <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.65rem;">Designation</small>
-              <span class="text-dark fw-medium" style="font-size: 0.85rem;">${profile.designation || 'N/A'}</span>
-            </div>
-            <div class="col-6 col-md-3">
-              <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.65rem;">Email</small>
-              <span class="text-dark fw-medium" style="font-size: 0.85rem;">${profile.email || 'N/A'}</span>
-            </div>
-            <div class="col-6 col-md-3">
-              <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.65rem;">Phone</small>
-              <span class="text-dark fw-medium" style="font-size: 0.85rem;">${profile.mobileNumber || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  generateLogsHtml(logs: any[]): string {
-    let rowsHtml = '';
-    if (logs.length === 0) {
-      rowsHtml = `
-        <tr>
-          <td colspan="6" class="text-center py-3 text-muted">
-            No email or phone change logs found.
-          </td>
-        </tr>
-      `;
-    } else {
-      logs.forEach((log, index) => {
-        const attachmentHtml = log.file 
-          ? `<a href="http://localhost:8000/storage/${log.file}" 
-                target="_blank" 
-                class="btn btn-sm btn-success rounded p-1 px-2 lh-1 text-white shadow-none">
-               <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
-             </a>`
-          : '<span class="text-muted">-</span>';
-
-        rowsHtml += `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${log.existing_email_id || 'N/A'}</td>
-            <td>${log.existing_phone_number || 'N/A'}</td>
-            <td>${this.formatDate(log.created_at)}</td>
-            <td>${this.formatDate(log.updated_at)}</td>
-            <td class="text-center">${attachmentHtml}</td>
-          </tr>
-        `;
-      });
-    }
-
-    return `
-      <div class="card shadow-sm border border-secondary-subtle p-3 bg-white mt-4">
-        <div class="fw-bold text-dark mb-3 small text-uppercase">Log Email/Phone Number</div>
-        <div class="table-responsive">
-          <table class="table table-bordered table-striped align-middle mb-0 small">
-            <thead class="table-light text-uppercase">
-              <tr>
-                <th style="width: 5%">#</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th style="width: 10%">Attachment</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
   }
 
   unlockUser(row: any): void {
@@ -706,7 +591,6 @@ export class Users implements OnInit {
   }
 
   searchUsers(text: string) {
-    alert(text);
     this.search = text;
 
     this.loadUsers(1);

@@ -68,22 +68,6 @@
 
               <div class="d-flex align-items-center justify-content-center">
                 <span>#</span>
-
-                <div class="sort-arrows">
-                  <i class="bi bi-caret-up-fill" role="button" tabindex="0"
-                    [class.text-muted]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc'"
-                    [class.opacity-25]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc'"
-                    [class.font_color]="!(activeSortColumn === 'orignalSeq' && activeSortDirection === 'asc')"
-                    (click)="sortData('orignalSeq', 'asc')" (keydown.enter)="sortData('orignalSeq', 'asc')"
-                    aria-label="Sort Number Ascending"></i>
-
-                  <i class="bi bi-caret-down-fill" role="button" tabindex="0"
-                    [class.text-muted]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc'"
-                    [class.opacity-25]="activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc'"
-                    [class.font_color]="!(activeSortColumn === 'orignalSeq' && activeSortDirection === 'desc')"
-                    (click)="sortData('orignalSeq', 'desc')" (keydown.enter)="sortData('orignalSeq', 'desc')"
-                    aria-label="Sort Number Descending"></i>
-                </div>
               </div>
             </th>
 
@@ -99,21 +83,27 @@
                 [class.justify-content-center]="['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || '')">
                 <span>{{ col.label }}</span>
 
-                <div class="sort-arrows">
-                  <i class="bi bi-caret-up-fill" role="button" tabindex="0"
-                    [class.text-muted]="activeSortColumn === col.key && activeSortDirection === 'asc'"
-                    [class.opacity-25]="activeSortColumn === col.key && activeSortDirection === 'asc'"
-                    [class.font_color]="!(activeSortColumn === col.key && activeSortDirection === 'asc')"
-                    (click)="sortData(col.key, 'asc')" (keydown.enter)="sortData(col.key, 'asc')"
-                    [attr.aria-label]="'Sort ' + col.label + ' Ascending'"></i>
+                @if (col.sortable) {
+                  <div class="sort-arrows">
+                      <i
+                          class="bi bi-caret-up-fill"
+                          role="button"
+                          tabindex="0"
+                          [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'asc'"
+                          [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'asc')"
+                          (click)="sortData(col, 'asc')">
+                      </i>
 
-                  <i class="bi bi-caret-down-fill" role="button" tabindex="0"
-                    [class.text-muted]="activeSortColumn === col.key && activeSortDirection === 'desc'"
-                    [class.opacity-25]="activeSortColumn === col.key && activeSortDirection === 'desc'"
-                    [class.font_color]="!(activeSortColumn === col.key && activeSortDirection === 'desc')"
-                    (click)="sortData(col.key, 'desc')" (keydown.enter)="sortData(col.key, 'desc')"
-                    [attr.aria-label]="'Sort ' + col.label + ' Descending'"></i>
-                </div>
+                      <i
+                          class="bi bi-caret-down-fill"
+                          role="button"
+                          tabindex="0"
+                          [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'desc'"
+                          [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'desc')"
+                          (click)="sortData(col, 'desc')">
+                      </i>
+                  </div>
+                }
               </div>
 
             </th>
@@ -132,7 +122,7 @@
 
           @for (row of pagedData; track row.id || $index; let i = $index) {
           <tr>
-            <td class="text-center text-secondary py-3 fw-bold">{{ row.orignalSeq }}</td>
+            <td class="text-center text-secondary text-dark py-3 fw-normal">{{ row.orignalSeq }}</td>
 
 
             @for (col of columns; track col.key) {
