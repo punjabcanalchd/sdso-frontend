@@ -1,0 +1,123 @@
+<!-- Announcements + Important Links -->
+<section class="py-4" aria-labelledby="ann-heading">
+  <div class="container">
+    <div class="row g-4">
+
+      <!-- Announcements -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100">
+
+          <!-- Card Header -->
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h2 id="ann-heading" class="h5 mb-0 d-flex align-items-center gap-2">
+              <span class="material-icons small" aria-hidden="true">notifications</span>
+              Announcements
+            </h2>
+
+            <a
+              routerLink="/announcements"
+              class="text-white text-decoration-none d-flex align-items-center gap-1"
+              aria-label="View all announcements">
+
+              View All
+              <span class="material-icons small" aria-hidden="true">arrow_forward</span>
+
+            </a>
+          </div>
+
+          <!-- Announcement List -->
+          <div
+            class="card-body overflow-auto"
+            style="max-height: 320px;"
+            (mouseenter)="annPaused = true"
+            (mouseleave)="annPaused = false"
+            aria-label="Announcements ticker. Hover to pause."
+            role="region">
+
+            <ul
+              class="list-unstyled mb-0"
+              [class.paused]="annPaused"
+              [style.animation-duration]="annDuration"
+              role="list">
+
+              <li
+                *ngFor="let item of announcements"
+                class="border-bottom py-3"
+                role="listitem">
+
+                <div class="small text-secondary mb-1">
+                  {{ item.date }}
+                </div>
+
+                <a
+                  [routerLink]="item.url"
+                  class="text-decoration-none">
+
+                  {{ item.title }}
+
+                </a>
+
+                <span
+                  *ngIf="item.isNew"
+                  class="badge bg-danger ms-2">
+
+                  NEW
+
+                </span>
+
+              </li>
+
+            </ul>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Important Links -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+
+          <!-- Card Header -->
+          <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0 d-flex align-items-center gap-2">
+              <span class="material-icons small" aria-hidden="true">link</span>
+              Important Links
+            </h2>
+          </div>
+
+          <!-- Links -->
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush" role="list">
+
+              <li
+                *ngFor="let link of importantLinks"
+                class="list-group-item"
+                role="listitem">
+
+                <a
+                  [href]="link.url"
+                  class="text-decoration-none d-flex align-items-center gap-2"
+                  [attr.target]="link.external ? '_blank' : null"
+                  [attr.rel]="link.external ? 'noopener noreferrer' : null"
+                  [attr.aria-label]="link.label + (link.external ? ' (opens in new tab)' : '')">
+
+                  <span class="material-icons small" aria-hidden="true">
+                    open_in_new
+                  </span>
+
+                  {{ link.label }}
+
+                </a>
+
+              </li>
+
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

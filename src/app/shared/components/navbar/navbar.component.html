@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-primary navbar-dark shadow-sm p-0 " role="navigation" aria-label="Main navigation">
+<nav class="navbar navbar-expand-lg  fw-bold " role="navigation" aria-label="Main navigation">
 
   <div class="container-fluid p-0 mx-xl-3  mx-lg-2 flex-wrap">
 
@@ -18,9 +18,7 @@
           <a routerLink="/auth/login" class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="closeMenu()">
             Login
           </a>
-          <a routerLink="/auth/register" class="btn btn-outline-light rounded-3 px-4 py-2 fw-bold w-100" (click)="closeMenu()">
-            Register
-          </a>
+       
         } @else {
           
           <button class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="navigateDashboard() ">
@@ -47,7 +45,7 @@
                 [routerLink]="item.route"
                 routerLinkActive="bg-warning text-dark active"
                 [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-                class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center link-light h-100"
+                class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center fw-bold h-100"
                 role="menuitem"
                 (click)="closeMenu()">
                 
@@ -64,7 +62,7 @@
             } @else {
               <button
                 type="button"
-                class="nav-link px-3 px-lg-2 px-xl-4 py-3 rounded-0 d-flex align-items-center gap-1 text-nowrap border-0 link-light h-100 w-100"
+                class="nav-link px-3 px-lg-2 px-xl-4 py-3 rounded-0 d-flex align-items-center gap-1 text-nowrap border-0 fw-bold h-100 w-100"
                 [class.bg-warning]="item.isOpen"
                 [class.text-black]="item.isOpen"
                 [class.active]="item.isOpen"              

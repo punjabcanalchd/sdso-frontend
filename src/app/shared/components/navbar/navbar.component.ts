@@ -5,6 +5,8 @@ import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
 
 export interface NavItem {
+    id?: number;
+  parent_id?: number | null;
   label: string;
   route?: string;
   externalUrl?: string;
@@ -41,18 +43,16 @@ export class NavbarComponent implements OnInit {
   ngOnInit() {
     this.fetchAndBuildNavbar();
   }
-    fetchAndBuildNavbar() {
-    this.api.get<any>('/admin/menus').subscribe({
+
+ fetchAndBuildNavbar() {
+    this.api.get<any>('/front/menus').subscribe({
       next: (res) => {
         const rawMenus = res.data || [];
-        const activeMenus = rawMenus
-          .filter((m: any) => (m.status == 1 || m.status === true))
-          .sort((a: any, b: any) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
-
-        const mappedItems: NavItem[] = activeMenus.map((m: any) => {
+ 
+        const mapMenu = (m: any): NavItem => {
           let internalRoute: string | undefined = '/';
           let extUrl: string | undefined = undefined;
-
+ 
           if (m.page_id) {
              internalRoute = `/pages/${m.page_id}`;
           } else if (m.external_link) {
@@ -63,65 +63,35 @@ export class NavbarComponent implements OnInit {
                  internalRoute = m.external_link.startsWith('/') ? m.external_link : `/${m.external_link}`;
              }
           }
-
-          return {
-            id: m.menu_id,             
-            parent_id: m.parent_id, 
-            label: m.name_en,          
+ 
+          const mapped: NavItem = {
+            label: m.english_description?.message || 'Unnamed Menu',
             route: internalRoute,
             externalUrl: extUrl,
             isOpen: false,
-            children: []
-          } as any;
-        });
-
-        const map = new Map();
-        mappedItems.forEach((item: any) => map.set(item.id, item));
-        const tree: NavItem[] = [];
-        mappedItems.forEach((item: any) => {
-          if (item.parent_id) {
-            const parent = map.get(Number(item.parent_id));
-            if (parent) {
-              parent.children!.push(item);
-            }
-          } else {
-            tree.push(item);
+          };
+ 
+          if (m.children && m.children.length > 0) {
+            mapped.children = m.children.map((child: any) => mapMenu(child));
           }
-        });
-
-        const cleanEmptyChildren = (items: NavItem[]) => {
-          items.forEach(item => {
-            if (item.children && item.children.length === 0) {
-              delete item.children;
-            } else if (item.children) {
-              cleanEmptyChildren(item.children);
-            }
-          });
+ 
+          return mapped;
         };
-        cleanEmptyChildren(tree);
-
-        this.navItems = tree;
+ 
+        const activeMenus = rawMenus
+          .filter((m: any) => (m.status == 1 || m.status === true))
+          .sort((a: any, b: any) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+ 
+        this.navItems = activeMenus.map((m: any) => mapMenu(m));
         this.cdr.detectChanges();
       },
-      error: (err) => { 
+      error: (err) => {
         console.error('Failed to load dynamic navbar, using fallback', err);
-        
-        // --- TEMPORARY FALLBACK MENU ---
-        // this.navItems = [
-        //   { label: 'Home', route: '/', isOpen: false },
-        //   { label: 'Services', route: undefined, isOpen: false, children: [
-        //       { label: 'Apply for NOC', route: '/fee-calculator/industrial', isOpen: false },
-        //       { label: 'Track Application', route: '/cons', isOpen: false }
-        //   ]},
-        //   { label: 'About Us', route: '/about', isOpen: false },
-        //   { label: 'Contact Us', route: '/contact', isOpen: false }
-        // ];
-        
-        
         this.cdr.detectChanges();
       }
-    }); 
+    });
   }
+  
 
 
   toggleMenu(): void {

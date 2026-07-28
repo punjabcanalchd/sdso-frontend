@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 import { AuthService } from '../../../core/auth/auth.service';
 import { APP_ASSETS } from '../../../core/constants/app-assets';
@@ -8,7 +9,7 @@ import { APP_ASSETS } from '../../../core/constants/app-assets';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, AsyncPipe],
+  imports: [RouterLink, AsyncPipe,NavbarComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

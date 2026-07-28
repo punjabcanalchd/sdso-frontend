@@ -1,0 +1,105 @@
+<section class="container-fluid px-0">
+
+  <div id="bannerCarousel"
+       class="carousel slide"
+       aria-label="Featured announcements slideshow"
+       (mouseenter)="onMouseEnter()"
+       (mouseleave)="onMouseLeave()">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+      <button
+        *ngFor="let slide of slides; let i = index"
+        type="button"
+        [class.active]="i === currentIndex"
+        [attr.aria-current]="i === currentIndex ? 'true' : null"
+        [attr.aria-label]="'Slide ' + (i + 1)"
+        (click)="goToSlide(i)">
+      </button>
+    </div>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+
+      <div
+        *ngFor="let slide of slides; let i = index"
+        class="carousel-item"
+        [class.active]="i === currentIndex">
+
+        <img
+          [src]="slide.imageUrl"
+          class="d-block w-100"
+          [alt]="slide.altText"
+          loading="eager">
+
+        <div class="carousel-caption text-start">
+
+          <h2 class="fw-bold">
+            {{ slide.title }}
+          </h2>
+
+          <p>
+            {{ slide.subtitle }}
+          </p>
+
+          <a
+            *ngIf="slide.ctaLabel && slide.ctaUrl"
+            [routerLink]="slide.ctaUrl"
+            class="btn btn-warning fw-bold">
+
+            {{ slide.ctaLabel }}
+            <span class="material-icons align-middle ms-1">
+              arrow_forward
+            </span>
+
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Previous -->
+    <button
+      class="carousel-control-prev"
+      type="button"
+      (click)="prevSlide()">
+
+      <span class="carousel-control-prev-icon"></span>
+
+      <span class="visually-hidden">
+        Previous
+      </span>
+
+    </button>
+
+    <!-- Next -->
+    <button
+      class="carousel-control-next"
+      type="button"
+      (click)="nextSlide()">
+
+      <span class="carousel-control-next-icon"></span>
+
+      <span class="visually-hidden">
+        Next
+      </span>
+
+    </button>
+
+    <!-- Play / Pause -->
+    <button
+      type="button"
+      class="btn btn-light position-absolute bottom-0 end-0 m-3"
+      (click)="toggleAutoPlay()">
+
+      <span class="material-icons">
+        {{ isAutoPlaying ? 'pause' : 'play_arrow' }}
+      </span>
+
+    </button>
+
+  </div>
+
+</section>
