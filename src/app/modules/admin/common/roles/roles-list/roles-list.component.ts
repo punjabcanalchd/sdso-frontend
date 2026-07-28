@@ -32,6 +32,13 @@ export class Roles implements OnInit {
   isEditMode = false;
   roleId: string | null = null;
 
+  currentPage = 1;
+  pageSize = 25;
+  pagination: any = {};
+  search = '';
+  sortColumn = '';
+  sortDirection = 'asc';
+
   roleSchema = roleSchema;
 
   ngOnInit(): void {
@@ -91,17 +98,33 @@ export class Roles implements OnInit {
     }
   }
 
-  loadRoles(): void {
-    this.rolesService.getRoles({}).subscribe({
+  loadRoles(page: number = this.currentPage): void {
+    this.currentPage = page;
+
+    const params = {
+      page: this.currentPage,
+      per_page: this.pageSize,
+      search: this.search,
+      sort_column: this.sortColumn,
+      sort_direction: this.sortDirection
+    };
+    this.rolesService.getRoles(params).subscribe({
       next: (response) => {
         this.data = response.data.flatMap((category: any) =>
-          category.roles.map((role: any) => ({
-            id: role.public_id,
-            name: role.name,
-            category: category.name,
-            canEdit: category.name === 'Admin'
+          category.roles.map((role: any, index: number) => ({
+              orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1, // will update below
+              id: role.public_id,
+              name: role.name,
+              category: category.name,
+              canEdit: role.name !== 'Super Admin'
           }))
-        );
+      );
+
+        this.pagination = response.pagination;
+
+        this.currentPage = response.pagination.current_page;
+
+        this.pageSize = response.pagination.per_page;
 
         this.cdr.detectChanges();
       }
@@ -153,7 +176,30 @@ export class Roles implements OnInit {
   }
 
   tableColumns: TableColumn[] = [
-    { key: 'name', label: 'Name', widthClass: 'col-2' },
+    { key: 'name', label: 'Name', widthClass: 'col-2', sortable: true },
     { key: 'edit', label: 'Edit', type: 'edit', widthClass: 'col-3' }
   ];
+
+  changePage(page: number) {
+
+    this.loadRoles(page);
+
+  }
+
+  searchRoles(text: string) {
+    this.search = text;
+
+    this.loadRoles(1);
+
+  }
+
+  sortRoles(event: any) {
+
+    this.sortColumn = event.column;
+
+    this.sortDirection = event.direction;
+
+    this.loadRoles(1);
+
+  }
 }

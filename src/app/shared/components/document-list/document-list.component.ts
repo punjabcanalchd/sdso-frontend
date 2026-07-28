@@ -200,21 +200,21 @@ export class DocumentListComponent implements OnChanges {
   }
 
   private getPageNumbers(): number[] {
-  const pages: number[] = [];
-  const maxVisiblePages = 5;
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
 
-  let start = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
-  let end = start + maxVisiblePages - 1;
+    let start = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let end = start + maxVisiblePages - 1;
 
-  if (end > this.lastPage) {
-    end = this.lastPage;
-    start = Math.max(1, end - maxVisiblePages + 1);
+    if (end > this.lastPage) {
+      end = this.lastPage;
+      start = Math.max(1, end - maxVisiblePages + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-
-  return pages;
-}
 }
