@@ -210,6 +210,7 @@ export class CustomPermissionComponent implements OnInit, OnDestroy, ControlValu
     });
     this.selectedPermissionIds = allIds;
     this.propagateChanges();
+    this.cdr.detectChanges();
   }
 
   deselectAll() {

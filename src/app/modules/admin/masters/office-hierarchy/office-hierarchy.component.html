@@ -1,0 +1,26 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Office Hierarchy"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageChange)="loadOfficeHierarchy($event)"
+        (searchChange)="onSearch($event)"
+        (sortChange)="onSort($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createOfficeHierarchyModal
+    [title]="isEditMode ? 'Edit Office Hierarchy' : 'Create Office Hierarchy'"
+    [schema]="OfficeHierarchySchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

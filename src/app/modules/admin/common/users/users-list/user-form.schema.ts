@@ -11,28 +11,19 @@ export const userSchema: FormSchema = {
       title: 'Personal Details',
       fields: [
         {
-          name: 'first_name',
-          label: 'First Name',
+          name: 'hrmscode',
+          label: 'HRMS Code',
           type: 'text',
-          placeholder: 'Enter First Name',
+          placeholder: 'Enter Hrms Code',
           required: true,
           className: 'col-md-4',
-          validators: [CustomValidators.shortAlpha()]
+          validators: [CustomValidators.digitsOnly()]
         },
         {
-          name: 'middle_name',
-          label: 'Middle Name',
+          name: 'name',
+          label: 'Name',
           type: 'text',
-          placeholder: 'Enter Middle Name',
-          className: 'col-md-4',
-          validators: [CustomValidators.shortAlpha()]
-        },
-        {
-          name: 'last_name',
-          label: 'Last Name',
-          type: 'text',
-          placeholder: 'Enter Last Name',
-          required: true,
+          placeholder: 'Enter Name',
           className: 'col-md-4',
           validators: [CustomValidators.shortAlpha()]
         },
@@ -65,12 +56,12 @@ export const userSchema: FormSchema = {
           className: 'col-md-4'
         },
         {
-          name: 'district_code',
-          label: 'District',
-          type: 'select',
+          name: 'retirementdate',
+          label: 'Retirement Date',
+          type: 'datepicker',
           required: true,
           className: 'col-md-4',
-          options: []
+          validators: [CustomValidators.dateInFuture()],
         },
         {
           name: 'password',
@@ -111,7 +102,7 @@ export const userSchema: FormSchema = {
       ]
     },
     {
-      title: 'Role Assignment',
+      title: 'Assignments',
       fields: [
         {
           name: 'role_assignment',

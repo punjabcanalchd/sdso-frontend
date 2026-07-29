@@ -201,8 +201,8 @@ export class AuthService {
     return this.api.get<any>(`/admin/users/${publicId}/email-logs`);
   }
   
-  getDistricts(): Observable<any> {
-    return this.api.get<any>('/admin/districts');
+  getDistricts(data?: any): Observable<any> {
+    return this.api.get<any>('/admin/districts', data);
   }
 
   getRoles(data: any): Observable<any> {
@@ -232,5 +232,33 @@ export class AuthService {
 
   getPages(payload:any): Observable<any>{
     return this.api.get<any>(`/admin/pages`, payload);
+  }
+
+  getStates(data: any): Observable<any> {
+    return this.api.get<any>('/admin/states', data);
+  }
+
+  getOfficeHierarchy(data: any): Observable<any> {
+    return this.api.get<any>('/admin/office_hierarchy', data);
+  }
+
+  getDesignation(data: any): Observable<any> {
+    return this.api.get<any>('/admin/designation', data);
+  }
+
+  getCircles(data: any): Observable<any> {
+    return this.api.get<any>('/admin/circles', data);
+  }
+
+  getDivisions(data: any): Observable<any> {
+    return this.api.get<any>('/admin/divisions', data);
+  }
+
+  getSubDivisions(data: any): Observable<any> {
+    return this.api.get<any>('/admin/subdivisions', data);
+  }
+
+  getOffice(data: any): Observable<any> {
+    return this.api.get<any>('/admin/offices', data);
   }
 }

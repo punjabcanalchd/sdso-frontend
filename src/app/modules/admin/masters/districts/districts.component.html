@@ -1,0 +1,26 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Districts"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageChange)="loadDistricts($event)"
+        (searchChange)="searchDistricts($event)"
+        (sortChange)="sortDistricts($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createDistrictModal
+    [title]="isEditMode ? 'Edit District' : 'Create District'"
+    [schema]="districtSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

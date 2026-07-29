@@ -7,11 +7,12 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "pwrda-frontend": {
+    "sdso-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "type": "component"
         }
       },
       "root": "",

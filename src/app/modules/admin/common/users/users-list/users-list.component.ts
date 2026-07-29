@@ -375,7 +375,6 @@ export class Users implements OnInit {
   }
   
   handleAction(event: any): void {
-    console.log('Action Event:', event);
     if (event.action === 'VIEW' || event.actionName === 'VIEW') {
       this.openViewProfileModal(event.row.id);
     } else if (event.action === 'unlock') {
