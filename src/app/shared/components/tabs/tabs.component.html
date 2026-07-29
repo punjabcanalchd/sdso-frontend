@@ -1,1 +1,17 @@
-<p>tabs works!</p>
+<ul class="nav nav-tabs mb-3">
+
+  <li class="nav-item" *ngFor="let tab of tabs">
+
+    <button
+      type="button"
+      class="nav-link"
+      [class.active]="activeTab === tab.id"
+      (click)="selectTab(tab)">
+
+      {{ tab.label }}
+
+    </button>
+
+  </li>
+
+</ul>

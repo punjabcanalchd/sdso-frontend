@@ -1,6 +1,10 @@
 import { FormSchema } from '../../../core/models/form-schema.model';
 import { CustomValidators } from '../../../common/validation/custom-validators';
 
+
+import { englishFields } from './tabs/english-tab';
+import { punjabiFields } from './tabs/punjabi-tab';
+
 export const pageSchema: FormSchema = {
   layoutStyle: 'popup',
   submitLabel: 'Create Page',
@@ -8,89 +12,28 @@ export const pageSchema: FormSchema = {
   submitClass: 'btn-primary',
 
 
+  tabs: [
+    {
+      id: 'english',
+      label: 'English Details'
+    },
+    {
+      id: 'punjabi',
+      label: 'Punjabi Details'
+    }
+  ],
+
+
   fields: [
-  {
-    name: 'header_en',
-    label: '',
-    type: 'html',
-    html: '<div class="font_color fw-bold text-uppercase small">English Details</div>',
-    // className: 'col-md-6 border-end border-light-subtle pe-4 mt-0 pt-3'
-  },
+    ...englishFields,
+    ...punjabiFields,
 
-  //  English Title 
-    {
-      name: 'title',
-      label: 'Title',
-      type: 'text',
-      placeholder: 'Enter Title',
-      required: true,
-      className: 'col-md-4',
-      validators: [CustomValidators.shortAlpha()]
-    },
-   
-    {
-      type: 'editor',
-      name: 'description',
-      label: 'Description',
-      required: true,
-    },
-    {
-    name: 'header_en',
+     {
+    name: 'header_page',
     label: '',
     type: 'html',
-    html: '<div class="font_color fw-bold text-uppercase small">Meta Information </div>',
+    html: '<div class="font_color fw-bold text-uppercase small">Page Settings </div>',
     // className: 'col-md-3 ps-4 mt-0 pt-3'
-    },
-    {
-      type: 'text',
-      name:  'meta_title_en',
-      label: 'Meta Title',
-      className: 'col-md-4',
-  
-    },
-     {
-      type: 'text',
-      name:  'meta_description_en',
-      label: 'Meta Description',
-      className: 'col-md-4',   
-    },
-    {
-      type: 'text',
-      name:  'meta_keyword_en',
-      label: 'Meta Keyword',
-      className: 'col-md-4',   
-    },
-    {
-      name: 'header_pb',
-      label: '',
-      type: 'html',
-      html: '<div class="font_color fw-bold text-uppercase small">Punjabi Details</div>',
-      // className: 'col-md-3 ps-4 mt-0 pt-3'
-    },
-    {
-      name: 'same_as_english',
-      label: '',
-      text: 'Same as English',
-      type: 'checkbox',
-      // className: 'col-md-3 mt-0 pt-2 d-flex justify-content-end' // Takes the last 25% of the row!
-    },
-
-    // Punjabi Details
-    
-     {
-      name: 'title',
-      label: 'Title',
-      type: 'text',
-      placeholder: 'Enter Title',
-      required: true,
-      className: 'col-md-4',
-      validators: [CustomValidators.shortAlpha()]
-    },   
-    {
-      type: 'editor',
-      name: 'description',
-      label: 'Description',
-      required: true,
     },
      {
       type: 'text',
@@ -144,32 +87,7 @@ export const pageSchema: FormSchema = {
       name: 'pageBanner',
       label: 'Default Page Banner (1366p x 350p)',       
     },
-    {
-    name: 'header_pb',
-    label: '',
-    type: 'html',
-    html: '<div class="font_color fw-bold text-uppercase small">Meta Information </div>',
-    // className: 'col-md-3 ps-4 mt-0 pt-3'
-    },
-    {
-      type: 'text',
-      name:  'meta_title_pb',
-      label: 'Meta Title',
-      className: 'col-md-4',
-  
-    },
-     {
-      type: 'text',
-      name:  'meta_description_pb',
-      label: 'Meta Description',
-      className: 'col-md-4',   
-    },
-    {
-      type: 'text',
-      name:  'meta_keyword_pb',
-      label: 'Meta Keyword',
-      className: 'col-md-4',   
-    },
+   
 
   
 ]

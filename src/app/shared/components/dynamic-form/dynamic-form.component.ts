@@ -20,13 +20,15 @@ import { WizardStepperComponent } from '../../components/wizard/wizard-stepper.c
 import { CustomPermissionComponent } from '../form-elements/custom-permission/custom-permission.component';
 import { TinymceEditorComponent } from '../tinymce-editor/tinymce-editor.component';
 import { RoleAssignmentComponent } from '../form-elements/role-assignment/role-assignment.component';
+import { TabsComponent } from '../tabs/tabs.component';
+
 
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule, ClearGlobalErrorOnFocusDirective, CaptchaComponent,
     DatepickerComponent, SliderComponent, ToggleComponent, RangeComponent, FileUploadComponent, WizardStepperComponent,
-    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent],
+    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent,TabsComponent],
 
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
@@ -47,6 +49,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() hideChrome: boolean = false;   //  new input
 
   @Input() showTitle: boolean = true;
+  activeTab: string = '';
 
   @Input() set formData(val: any) {
     if (val && this.form) {
@@ -82,6 +85,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.initForm();
+
+      if (this.schema.tabs?.length) {
+    this.activeTab = this.schema.tabs[0].id;
+  }
   }
 
   /**
@@ -148,6 +155,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     return this.form.get(name) as FormControl;
   }
 
+  
 
   get inputClasses() {
     return {
@@ -160,26 +168,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     };
   }
 
-  isFieldVisible(field: any): boolean {
-    if (!field.visibleWhen) {
-      return true;
-    }
 
-    const condition = field.visibleWhen;
-    const targetControl = this.form.get(condition.field);
-
-    if (!targetControl) {
-      return false;
-    }
-
-    const currentValue = targetControl.value;
-
-    if (Array.isArray(condition.value)) {
-      return condition.value.includes(currentValue);
-    }
-
-    return currentValue === condition.value;
-  }
 
 
   onFileSelect(event: Event, field: any) {
@@ -411,6 +400,33 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     return this.currentStep === this.steps.length - 1;
   }
+
+  isFieldVisible(field: any): boolean {
+
+  // Hide fields that belong to another tab
+  if (field.tab && field.tab !== this.activeTab) {
+    return false;
+  }
+
+  if (!field.visibleWhen) {
+    return true;
+  }
+
+  const condition = field.visibleWhen;
+  const targetControl = this.form.get(condition.field);
+
+  if (!targetControl) {
+    return false;
+  }
+
+  const currentValue = targetControl.value;
+
+  if (Array.isArray(condition.value)) {
+    return condition.value.includes(currentValue);
+  }
+
+  return currentValue === condition.value;
+}
 
   forceNumericText(event: Event, field: any): void {
     if (field.name === 'mobileNumber' || field.name === 'mobile_number') {
