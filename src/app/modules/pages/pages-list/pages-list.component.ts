@@ -10,12 +10,11 @@ import {
 import { ModalFormComponent } from '../../../shared/components/modal-form/modal-form.component';
 
 import { ToastService } from '../../../shared/services/toast.service';
+// import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
+
 import { AuthService } from '../../../core/auth/auth.service';
 import { pageSchema } from './page-form.schema';
 import { LanguageService } from '../../../core/services/language.service';
-
-
-
 
 
 @Component({
@@ -25,6 +24,7 @@ import { LanguageService } from '../../../core/services/language.service';
   imports: [
     DocumentListComponent,
     ModalFormComponent,
+    // TabsComponent
 
   ],
   templateUrl: './pages-list.component.html',
@@ -134,5 +134,14 @@ export class PagesComponent implements OnInit {
 
   closeModal(): void {
     this.pageModal.close();
+  }
+
+  
+  onModalClosed(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { public_id: null },
+      queryParamsHandling: 'merge'
+    });
   }
 }

@@ -1,4 +1,5 @@
 <div class="container-fluid p-3">
+   
     <app-document-list 
         title="Pages" 
         [isAdmin]="true"
@@ -17,5 +18,10 @@
     [schema]="pageSchema"
     [initialValue]="formInitialData"
     size="xl"
-    (submitForm)="onSubmit($event)">
+    (submitForm)="onSubmit($event)"
+    (modalClosed)="onModalClosed()">
 </app-modal-form>
+
+
+<!-- <app-dynamic-form></app-dynamic-form> -->
+

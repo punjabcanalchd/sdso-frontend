@@ -1,5 +1,6 @@
 import { AfterViewInit, OnInit, Component, ViewChild } from '@angular/core';
 import { ValidatorFn } from "@angular/forms";
+import { TabSchema } from './tab-schema';
 
 export type FormFieldType =
   | 'text'
@@ -31,6 +32,7 @@ export interface FormOption {
 export interface FormSection {
   sectionTitle: string;
   fields?: FormField[];  // 'FieldConfig' being whatever your field object type is
+  
 }
 
 export type Layouts =
@@ -73,7 +75,7 @@ export interface FormField {
     [key: string]: string;
   };
 
-
+  tab?: string;
   validators?: ValidatorFn[];
   clickable?: boolean;
   matchField?: string;
@@ -126,7 +128,9 @@ export interface FormSchema {
     route?: string;
     class?: string;
   };
-
+  
+  tabs?: TabSchema[];
+  [key: string]: any;
   icon?: string;
   submitIcon?: string;
   fields?: FormField[];
@@ -136,3 +140,5 @@ export interface FormSchema {
   showCustomButtons?: boolean;
   buttonContainerClass?: string;
 }
+
+
