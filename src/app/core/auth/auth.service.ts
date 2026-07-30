@@ -242,7 +242,7 @@ export class AuthService {
     return this.api.get<any>('/admin/office_hierarchy', data);
   }
 
-  getDesignation(data: any): Observable<any> {
+  getDesignations(data: any): Observable<any> {
     return this.api.get<any>('/admin/designation', data);
   }
 

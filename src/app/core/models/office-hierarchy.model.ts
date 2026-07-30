@@ -1,5 +1,5 @@
 export interface OfficeHierarchy {
-  id: string;
+  officelevelcode: string;
   name: string;
   officesenioritylevel: number;
   status: boolean;

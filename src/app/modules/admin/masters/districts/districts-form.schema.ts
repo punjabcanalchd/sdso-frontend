@@ -31,7 +31,7 @@ export const districtSchema: FormSchema = {
           name: 'lgdstatecode',
           label: 'State Code',
           type: 'select',
-          placeholder: 'Enter State Code',
+          placeholder: 'Enter Code',
           className: 'col-md-4',
           validators: [CustomValidators.digitsOnly()]
         },

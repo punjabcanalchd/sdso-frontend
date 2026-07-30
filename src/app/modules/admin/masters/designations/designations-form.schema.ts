@@ -1,14 +1,14 @@
 import { FormSchema } from '../../../../core/models/form-schema.model';
 import { CustomValidators } from '../../../../common/validation/custom-validators';
 
-export const OfficeHierarchySchema: FormSchema = {
+export const DesignationSchema: FormSchema = {
   layoutStyle: 'popup',
   submitLabel: 'Save',
   submitIcon: 'bi bi-floppy',
   submitClass: 'btn btn-primary-govt',
   steps: [
     {
-      title: 'Office Hierarchy',
+      title: 'Designation',
       fields: [
         {
           name: 'name',
@@ -28,7 +28,7 @@ export const OfficeHierarchySchema: FormSchema = {
           validators: [CustomValidators.textContent()]
         },
         {
-          name: 'officesenioritylevel',
+          name: 'desigsenioritylevel',
           label: 'Seniority Level',
           type: 'number',
           placeholder: 'Enter Code',

@@ -88,10 +88,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "pwrda-frontend:build:production"
+              "buildTarget": "sdso-frontend:build:production"
             },
             "development": {
-              "buildTarget": "pwrda-frontend:build:development"
+              "buildTarget": "sdso-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

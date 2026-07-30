@@ -1,5 +1,5 @@
 export interface State {
-  id: string;
+  state_id: string;
   name: string;
   lgdstatecode: number;
   status: boolean;

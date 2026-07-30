@@ -1,1 +1,26 @@
-<p>designations works!</p>
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Designation"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageChange)="loadDesignations($event)"
+        (searchChange)="onSearch($event)"
+        (sortChange)="onSort($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createDesignationModal
+    [title]="isEditMode ? 'Edit Designation' : 'Create Designation'"
+    [schema]="DesignationSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

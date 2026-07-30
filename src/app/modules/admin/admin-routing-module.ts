@@ -8,7 +8,7 @@ import { Users } from './common/users/users-list/users-list.component';
 import { Roles } from './common/roles/roles-list/roles-list.component';
 import { States } from './masters/states/states.component';
 import { Districts } from './masters/districts/districts.component';
-//import { Designations } from './masters/designations/designations.component';
+import { DesignationsComponent } from './masters/designations/designations.component';
 //import { Divisions } from './masters/divisions/divisions.component';
 //import { Circles } from './masters/circles/circles.component';
 //import { Offices } from './masters/offices/offices.component';
@@ -39,7 +39,7 @@ const routes: Routes = [
       { path: 'districts', component: Districts, title: 'Districts – Admin' },
 
       { path: 'officehierarchy', component: OfficeHierarchyComponent, title: 'OfficeHierarchy – Admin' },
-      //{ path: 'designations', component: Designations, title: 'Designations – Admin' },
+      { path: 'designation', component: DesignationsComponent, title: 'Designations – Admin' },
       //{ path: 'circles', component: Circles, title: 'Circles – Admin' },
       //{ path: 'divisions', component: Divisions, title: 'Divisions – Admin' },
       //{ path: 'sub_divisions', component: SubDivisions, title: 'SubDivisions – Admin' },
