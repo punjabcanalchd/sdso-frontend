@@ -9,6 +9,7 @@
         [lastPage]="pagination.last_page"
         [pageSize]="pagination.per_page"
         [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
         (pageChange)="loadDistricts($event)"
         (searchChange)="searchDistricts($event)"
         (sortChange)="sortDistricts($event)"

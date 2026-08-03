@@ -142,6 +142,13 @@ export class Districts implements OnInit {
     openCreateModal(){
   
     }
+
+    onPageSizeChange(size: number): void {
+      this.pageSize = size;
+      this.currentPage = 1;
+
+      this.loadDistricts();
+    }
   
     onSubmit(formData: any){
   

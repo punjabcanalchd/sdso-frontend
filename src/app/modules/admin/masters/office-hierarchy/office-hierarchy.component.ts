@@ -141,6 +141,13 @@ export class OfficeHierarchyComponent  implements OnInit {
     this.loadOfficeHierarchy(1);
 
   }
+  
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+
+    this.loadOfficeHierarchy();
+  }
 
   openCreateModal(){
 

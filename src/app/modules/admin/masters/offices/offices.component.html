@@ -1,1 +1,27 @@
-<p>offices works!</p>
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Offices"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadOffices($event)"
+        (searchChange)="onSearch($event)"
+        (sortChange)="onSort($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createOfficeModal
+    [title]="isEditMode ? 'Edit Office' : 'Create Office'"
+    [schema]="OfficeSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

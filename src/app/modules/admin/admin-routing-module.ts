@@ -9,10 +9,10 @@ import { Roles } from './common/roles/roles-list/roles-list.component';
 import { States } from './masters/states/states.component';
 import { Districts } from './masters/districts/districts.component';
 import { DesignationsComponent } from './masters/designations/designations.component';
-//import { Divisions } from './masters/divisions/divisions.component';
-//import { Circles } from './masters/circles/circles.component';
-//import { Offices } from './masters/offices/offices.component';
-//import { SubDivisions } from './masters/sub-divisions/sub-divisions.component';
+import { DivisionsComponent } from './masters/divisions/divisions.component';
+import { CirclesComponent } from './masters/circles/circles.component';
+import { OfficesComponent } from './masters/offices/offices.component';
+import { SubDivisionsComponent } from './masters/sub-divisions/sub-divisions.component';
 import { OfficeHierarchyComponent } from './masters/office-hierarchy/office-hierarchy.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
 
@@ -40,11 +40,10 @@ const routes: Routes = [
 
       { path: 'officehierarchy', component: OfficeHierarchyComponent, title: 'OfficeHierarchy – Admin' },
       { path: 'designation', component: DesignationsComponent, title: 'Designations – Admin' },
-      //{ path: 'circles', component: Circles, title: 'Circles – Admin' },
-      //{ path: 'divisions', component: Divisions, title: 'Divisions – Admin' },
-      //{ path: 'sub_divisions', component: SubDivisions, title: 'SubDivisions – Admin' },
-      //{ path: 'offices', component: Offices, title: 'Offices – Admin' },
-      
+      { path: 'circles', component: CirclesComponent, title: 'Circles – Admin' },
+      { path: 'divisions', component: DivisionsComponent, title: 'Divisions – Admin' },
+      { path: 'subdivisions', component: SubDivisionsComponent, title: 'SubDivisions – Admin' },
+      { path: 'offices', component: OfficesComponent, title: 'Offices – Admin' },
       { path: 'menu-management', component: MenuManagementComponent, title: 'Menu Management – Admin' },
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
     ],

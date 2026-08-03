@@ -258,7 +258,7 @@ export class AuthService {
     return this.api.get<any>('/admin/subdivisions', data);
   }
 
-  getOffice(data: any): Observable<any> {
+  getOffices(data: any): Observable<any> {
     return this.api.get<any>('/admin/offices', data);
   }
 }

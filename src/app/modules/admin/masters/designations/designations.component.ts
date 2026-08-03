@@ -147,6 +147,13 @@ export class DesignationsComponent implements OnInit {
 
   }
 
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+
+    this.loadDesignations();
+  }
+
   formatDate(dateInput: any): string {
     if (!dateInput) return '';
     const date = new Date(dateInput);

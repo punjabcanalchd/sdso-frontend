@@ -138,6 +138,13 @@ export class States implements OnInit {
 
   }
 
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.currentPage = 1;
+
+    this.loadStates();
+  }
+
   openCreateModal(){
 
   }

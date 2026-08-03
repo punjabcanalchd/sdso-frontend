@@ -1,1 +1,27 @@
-<p>sub-divisions works!</p>
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Sub-Division"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadSubDivisions($event)"
+        (searchChange)="onSearch($event)"
+        (sortChange)="onSort($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createSubDivisionModal
+    [title]="isEditMode ? 'Edit Sub-Division' : 'Create Sub-Division'"
+    [schema]="SubDivisionSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>
