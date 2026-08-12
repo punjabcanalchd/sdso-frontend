@@ -49,7 +49,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() hideChrome: boolean = false;   //  new input
 
   @Input() showTitle: boolean = true;
-  activeTab: string = '';
+  activeTab = 'general';
+
+  activeChildTab = 'general-english';
 
   @Input() set formData(val: any) {
     if (val && this.form) {
@@ -167,6 +169,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
       'input-modern': this.schema.layoutStyle === 'modern' || !this.schema.layoutStyle
     };
   }
+
 
 
 
@@ -401,13 +404,24 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     return this.currentStep === this.steps.length - 1;
   }
 
-  isFieldVisible(field: any): boolean {
 
-  // Hide fields that belong to another tab
-  if (field.tab && field.tab !== this.activeTab) {
-    return false;
+  isFieldInActiveTab(field: any): boolean {
+
+  // Existing fields without a tab remain visible
+  if (!field.tab) {
+    return true;
   }
 
+  // If the form doesn't use tabs, don't change existing behavior
+  if (!this.schema.tabs?.length) {
+    return true;
+  }
+
+  // Only tab-specific fields are filtered
+  return field.tab === this.activeChildTab;
+}
+
+isFieldVisible(field: any): boolean {
   if (!field.visibleWhen) {
     return true;
   }
@@ -441,4 +455,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     }
   }
 
+
+
+  onChildTabChange(tabId: string): void {
+  console.log('Selected child tab:', tabId);
+  this.activeChildTab = tabId;
+}
 }

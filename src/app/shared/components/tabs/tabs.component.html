@@ -1,15 +1,47 @@
+<!-- MAIN TABS -->
+
 <ul class="nav nav-tabs mb-3">
 
-  <li class="nav-item" *ngFor="let tab of tabs">
+  <li
+    class="nav-item"
+    *ngFor="let tab of tabs"
+  >
 
     <button
       type="button"
       class="nav-link"
       [class.active]="activeTab === tab.id"
-      (click)="selectTab(tab)">
-
+      [disabled]="tab.disabled"
+      (click)="selectTab(tab)"
+    >
       {{ tab.label }}
+    </button>
 
+  </li>
+
+</ul>
+
+
+<!-- CHILD TABS -->
+
+<ul
+  class="nav nav-tabs mb-3"
+  *ngIf="childTabs.length > 0"
+>
+
+  <li
+    class="nav-item"
+    *ngFor="let tab of childTabs"
+  >
+
+    <button
+      type="button"
+      class="nav-link"
+      [class.active]="activeChildTab === tab.id"
+      [disabled]="tab.disabled"
+      (click)="selectChildTab(tab)"
+    >
+      {{ tab.label }}
     </button>
 
   </li>
