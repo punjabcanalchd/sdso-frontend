@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { State } from '../../../../core/models/state.model';
@@ -22,14 +22,18 @@ export class States implements OnInit {
 
   constructor(private userService: AuthService, private cdr: ChangeDetectorRef) { }
 
-  private encryptService = inject(EncryptionService);
+  @ViewChild(ModalFormComponent) stateModal!: ModalFormComponent;
+
   private toast = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
 
   data: State[] = [];
   formInitialData: any = {};
   allStatesList: any[] = [];
-   isEditMode = false;
+  isEditMode = false;
+  stateId: string | null = null;
 
   stateSchema = stateSchema;
   updatingStateId: string | null = null;
@@ -47,6 +51,52 @@ export class States implements OnInit {
 
   ngOnInit(): void {
     this.loadStates();
+  }
+
+  openCreateModal() {
+    this.isEditMode = false;
+    this.stateId = null;
+
+    this.modalHelper.openModal({
+      modalRef: this.stateModal, 
+      schema: this.stateSchema,
+      submitLabel: 'Create State',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
+  }
+
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  openEditModal(state: any) {
+    this.isEditMode = true;
+    this.stateId = state.id;
+    this.stateSchema.submitLabel = 'Update State';
+    
+    if (this.stateModal?.dynamicForm) {
+      this.stateModal.dynamicForm.form.reset({
+        name: state.name,
+        search: '',
+        selectAll: false,
+        permissions: { slugs: [] }
+      });
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.stateId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      this.stateModal.open();
+    }); 
   }
 
   loadStates(page: number = this.currentPage): void {
@@ -145,10 +195,6 @@ export class States implements OnInit {
     this.loadStates();
   }
 
-  openCreateModal(){
-
-  }
-
   onSubmit(formData: any){
 
   }
@@ -164,7 +210,8 @@ export class States implements OnInit {
   }
 
   handleAction(event: any): void {
-    if (event.action === 'EDIT' || event.actionName === 'EDIT') {
+    if (event.action === 'edit' || event.actionName === 'edit') {
+        this.openEditModal(event.row);
     }
   }
   

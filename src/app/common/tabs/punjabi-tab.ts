@@ -14,13 +14,15 @@ export const punjabiFields: FormField[] = [
     label: 'Title',
     type: 'text',
     tab: 'general-punjabi',
-    placeholder: 'Enter Title'
+    placeholder: 'Enter Title',
+    required: true
   },
   {
     name: 'description_pb',
     label: 'Description',
     type: 'editor',
     tab: 'general-punjabi',
+    required: true
   },
  
 ];

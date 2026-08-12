@@ -1,51 +1,58 @@
 import { FormSchema } from '../../../../core/models/form-schema.model';
 import { CustomValidators } from '../../../../common/validation/custom-validators';
+import { englishFields } from '../../../../common/tabs/english-tab';
+import { punjabiFields } from '../../../../common/tabs/punjabi-tab';
+import { metaPunjabiFields } from '../../../../common/tabs/meta-punjabi-tab';
+import { metaEnglishFields } from '../../../../common/tabs/meta-english-tab';
 
 export const stateSchema: FormSchema = {
   layoutStyle: 'popup',
   submitLabel: 'Save',
   submitIcon: 'bi bi-floppy',
   submitClass: 'btn btn-primary-govt',
-  steps: [
+   tabs: [
+
     {
-      title: 'State',
-      fields: [
+      id: 'general',
+      label: 'General',
+
+      tabs: [
         {
-          name: 'name',
-          label: 'Name',
-          type: 'text',
-          placeholder: 'Enter Name',
-          required: true,
-          className: 'col-md-4',
-          validators: [CustomValidators.shortAlpha()]
+          id: 'general-english',
+          label: 'English'
         },
+
         {
-          name: 'description',
-          label: 'Description',
-          type: 'textarea',
-          placeholder: 'Enter Description',
-          className: 'col-md-4',
-          validators: [CustomValidators.textContent()]
-        },
-        {
-          name: 'lgdstatecode',
-          label: 'State Code',
-          type: 'number',
-          placeholder: 'Enter State Code',
-          className: 'col-md-4',
-          validators: [CustomValidators.digitsOnly()]
-        },
-        {
-          name: 'status',
-          label: 'Status',
-          type: 'toggle',
-          required: true,
-          className: 'col-md-4',
-          options: [
-            { label: 'Active', value: 'ACTIVE' },
-            { label: 'Inactive', value: 'INACTIVE' }
-          ]
-        },
+          id: 'general-punjabi',
+          label: 'Punjabi'
+        }
+      ]
+    },
+
+  ],
+  fields: [
+
+    ...englishFields,
+
+    ...punjabiFields,   
+    {
+      name: 'lgdstatecode',
+      label: 'State Code',
+      type: 'number',
+      required: true,
+      placeholder: 'Enter State Code',
+      className: 'col-md-6',
+      validators: [CustomValidators.digitsOnly()]
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'toggle',
+      required: true,
+      className: 'col-md-6',
+      options: [
+        { label: 'Active', value: 'ACTIVE' },
+        { label: 'Inactive', value: 'INACTIVE' }
       ]
     },
   ]
