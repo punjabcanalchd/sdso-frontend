@@ -1,17 +1,20 @@
 <div class="container-fluid p-3">
-   
     <app-document-list 
         title="Pages" 
         [isAdmin]="true"
+         /* [isLoading]="isLoading" */
          [data]="data" 
         [columns]="tableColumns" 
         [showCreateButton]="true"
+         /* [isServerSide]="true", */
+        /* [totalServerRecords]="totalRecords", */
+        /* (serverAction)="onServerAction($event)", */
          (createClick)="openCreateModal()"
         (actionClick)="handleAction($event)"     
         >
     </app-document-list>
 </div>
-<!-- <app-dynamic-form></app-dynamic-form> -->
+
 
 <app-modal-form 
     [title]="isEditMode ? 'Edit Page' : 'Create Page'"
@@ -21,7 +24,3 @@
     (submitForm)="onSubmit($event)"
     (modalClosed)="onModalClosed()">
 </app-modal-form>
-
-
-<!-- <app-dynamic-form></app-dynamic-form> -->
-

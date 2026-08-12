@@ -1,5 +1,5 @@
-import { FormField } from '../../../../core/models/form-schema.model';
-import { CustomValidators } from '../../../../common/validation/custom-validators';
+import { FormField } from '../../core/models/form-schema.model';
+import { CustomValidators } from '../validation/custom-validators';
 
 export const englishFields: FormField[] = [
 

@@ -2,8 +2,8 @@ import { FormSchema } from '../../../core/models/form-schema.model';
 import { CustomValidators } from '../../../common/validation/custom-validators';
 
 
-import { englishFields } from './tabs/english-tab';
-import { punjabiFields } from './tabs/punjabi-tab';
+import { englishFields } from '../../../common/tabs/english-tab';
+import { punjabiFields } from '../../../common/tabs/punjabi-tab';
 
 export const pageSchema: FormSchema = {
   layoutStyle: 'popup',

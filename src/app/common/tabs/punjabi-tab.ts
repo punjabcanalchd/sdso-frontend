@@ -1,4 +1,4 @@
-import { FormField } from '../../../../core/models/form-schema.model';
+import { FormField } from '../../core/models/form-schema.model';
 
 export const punjabiFields: FormField[] = [
 
