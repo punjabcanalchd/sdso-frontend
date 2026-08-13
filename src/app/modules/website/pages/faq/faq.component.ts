@@ -42,7 +42,7 @@ export class FaqComponent {
     {
       number: 'Q.4',
       question: 'How should a User apply for permission?',
-      answer: 'A User should apply for permission through the PWRDA online portal by filling in the prescribed application form and submitting the required documents.',
+      answer: 'A User should apply for permission through the SDSO online portal by filling in the prescribed application form and submitting the required documents.',
     },
     {
       number: 'Q.5',
@@ -81,8 +81,8 @@ export class FaqComponent {
     },
     {
       number: 'Q.12',
-      question: 'If a User has already obtained a No Objection Certificate (NOC) from the Central Groundwater Authority, does it need to apply to PWRDA?',
-      answer: 'Yes. A NOC from the Central Groundwater Authority does not substitute the permission required under the Punjab Water Resources (Management & Regulation) Act, 2020. The User must separately apply to PWRDA.',
+      question: 'If a User has already obtained a No Objection Certificate (NOC) from the Central Groundwater Authority, does it need to apply to SDSO?',
+      answer: 'Yes. A NOC from the Central Groundwater Authority does not substitute the permission required under the Punjab Water Resources (Management & Regulation) Act, 2020. The User must separately apply to SDSO.',
     },
   ];
 

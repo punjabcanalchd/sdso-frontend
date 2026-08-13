@@ -65,7 +65,7 @@ export class ContactComponent implements AfterViewInit, OnDestroy {
         },
         symbol: markerSymbol,
         attributes: {
-          TOURISM_NAME: "PWRDA Office"
+          TOURISM_NAME: "SDSO Office"
         },
         popupTemplate: {
           title: "{TOURISM_NAME}",

@@ -79,7 +79,7 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
     importantLinks = [
     // { path: '/about/chairperson', label: 'About' },
-    { path: '/about/pwrda', label: 'Home' },
+    { path: '/about/SDSO', label: 'Home' },
     { path: '/about/chairperson', label: 'About' },
     { path: '', label: 'Raise a query' },
     { path: '', label: 'Privacy Policy' },  

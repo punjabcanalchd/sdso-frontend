@@ -45,8 +45,8 @@ sections: DirectorySection[] = [];
         id: 1,
         question: 'Administration',
         content: [
-          { name: 'Sh. Vijoy Kumar Singh, IAS (Retd.)', designation: 'Chairperson', email: 'chairperson[dot]pwrda[at]punjab[dot]gov[dot]in'},
-          { name: 'Sh. Sher Singh', designation: 'Member', email: 'member[dot]pwrda1[at]punjab[dot]gov[dot]in' },
+          { name: 'Sh. Vijoy Kumar Singh, IAS (Retd.)', designation: 'Chairperson', email: 'chairperson[dot]SDSO[at]punjab[dot]gov[dot]in'},
+          { name: 'Sh. Sher Singh', designation: 'Member', email: 'member[dot]SDSO1[at]punjab[dot]gov[dot]in' },
           { name: 'Post Vacant', designation: 'Member', email: '' },
          
         ]
@@ -55,17 +55,17 @@ sections: DirectorySection[] = [];
         id: 2,
         question: 'Managerial & Professional',
         content: [
-           { name: 'Post Vacant', designation: 'Secretary', email: '	secretary[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Rajesh Vashisht', designation: 'Technical Advisor', email: 'ta[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Sanal Singla', designation: 'Executive Engineer', email: 'ee2[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Navdeep Singh', designation: 'Executive Engineer', email: 'ee[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Davinder Singh', designation: 'Manager (Accounts)', email: 'ma[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Kamalpreet Singh', designation: 'Manager IT', email: 'smit[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Nitin Goyal', designation: 'Manager Legal', email: 'smlegal[dot]pwrda[at]punjab[dot]gov[dot]in' },
+           { name: 'Post Vacant', designation: 'Secretary', email: '	secretary[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Rajesh Vashisht', designation: 'Technical Advisor', email: 'ta[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Sanal Singla', designation: 'Executive Engineer', email: 'ee2[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Navdeep Singh', designation: 'Executive Engineer', email: 'ee[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Davinder Singh', designation: 'Manager (Accounts)', email: 'ma[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Kamalpreet Singh', designation: 'Manager IT', email: 'smit[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Nitin Goyal', designation: 'Manager Legal', email: 'smlegal[dot]SDSO[at]punjab[dot]gov[dot]in' },
            { name: 'Sh. Mandeep Singh', designation: 'Sub-Divisional Engineer', email: 'mandeep[dot]singh80[at]punjab[dot]gov[dot]in' },
            { name: 'Post Vacant', designation: 'Sub-Divisional Engineer', email: '' },
-           { name: 'Sh. Prince Dhiman', designation: 'Technical Manager (Groundwater)', email: 'tmgw[dot]pwrda[at]punjab[dot]gov[dot]in' },
-           { name: 'Sh. Anil Kumar', designation: 'Technical Manager (Agriculture)', email: 'tma[dot]pwrda[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Prince Dhiman', designation: 'Technical Manager (Groundwater)', email: 'tmgw[dot]SDSO[at]punjab[dot]gov[dot]in' },
+           { name: 'Sh. Anil Kumar', designation: 'Technical Manager (Agriculture)', email: 'tma[dot]SDSO[at]punjab[dot]gov[dot]in' },
            { name: 'Smt. Ravneet Lumba', designation: 'Legal Executive', email: 'ravneet[dot]lumba[at]punjab[dot]gov[dot]in' },
         ]
       },

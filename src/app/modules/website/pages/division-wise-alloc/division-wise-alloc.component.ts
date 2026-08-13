@@ -61,7 +61,7 @@ export class DivisionWiseAllocComponent {
         'Coordination with NIC and DGR Punjab; and',
         'Office Orders, Instructions, Regulations etc. pertaining to the work of the Division.',
         'Maintenance of Computer and Communication Hardware.',
-        'Monitoring, collating, and keeping record of news, articles, videos, posts about PWRDA or water issues in all media including print, social media, & electronic media;',
+        'Monitoring, collating, and keeping record of news, articles, videos, posts about SDSO or water issues in all media including print, social media, & electronic media;',
         'Ensuring strategic communication of matters with all stakeholders related to the work of the Authority, preparing and delivering relevant content for communication with all types of Media, including digital platforms such as Facebook, Twitter, YouTube, etc.;',
         'Content management of websites, portals, social media accounts of the Authority, and',
         'Public Information, Generating Awareness and Behaviour Change related to water, in accordance with the objectives of the Authority.'

@@ -6,8 +6,11 @@ import {
   Output,
   ViewChild,
   AfterViewInit,
-  OnDestroy
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
 } from '@angular/core';
+
 import { ToastService } from '../../services/toast.service';
 
 import tinymce from 'tinymce';
@@ -41,7 +44,7 @@ import 'tinymce/plugins/wordcount';
   styleUrls: ['./tinymce-editor.component.scss']
 })
 export class TinymceEditorComponent
-  implements AfterViewInit, OnDestroy {
+  implements AfterViewInit, OnDestroy, OnChanges {
 
   constructor(
     private toast: ToastService
@@ -110,6 +113,9 @@ export class TinymceEditorComponent
      skin: 'oxide',
 
 
+
+     
+
       // content_style: `body { font-family: Roboto, "Helvetica Neue", sans-serif;
       //          font-size: 15px; line-height: 1.6; padding: 12px 16px; color: #212121; }`,
 
@@ -148,6 +154,23 @@ export class TinymceEditorComponent
     });
 
   }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+  if (!changes['value']) {
+    return;
+  }
+
+  if (!this.currentEditor) {
+    return;
+  }
+
+  const newValue = changes['value'].currentValue || '';
+
+  if (this.currentEditor.getContent() !== newValue) {
+    this.currentEditor.setContent(newValue);
+  }
+}
 
   uploadFile(event: any) {
 

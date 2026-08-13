@@ -10,5 +10,5 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   styleUrl: './app.component.scss'
 })
 export class App {
-  protected readonly title = signal('pwrda-frontend');
+  protected readonly title = signal('SDSO-frontend');
 }

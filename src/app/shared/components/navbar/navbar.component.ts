@@ -61,7 +61,7 @@ export class NavbarComponent implements OnInit {
                  internalRoute = undefined;
              } else {
                  internalRoute = m.external_link.startsWith('/') ? m.external_link : `/${m.external_link}`;
-             }
+             }  
           }
  
           const mapped: NavItem = {

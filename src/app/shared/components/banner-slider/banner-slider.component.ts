@@ -31,7 +31,7 @@ export class BannerSlider implements OnInit, OnDestroy {
   slides: BannerSlide[] = [
     {
       id: 1,
-      imageUrl: 'assets/images/banner1.png',
+      imageUrl: 'assets/images/front/banner/b1.jpg',
       altText: 'Digital India Initiative - Empowering citizens through technology',
       title: 'Digital India Initiative',
       subtitle: 'Empowering citizens through technology and innovation',
@@ -40,7 +40,7 @@ export class BannerSlider implements OnInit, OnDestroy {
     },
     {
       id: 2,
-      imageUrl: 'assets/images/login-illustration (2).png',
+      imageUrl: 'assets/images/front/banner/b2.jpg',
       altText: 'water Management - Sustainable water resources for future generations',
       title: 'water Management',
       subtitle: 'Sustainable water resources for future generations',
@@ -49,7 +49,7 @@ export class BannerSlider implements OnInit, OnDestroy {
     },
     {
       id: 3,
-      imageUrl: 'assets/images/banner3.png',
+      imageUrl: 'assets/images/front/banner/b2.jpg',
       altText: 'Transparent Governance - RTI and public information access',
       title: 'Transparent Governance',
       subtitle: 'Access public information under the Right to Information Act',
@@ -58,7 +58,7 @@ export class BannerSlider implements OnInit, OnDestroy {
     },
     {
       id: 4,
-      imageUrl: 'assets/images/banner4.jpg',
+      imageUrl: 'assets/images/front/banner/b4.png',
       altText: 'Citizen Services - Fast-track approvals and online applications',
       title: 'Citizen Services',
       subtitle: 'Fast-track approvals and seamless online applications',

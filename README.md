@@ -1,6 +1,6 @@
-# PWRDA Portal Frontend
+# SDSO Portal Frontend
 
-New generation PWRDA portal frontend built using Angular with modular architecture and Laravel API backend support.
+New generation SDSO portal frontend built using Angular with modular architecture and Laravel API backend support.
 
 ---
 
@@ -43,7 +43,7 @@ ng version
 # Create Project
 
 ```bash
-ng new pwrda-portal
+ng new SDSO-portal
 ```
 
 Recommended options:
@@ -121,7 +121,7 @@ Recommended options:
 # Move Into Project
 
 ```bash
-cd pwrda-portal
+cd SDSO-portal
 ```
 
 ---
@@ -395,7 +395,7 @@ ng build --configuration production
 Generated build location:
 
 ```text
-dist/pwrda-portal
+dist/SDSO-portal
 ```
 
 ---
@@ -486,11 +486,11 @@ Settings
 
 # License
 
-Internal PWRDA Project.
+Internal SDSO Project.
 ```typescripttypescripte
 import { EncryptionService } from '../../../../core/services/encryption.service';
 
-const encryptedPayload = this.encryptionService.encrypt('Pwrda@12342');
+const encryptedPayload = this.encryptionService.encrypt('SDSO@12342');
 ```
 
 
@@ -589,7 +589,7 @@ export const routes: Routes = [
 # Move Into Project
 
 ```bash
-cd pwrda-portal
+cd SDSO-portal
 ```
 
 ---
@@ -854,7 +854,7 @@ ng build --configuration production
 Generated build location:
 
 ```text
-dist/pwrda-portal
+dist/SDSO-portal
 ```
 
 ---
@@ -882,7 +882,7 @@ git commit -m "Initial Angular project setup"
 ## Add Remote Repository
 
 ```bash
-git remote add origin https://github.com/pwrda/pwrda-frontend.git
+git remote add origin https://github.com/SDSO/SDSO-frontend.git
 ```
 
 ## Push Code
@@ -933,7 +933,7 @@ Settings
 import { EncryptionService } from '../../../../services/encryption.service';
 
 const encryptedPayload = this.encryptionService.encrypt({
-  email: 'pwrda2022@gmail.com',
-  password: 'Pwrda@12342'
+  email: 'SDSO2022@gmail.com',
+  password: 'SDSO@12342'
 });
 ```

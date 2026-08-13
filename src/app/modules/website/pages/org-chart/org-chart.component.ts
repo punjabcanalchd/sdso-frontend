@@ -18,5 +18,5 @@ export class OrgStructureComponent {
     { label: 'Organization Chart' }
   ];
 
-  orgChartUrl = 'https://pwrda.punjab.gov.in/images/admin/Organisation chart3.png';
+  orgChartUrl = 'https://SDSO.punjab.gov.in/images/admin/Organisation chart3.png';
 }

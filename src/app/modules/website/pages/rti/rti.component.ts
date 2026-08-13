@@ -62,8 +62,8 @@ export class RtiComponent implements OnInit{
         type: 'pio-table',
         note: 'All division heads are designated as APIO.',
         content: [
-          { name: 'Smt. Kamlesh Kumari Joshi', designation: 'Administrative Officer', email: 'ado[dot]pwrda[at]punjab[dot]gov[dot]in', phone: '0172-2727411', authority: 'Public Information Officer' },
-          { name: 'Sh. Sanal Singla', designation: 'Secretary', email: 'secretary[dot]pwrda[at]punjab[dot]gov[dot]in', phone: '0172-2727411', authority: 'First Appellate Authority' }
+          { name: 'Smt. Kamlesh Kumari Joshi', designation: 'Administrative Officer', email: 'ado[dot]SDSO[at]punjab[dot]gov[dot]in', phone: '0172-2727411', authority: 'Public Information Officer' },
+          { name: 'Sh. Sanal Singla', designation: 'Secretary', email: 'secretary[dot]SDSO[at]punjab[dot]gov[dot]in', phone: '0172-2727411', authority: 'First Appellate Authority' }
         ]
       },
       {

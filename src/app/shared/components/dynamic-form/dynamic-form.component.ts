@@ -50,7 +50,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   @Input() showTitle: boolean = true;
   activeTab = 'general';
-
   activeChildTab = 'general-english';
 
   @Input() set formData(val: any) {
@@ -87,13 +86,13 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.initForm();
-    if (this.schema.tabs?.length) {
-      this.activeTab = this.schema.tabs[0].id;
-      if(this.schema.tabs[0].tabs?.length) {
-        this.activeChildTab = this.schema.tabs[0].tabs[0].id;
-      }
+    // if (this.schema.tabs?.length) {
+    //   this.activeTab = this.schema.tabs[0].id;
+    //   if(this.schema.tabs[0].tabs?.length) {
+    //     this.activeChildTab = this.schema.tabs[0].tabs[0].id;
+    //   }
       
-    }
+    // }
   }
 
   /**
@@ -457,10 +456,13 @@ isFieldVisible(field: any): boolean {
     }
   }
 
+onTabChange(tab: string): void {
+  this.activeTab = tab;
+}
 
+onChildTabChange(childTab: string): void {
+  console.log('childTab:', childTab);
 
-  onChildTabChange(tabId: string): void {
-  console.log('Selected child tab:', tabId);
-  this.activeChildTab = tabId;
+  this.activeChildTab = childTab;
 }
 }

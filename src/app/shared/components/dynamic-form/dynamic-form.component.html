@@ -35,14 +35,15 @@
     </div>
 
   </div>
-
+  
 <app-tabs
-  *ngIf="schema.tabs?.length"
-  [tabs]="schema.tabs"
+  [tabs]="schema.tabs || []"
   [activeTab]="activeTab"
-  (activeTabChange)="activeTab = $event"
+  [activeChildTab]="activeChildTab"
+  (activeTabChange)="onTabChange($event)"
   (activeChildTabChange)="onChildTabChange($event)">
 </app-tabs>
+
 
   <div class="row g-4 flex-grow-1">
     <ng-container *ngFor="let field of (isWizard ? currentFields : schema.fields)">
@@ -120,12 +121,18 @@
       </textarea>
 
 
-        <!-- TINYMCE EDITOR -->
       <app-tinymce-editor
+  *ngSwitchCase="'editor'"
+  [value]="form.get(field.name)?.value || ''"
+  (valueChange)="form.get(field.name)?.setValue($event)">
+</app-tinymce-editor>
+
+        <!-- TINYMCE EDITOR -->
+      <!-- <app-tinymce-editor
           *ngSwitchCase="'editor'"
           [value]="form.get(field.name)?.value || ''"
           (valueChange)="form.get(field.name)?.setValue($event)">
-      </app-tinymce-editor>
+      </app-tinymce-editor> -->
 
         <!-- CHECKBOX -->
         <div *ngSwitchCase="'checkbox'" class="form-check mt-1 mb-3 d-flex align-items-start gap-2">

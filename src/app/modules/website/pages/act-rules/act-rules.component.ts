@@ -99,7 +99,7 @@ export class ActRulesComponent {
     },
     {
       id: 12,
-      description: 'Groundwater Charges Notification under PWRDA Act 2020',
+      description: 'Groundwater Charges Notification under SDSO Act 2020',
       publishDate: '2023-03-31',
       fileUrl: '#',
     },
