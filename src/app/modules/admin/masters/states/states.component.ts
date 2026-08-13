@@ -136,7 +136,8 @@ export class States implements OnInit {
           description_en: state.description_en,
           description_pb: state.description_pb,
           lgdstatecode: state.lgdstatecode,
-          status: state.status == 1 ? 'Active' : 'In-active',
+          status: state.status,
+          status_value: state.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(state.created_at),
         }));
 
@@ -161,7 +162,7 @@ export class States implements OnInit {
   tableColumns: TableColumn[] = [
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
-    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -214,27 +215,48 @@ export class States implements OnInit {
   onSubmit(formData: any): void {
     console.log('formData',formData);
     
-    /*const payload = {
-      ...formData,
-      role_id: roleId,
-      additional_role_ids: selectedRoles,
-      password: this.encryptService.encrypt(formData.password),
-      password_confirmation: this.encryptService.encrypt(formData.password_confirmation),
+    const payload = {
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      name: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      lgdstatecode: formData.lgdstatecode,
+      same_as_english_pb: formData.same_as_english_pb ?? null,
+      status: formData.status,
+      state_id: this.stateId ?? null,
     };
 
-    delete payload.role_assignment;
+    if (this.isEditMode && this.stateId) {
 
-    this.userService.createUser(payload).subscribe({
-      next: (res: any) => {
-        this.toast.show('success', res.message || 'User created successfully!', 4000);
-        this.userModal.close();
-        this.loadUsers();
-      },
-      error: (error: any) => {
-        this.toast.show('error', error.error?.message || 'Failed to create user');
-        console.error('Failed to create user:', error);
-      }
-    });*/
+      this.userService.updateState(this.stateId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'State updated successfully!', 4000);
+          this.stateModal.close();
+          this.loadStates();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update state');
+          console.error('Failed to update state:', error);
+        }
+      });
+
+    } else {
+       this.userService.createState(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'State created successfully!', 4000);
+          this.stateModal.close();
+          this.loadStates();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create state');
+          console.error('Failed to create state:', error);
+        }
+      });
+    }
   }
 
    formatDate(dateInput: any): string {

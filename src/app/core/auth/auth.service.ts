@@ -185,7 +185,6 @@ export class AuthService {
   }
 
   createUser(payload: any) {
-    console.log(payload)
     return this.api.post('/admin/users',payload);
   }
 
@@ -210,7 +209,6 @@ export class AuthService {
   }
 
   createRole(payload: any) {
-    console.log(payload)
     return this.api.post('/admin/roles', payload);
   }
 
@@ -236,6 +234,14 @@ export class AuthService {
 
   getStates(data: any): Observable<any> {
     return this.api.get<any>('/admin/states', data);
+  }
+
+  createState(payload: any) {
+    return this.api.post('/admin/states',payload);
+  }
+
+  updateState(stateId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/states/${stateId}/update`, payload);
   }
 
   getOfficeHierarchy(data: any): Observable<any> {
