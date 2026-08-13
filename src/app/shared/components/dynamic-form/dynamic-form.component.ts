@@ -87,10 +87,13 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.initForm();
-
-      if (this.schema.tabs?.length) {
-    this.activeTab = this.schema.tabs[0].id;
-  }
+    if (this.schema.tabs?.length) {
+      this.activeTab = this.schema.tabs[0].id;
+      if(this.schema.tabs[0].tabs?.length) {
+        this.activeChildTab = this.schema.tabs[0].tabs[0].id;
+      }
+      
+    }
   }
 
   /**
@@ -406,7 +409,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
 
   isFieldInActiveTab(field: any): boolean {
-
   // Existing fields without a tab remain visible
   if (!field.tab) {
     return true;

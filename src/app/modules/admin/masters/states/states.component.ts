@@ -77,26 +77,39 @@ export class States implements OnInit {
   }
 
   openEditModal(state: any) {
+
     this.isEditMode = true;
     this.stateId = state.id;
+
     this.stateSchema.submitLabel = 'Update State';
-    
-    if (this.stateModal?.dynamicForm) {
-      this.stateModal.dynamicForm.form.reset({
-        name: state.name,
-        search: '',
-        selectAll: false,
-        permissions: { slugs: [] }
-      });
-    }
 
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { id: this.stateId },
       queryParamsHandling: 'merge'
     }).then(() => {
+
       this.stateModal.open();
-    }); 
+
+      setTimeout(() => {
+
+        const form = this.stateModal?.dynamicForm?.form;
+
+        if (!form) {
+          return;
+        }
+
+        form.patchValue({
+          name_en: state.name_en || '',
+          name_pb: state.name_pb || '',
+          description_en: state.description_en || '',
+          description_pb: state.description_pb || '',
+          lgdstatecode: state.lgdstatecode,
+          status: state.status
+        });
+
+      }, 100);
+    });
   }
 
   loadStates(page: number = this.currentPage): void {
@@ -120,6 +133,9 @@ export class States implements OnInit {
           id: state.public_id,
           name_en: state.name_en,
           name_pb: state.name_pb,
+          description_en: state.description_en,
+          description_pb: state.description_pb,
+          lgdstatecode: state.lgdstatecode,
           status: state.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(state.created_at),
         }));
@@ -195,8 +211,30 @@ export class States implements OnInit {
     this.loadStates();
   }
 
-  onSubmit(formData: any){
+  onSubmit(formData: any): void {
+    console.log('formData',formData);
+    
+    /*const payload = {
+      ...formData,
+      role_id: roleId,
+      additional_role_ids: selectedRoles,
+      password: this.encryptService.encrypt(formData.password),
+      password_confirmation: this.encryptService.encrypt(formData.password_confirmation),
+    };
 
+    delete payload.role_assignment;
+
+    this.userService.createUser(payload).subscribe({
+      next: (res: any) => {
+        this.toast.show('success', res.message || 'User created successfully!', 4000);
+        this.userModal.close();
+        this.loadUsers();
+      },
+      error: (error: any) => {
+        this.toast.show('error', error.error?.message || 'Failed to create user');
+        console.error('Failed to create user:', error);
+      }
+    });*/
   }
 
    formatDate(dateInput: any): string {

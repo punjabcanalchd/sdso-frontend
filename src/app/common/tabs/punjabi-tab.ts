@@ -10,7 +10,7 @@ export const punjabiFields: FormField[] = [
   },
 
   {
-    name: 'title_pb',
+    name: 'name_pb',
     label: 'Title',
     type: 'text',
     tab: 'general-punjabi',

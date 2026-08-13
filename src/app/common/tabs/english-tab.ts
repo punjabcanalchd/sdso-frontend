@@ -3,7 +3,7 @@ import { CustomValidators } from '../validation/custom-validators';
 
 export const englishFields: FormField[] = [
   {
-    name: 'title_en',
+    name: 'name_en',
     label: 'Title',
     type: 'text',
     tab: 'general-english',
