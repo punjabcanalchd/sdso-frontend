@@ -21,7 +21,11 @@ import { CustomPermissionComponent } from '../form-elements/custom-permission/cu
 import { TinymceEditorComponent } from '../tinymce-editor/tinymce-editor.component';
 import { RoleAssignmentComponent } from '../form-elements/role-assignment/role-assignment.component';
 import { TabsComponent } from '../tabs/tabs.component';
+import { FormField } from '../../../core/models/form-schema.model';
 
+
+import { englishFields } from '../../../common/tabs/english-tab';
+import { punjabiFields } from '../../../common/tabs/punjabi-tab';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -456,6 +460,9 @@ isFieldVisible(field: any): boolean {
     }
   }
 
+
+
+
 onTabChange(tab: string): void {
   this.activeTab = tab;
 }
@@ -465,4 +472,54 @@ onChildTabChange(childTab: string): void {
 
   this.activeChildTab = childTab;
 }
+
+
+// add checkbox english to punjabi 
+
+private copyEnglishToPunjabi(): void {
+
+    const allFields: FormField[] = this.schema.fields ?? [];
+
+    const englishFields = allFields.filter(
+      field => field.tab === 'general-english'
+    );
+
+    const punjabiFields = allFields.filter(
+      field => field.tab === 'general-punjabi'
+    );
+
+    const values: Record<string, any> = {};
+
+    for (const englishField of englishFields) {
+
+      if (!englishField.copyKey) {
+        continue;
+      }
+
+      const punjabiField = punjabiFields.find(
+        field => field.copyKey === englishField.copyKey
+      );
+
+      if (!punjabiField) {
+        continue;
+      }
+
+      values[punjabiField.name] =
+        this.form.get(englishField.name)?.value || '';
+    }
+
+    this.form.patchValue(values);
+  }
+
+
+  onSameAsEnglishChange(checked: boolean): void {
+
+    if (!checked) {
+      return;
+    }
+
+    this.copyEnglishToPunjabi();
+  }
+
+
 }

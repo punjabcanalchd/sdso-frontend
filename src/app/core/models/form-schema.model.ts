@@ -69,7 +69,8 @@ export interface FormField {
     value: any;
   }
   maskOnBlur?: boolean;
-
+    copyKey?: string;
+  // syncKey?: string;  
   inputClass?: string;
   validationMessages?: {
     [key: string]: string;
