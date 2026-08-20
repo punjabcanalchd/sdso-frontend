@@ -213,7 +213,6 @@ export class States implements OnInit {
   }
 
   onSubmit(formData: any): void {
-    console.log('formData',formData);
     
     const payload = {
       description: {
@@ -229,7 +228,6 @@ export class States implements OnInit {
       status: formData.status,
       state_id: this.stateId ?? null,
     };
-
     if (this.isEditMode && this.stateId) {
 
       this.userService.updateState(this.stateId, payload).subscribe({

@@ -199,10 +199,6 @@ export class AuthService {
   getEmailAndPhoneLogs(publicId: string): Observable<any> {
     return this.api.get<any>(`/admin/users/${publicId}/email-logs`);
   }
-  
-  getDistricts(data?: any): Observable<any> {
-    return this.api.get<any>('/admin/districts', data);
-  }
 
   getRoles(data: any): Observable<any> {
     return this.api.get<any>('/admin/roles', data);
@@ -236,6 +232,10 @@ export class AuthService {
     return this.api.get<any>('/admin/states', data);
   }
 
+  getAllStates(data: any): Observable<any> {
+    return this.api.get<any>('/admin/states/all', data);
+  }
+
   createState(payload: any) {
     return this.api.post('/admin/states',payload);
   }
@@ -244,12 +244,40 @@ export class AuthService {
     return this.api.post<any>(`/admin/states/${stateId}/update`, payload);
   }
 
+  getDistricts(data?: any): Observable<any> {
+    return this.api.get<any>('/admin/districts', data);
+  }
+
+  createDistrict(payload: any) {
+    return this.api.post('/admin/districts',payload);
+  }
+
+  updateDistrict(districtId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/districts/${districtId}/update`, payload);
+  }
+
   getOfficeHierarchy(data: any): Observable<any> {
     return this.api.get<any>('/admin/office_hierarchy', data);
   }
 
+  createOfficeHierarchy(payload: any) {
+    return this.api.post('/admin/office_hierarchy',payload);
+  }
+
+  updateOfficeHierarchy(OfficeHierarchyId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/office_hierarchy/${OfficeHierarchyId}/update`, payload);
+  }
+
   getDesignations(data: any): Observable<any> {
     return this.api.get<any>('/admin/designation', data);
+  }
+
+  createDesignation(payload: any) {
+    return this.api.post('/admin/designation',payload);
+  }
+
+  updateDesignation(designationId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/designation/${designationId}/update`, payload);
   }
 
   getCircles(data: any): Observable<any> {

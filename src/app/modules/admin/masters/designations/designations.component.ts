@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Designation } from '../../../../core/models/designation.model';
@@ -21,14 +21,18 @@ export class DesignationsComponent implements OnInit {
 
   constructor(private userService: AuthService, private cdr: ChangeDetectorRef) { }
 
-  private encryptService = inject(EncryptionService);
+  @ViewChild(ModalFormComponent) designationModal!: ModalFormComponent;
+
   private toast = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
 
   data: Designation[] = [];
   formInitialData: any = {};
   allDesignationList: any[] = [];
   isEditMode = false;
+  designationId: string | null = null;
 
   DesignationSchema = DesignationSchema;
   updatingDesignationId: string | null = null;
@@ -46,6 +50,65 @@ export class DesignationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDesignations();
+  }
+
+  openCreateModal() {
+    this.isEditMode = false;
+    this.designationId = null;
+
+    this.modalHelper.openModal({
+      modalRef: this.designationModal, 
+      schema: this.DesignationSchema,
+      submitLabel: 'Create State',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
+  }
+
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  openEditModal(Designation: any) {
+
+    this.isEditMode = true;
+    this.designationId = Designation.id;
+
+    this.DesignationSchema.submitLabel = 'Update State';
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.designationId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+
+      this.designationModal.open();
+
+      setTimeout(() => {
+
+        const form = this.designationModal?.dynamicForm?.form;
+
+        if (!form) {
+          return;
+        }
+
+        form.patchValue({
+          name_en: Designation.name_en || '',
+          name_pb: Designation.name_pb || '',
+          description_en: Designation.description_en || '',
+          description_pb: Designation.description_pb || '',
+          desigsenioritylevel: Designation.desigsenioritylevel,
+          status: Designation.status
+        });
+
+      }, 100);
+    });
   }
 
   loadDesignations(page: number = this.currentPage): void {
@@ -69,8 +132,11 @@ export class DesignationsComponent implements OnInit {
           id: designation.public_id,
           name_en: designation.name_en,
           name_pb: designation.name_pb,
+          description_en: designation.description_en,
+          description_pb: designation.description_pb,
           desigsenioritylevel: designation.desigsenioritylevel,
-          status: designation.status == 1 ? 'Active' : 'In-active',
+          status: designation.status,
+          status_value: designation.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(designation.created_at),
         }));
 
@@ -96,7 +162,7 @@ export class DesignationsComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'desigsenioritylevel', label: 'Level', widthClass: 'col-2', sortable: true },
-    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -139,14 +205,51 @@ export class DesignationsComponent implements OnInit {
 
   }
 
-  openCreateModal(){
+  onSubmit(formData: any): void {
+    
+    const payload = {
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      name: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      desigsenioritylevel: formData.desigsenioritylevel,
+      same_as_english_pb: formData.same_as_english_pb ?? null,
+      status: formData.status,
+      desigcode: this.designationId ?? null,
+    };
+    if (this.isEditMode && this.designationId) {
 
+      this.userService.updateDesignation(this.designationId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Designation updated successfully!', 4000);
+          this.designationModal.close();
+          this.loadDesignations();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update Designation');
+          console.error('Failed to update Designation:', error);
+        }
+      });
+
+    } else {
+       this.userService.createDesignation(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Designation created successfully!', 4000);
+          this.designationModal.close();
+          this.loadDesignations();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create Designation');
+          console.error('Failed to create Designation:', error);
+        }
+      });
+    }
   }
-
-  onSubmit(formData: any){
-
-  }
-
+ 
   onPageSizeChange(size: number): void {
     this.pageSize = size;
     this.currentPage = 1;
@@ -165,7 +268,8 @@ export class DesignationsComponent implements OnInit {
   }
 
   handleAction(event: any): void {
-    if (event.action === 'EDIT' || event.actionName === 'EDIT') {
+    if (event.action === 'edit' || event.actionName === 'edit') {
+      this.openEditModal(event.row);
     }
   }
 }
