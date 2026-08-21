@@ -22,7 +22,7 @@ import { TinymceEditorComponent } from '../tinymce-editor/tinymce-editor.compone
 import { RoleAssignmentComponent } from '../form-elements/role-assignment/role-assignment.component';
 import { TabsComponent } from '../tabs/tabs.component';
 import { FormField } from '../../../core/models/form-schema.model';
-
+import { LanguageService } from '../../../core/services/language.service';
 
 import { englishFields } from '../../../common/tabs/english-tab';
 import { punjabiFields } from '../../../common/tabs/punjabi-tab';
@@ -55,13 +55,27 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() showTitle: boolean = true;
   activeTab = 'general';
   activeChildTab = 'general-english';
+  private _formData: any = null;
 
-  @Input() set formData(val: any) {
+  @Input()
+  set formData(val: any) {
+
+    this._formData = val;
+
     if (val && this.form) {
-      // This is the "magic" that updates the checkboxes
-      this.form.patchValue(val, { emitEvent: true });
+
+      const data = this.prepareInitialValue(val);
+
+      console.log('formData received:', data);
+
+      this.form.patchValue(data, {
+        emitEvent: false
+      });
+
     }
   }
+  
+  
 
   /* ---------------- OUTPUTS ---------------- */
   @Output() submitForm = new EventEmitter<any>();
@@ -80,7 +94,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private languageService: LanguageService
   ) { }
 
   clearGlobalError(): void {
@@ -89,41 +104,156 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.initForm();
-    // if (this.schema.tabs?.length) {
-    //   this.activeTab = this.schema.tabs[0].id;
-    //   if(this.schema.tabs[0].tabs?.length) {
-    //     this.activeChildTab = this.schema.tabs[0].tabs[0].id;
-    //   }
-      
-    // }
+  this.initForm();
+
+
+      // 1. Build the form
+  // this.form = buildFormGroup(this.fb, this.schema);
+
+   console.log(
+    'Form controls:',
+    Object.keys(this.form.controls)
+  );
+
+  // 2. Patch initial data
+  if (this.initialValue) {
+
+    const data = this.prepareInitialValue(this.initialValue);
+
+    console.log('Prepared form data:', data);
+
+    this.form.patchValue(data, {
+      emitEvent: false
+    });
   }
 
-  /**
-   * Listens for changes to Input properties.
-   * If the schema or initialValue changes, we rebuild/repatch the form.
-   */
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['initialValue'] || changes['schema']) {
-      this.initForm();
-    }
-    if (changes['initialData'] && this.form) {
-      this.form.patchValue(this.initialData || {});
-    }
-  };
+  // 3. Also handle initialData if provided
+  if (this.initialData) {
 
+    const data = this.prepareInitialValue(this.initialData);
+
+    console.log('Prepared initialData:', data);
+
+    this.form.patchValue(data, {
+      emitEvent: false
+    });
+  }
+   
+  }
+
+ngOnChanges(changes: SimpleChanges): void {
+
+  if (changes['schema'] && this.schema) {
+    this.initForm();
+    return;
+  }
+
+  if (changes['initialValue'] && !changes['initialValue'].firstChange) {
+
+    if (this.form) {
+
+      const data = this.prepareInitialValue(
+        changes['initialValue'].currentValue
+      );
+
+      console.log('initialValue changed:', data);
+
+      this.form.patchValue(data, {
+        emitEvent: false
+      });
+
+    }
+
+  }
+
+  if (changes['initialData'] && this.form) {
+
+    const data = this.prepareInitialValue(
+      changes['initialData'].currentValue
+    );
+
+    console.log('initialData changed:', data);
+
+    this.form.patchValue(data, {
+      emitEvent: false
+    });
+
+  }
+
+}
   /**
    * Logic to build the form group and patch values if they exist.
    */
-  private initForm() {
-    // 1. Build the structure
-    this.form = buildFormGroup(this.fb, this.schema);
 
-    // 2. If data is provided (editing mode), fill the form
-    if (this.initialValue) {
-      this.form.patchValue(this.initialValue);
-    }
+
+  private initForm(): void {
+
+  this.form = buildFormGroup(this.fb, this.schema);
+
+  if (this.initialValue) {
+
+    const data = this.prepareInitialValue(this.initialValue);
+
+    console.log('INITIAL VALUE AFTER PREPARE:', data);
+
+    this.form.patchValue(data, { emitEvent: false });
+
+    console.log('FORM AFTER PATCH:', this.form.getRawValue());
   }
+
+  if (this.initialData) {
+
+    const data = this.prepareInitialValue(this.initialData);
+
+    console.log('INITIAL DATA AFTER PREPARE:', data);
+
+    this.form.patchValue(data, { emitEvent: false });
+
+    console.log('FORM AFTER PATCH INITIAL DATA:', this.form.getRawValue());
+  }
+
+  if (this._formData) {
+
+    const data = this.prepareInitialValue(this._formData);
+
+    console.log('FORM DATA AFTER PREPARE:', data);
+
+    this.form.patchValue(data, { emitEvent: false });
+
+    console.log('FORM AFTER PATCH FORM DATA:', this.form.getRawValue());
+  }
+}
+//  private initForm(): void {
+
+//   this.form = buildFormGroup(this.fb, this.schema);
+
+//   if (this.initialValue) {
+
+//     this.form.patchValue(
+//       this.prepareInitialValue(this.initialValue),
+//       { emitEvent: false }
+//     );
+
+//   }
+
+//   if (this.initialData) {
+
+//     this.form.patchValue(
+//       this.prepareInitialValue(this.initialData),
+//       { emitEvent: false }
+//     );
+
+//   }
+
+//   if (this._formData) {
+
+//     this.form.patchValue(
+//       this.prepareInitialValue(this._formData),
+//       { emitEvent: false }
+//     );
+
+//   }
+// }
 
   /* ---------------- API STATE ---------------- */
   setLoading(state: boolean) {
@@ -139,16 +269,34 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   /* ---------------- FORM SUBMIT ---------------- */
-  onSubmit() {
-    this.generalErrorMessage = null;
-    clearServerErrors(this.form);
+onSubmit(): void {
+  this.generalErrorMessage = null;
+  clearServerErrors(this.form);
 
-    if (this.form.valid) {
-      this.submitForm.emit(this.form.value);
-    } else {
-      this.form.markAllAsTouched();
-    }
+  // Get the complete form data
+  const formValue = this.form.getRawValue();
+
+  console.log('FORM SUBMIT DATA:', formValue);
+
+  // Validate form
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
   }
+
+
+  const languageData = this.prepareLanguageData();
+
+  console.log('LANGUAGE SUBMIT DATA:', languageData);
+
+  // Send complete form data
+  this.submitForm.emit({
+    ...formValue,
+    languages: languageData
+  });
+
+  // this.submitForm.emit(formValue);
+}
 
   onReloadCaptcha() {
     this.reloadCaptcha.emit();
@@ -521,5 +669,75 @@ private copyEnglishToPunjabi(): void {
     this.copyEnglishToPunjabi();
   }
 
+
+
+private prepareInitialValue(data: any): any {
+
+  const result: any = {};
+
+  if (!Array.isArray(data)) {
+    return data || {};
+  }
+
+  for (const row of data) {
+
+    if (
+      row.language_id ===
+      this.languageService.getLanguageId('en')
+    ) {
+      result.name_en = row.name ?? '';
+      result.description_en = row.description ?? '';
+    }
+
+    if (
+      row.language_id ===
+      this.languageService.getLanguageId('pb')
+    ) {
+      result.name_pb = row.name ?? '';
+      result.description_pb = row.description ?? '';
+    }
+  }
+
+  return result;
+}
+
+
+onEditorValueChange(fieldName: string, value: string): void {
+
+
+   console.log('EDITOR FIELD:', fieldName);
+  console.log('EDITOR VALUE:', value);
+
+  const control = this.form.get(fieldName);
+
+  if (!control) {
+    console.error(`Editor control not found: ${fieldName}`);
+    return;
+  }
+
+  control.setValue(value);
+  control.markAsDirty();
+}
+
+
+
+
+private prepareLanguageData(): any[] {
+
+  const value = this.form.getRawValue();
+
+  return [
+    {
+      language_id: this.languageService.getLanguageId('en'),
+      name: value.name_en ?? '',
+      description: value.description_en ?? ''
+    },
+    {
+      language_id: this.languageService.getLanguageId('pb'),
+      name: value.name_pb ?? '',
+      description: value.description_pb ?? ''
+    }
+  ];
+}
 
 }

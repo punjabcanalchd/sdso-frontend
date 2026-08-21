@@ -121,18 +121,12 @@
       </textarea>
 
 
-      <app-tinymce-editor
-  *ngSwitchCase="'editor'"
-  [value]="form.get(field.name)?.value || ''"
-  (valueChange)="form.get(field.name)?.setValue($event)">
-</app-tinymce-editor>
+    <app-tinymce-editor
+    *ngSwitchCase="'editor'"
+    [value]="form.get(field.name)?.value || ''"s
+    (valueChange)="onEditorValueChange(field.name, $event)"> 
+    </app-tinymce-editor>
 
-        <!-- TINYMCE EDITOR -->
-      <!-- <app-tinymce-editor
-          *ngSwitchCase="'editor'"
-          [value]="form.get(field.name)?.value || ''"
-          (valueChange)="form.get(field.name)?.setValue($event)">
-      </app-tinymce-editor> -->
 
         <!-- CHECKBOX -->
         <div *ngSwitchCase="'checkbox'" class="form-check mt-1 mb-3 d-flex align-items-start gap-2">
@@ -147,23 +141,7 @@
           </label>
 
         </div>
-        <!-- <div *ngSwitchCase="'checkbox'" class="form-check">
-
-        <input
-          type="checkbox"
-          class="form-check-input"
-          [formControlName]="field.name"
-          [id]="field.name" />
-
-        <label
-          class="form-check-label"
-          [for]="field.name">
-
-          {{ field.text || field.label }}
-
-        </label>
-
-      </div> -->
+        
 
         <!-- RADIO -->
         <div *ngSwitchCase="'radio'" class="d-flex flex-wrap gap-3">
@@ -241,9 +219,7 @@
       [disabled]="field.disabled || false">
     </app-datepicker>
 
-        <!-- FILE -->
-        <!-- <app-file-upload *ngSwitchCase="'file'" [control]="getControl(field.name)">
-        </app-file-upload> -->
+      
 
           <app-file-upload
          *ngSwitchCase="'file'" 

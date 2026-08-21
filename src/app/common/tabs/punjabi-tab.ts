@@ -5,6 +5,8 @@ export const punjabiFields: FormField[] = [
     name: 'same_as_english_pb',
     label: '',
     type: 'checkbox',
+     languageCode: 'pb',
+     languageId: 2,
     tab: 'general-punjabi',
     text: 'Same as English'
   },
@@ -13,6 +15,8 @@ export const punjabiFields: FormField[] = [
     name: 'name_pb',
     label: 'Title',
     type: 'text',
+    languageCode: 'pb',
+    languageId: 2,
     tab: 'general-punjabi',
     placeholder: 'Enter Title',
     required: true
@@ -21,6 +25,8 @@ export const punjabiFields: FormField[] = [
     name: 'description_pb',
     label: 'Description',
     type: 'editor',
+    languageId:2,
+    languageCode: 'pb',
     tab: 'general-punjabi',
     required: true
   },

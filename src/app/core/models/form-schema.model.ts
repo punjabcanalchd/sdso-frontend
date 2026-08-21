@@ -64,6 +64,8 @@ export interface FormField {
   html?: string;
   minDate?: string;
   maxDate?: string;
+ languageCode?: string;
+ languageId?: number;
   visibleWhen?: {
     field: string;
     value: any;

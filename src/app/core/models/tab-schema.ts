@@ -7,6 +7,6 @@ export interface TabSchema {
   disabled?: boolean;
 
   tabs?: TabSchema[];
-
+  
   fields?: FormField[];
 }

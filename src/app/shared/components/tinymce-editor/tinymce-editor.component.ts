@@ -35,7 +35,6 @@ import 'tinymce/plugins/table';
 import 'tinymce/plugins/preview';
 import 'tinymce/plugins/help';
 import 'tinymce/plugins/wordcount';
-// declare const tinymce: any;
 
 @Component({
   selector: 'app-tinymce-editor',
@@ -45,10 +44,6 @@ import 'tinymce/plugins/wordcount';
 })
 export class TinymceEditorComponent
   implements AfterViewInit, OnDestroy, OnChanges {
-
-  constructor(
-    private toast: ToastService
-  ) {}
 
   @ViewChild('editor')
   editor!: ElementRef;
@@ -62,7 +57,19 @@ export class TinymceEditorComponent
   @Output()
   valueChange = new EventEmitter<string>();
 
-  currentEditor: any;
+  currentEditor: any = null;
+
+  editorInitialized = false;
+
+  private pendingValue = '';
+
+  constructor(
+    private toast: ToastService
+  ) {}
+
+  // ---------------------------------------------------------
+  // TinyMCE INITIALIZATION
+  // ---------------------------------------------------------
 
   ngAfterViewInit(): void {
 
@@ -81,61 +88,76 @@ export class TinymceEditorComponent
       branding: false,
 
       height: 450,
-        // height: 450,
 
       toolbar_mode: 'wrap',
 
-    plugins: [
-      'advlist',
-      'autolink',
-      'lists',
-      'link',
-      'image',
-      'charmap',
-      'anchor',
-      'searchreplace',
-      'visualblocks',
-      'code',
-      'fullscreen',
-      'insertdatetime',
-      'media',
-      'table',
-      'preview',
-      'help',
-      'wordcount'
-    ],
+      plugins: [
+        'advlist',
+        'autolink',
+        'lists',
+        'link',
+        'image',
+        'charmap',
+        'anchor',
+        'searchreplace',
+        'visualblocks',
+        'code',
+        'fullscreen',
+        'insertdatetime',
+        'media',
+        'table',
+        'preview',
+        'help',
+        'wordcount'
+      ],
 
-  toolbar:
-    'undo redo | blocks | bold italic underline forecolor backcolor | ' +
-    'alignleft aligncenter alignright alignjustify | ' +
-    'bullist numlist outdent indent | link image media table | ' +
-    'uploadFile | code fullscreen preview | removeformat | help',
-     skin: 'oxide',
+      toolbar:
+        'undo redo | blocks | bold italic underline forecolor backcolor | ' +
+        'alignleft aligncenter alignright alignjustify | ' +
+        'bullist numlist outdent indent | link image media table | ' +
+        'uploadFile | code fullscreen preview | removeformat | help',
 
-
-
-     
-
-      // content_style: `body { font-family: Roboto, "Helvetica Neue", sans-serif;
-      //          font-size: 15px; line-height: 1.6; padding: 12px 16px; color: #212121; }`,
+      skin: 'oxide',
 
       setup: (editor: any) => {
 
         this.currentEditor = editor;
 
-       
+        // -----------------------------------------------
+        // EDITOR INITIALIZED
+        // -----------------------------------------------
 
         editor.on('init', () => {
 
-          editor.setContent(this.value || '');
+          this.editorInitialized = true;
 
+          const initialValue =
+            this.pendingValue || this.value || '';
+
+          console.log(
+            'TinyMCE initialized. Setting value:',
+            initialValue
+          );
+
+          editor.setContent(initialValue);
+
+          this.pendingValue = '';
         });
 
-        editor.on('keyup change', () => {
+        // -----------------------------------------------
+        // EDITOR VALUE CHANGED
+        // -----------------------------------------------
 
-          this.valueChange.emit(editor.getContent());
+        editor.on('input change undo redo', () => {
 
+          const content = editor.getContent();
+
+          this.valueChange.emit(content);
         });
+
+        // -----------------------------------------------
+        // UPLOAD FILE BUTTON
+        // -----------------------------------------------
 
         editor.ui.registry.addButton('uploadFile', {
 
@@ -152,50 +174,78 @@ export class TinymceEditorComponent
       }
 
     });
-
   }
 
+  // ---------------------------------------------------------
+  // INPUT VALUE CHANGE
+  // ---------------------------------------------------------
 
   ngOnChanges(changes: SimpleChanges): void {
-  if (!changes['value']) {
-    return;
+
+    if (!changes['value']) {
+      return;
+    }
+
+    const newValue =
+      changes['value'].currentValue || '';
+
+    console.log(
+      'TinyMCE @Input value changed:',
+      newValue
+    );
+
+    // TinyMCE is not initialized yet
+    if (!this.currentEditor || !this.editorInitialized) {
+
+      console.log(
+        'TinyMCE not initialized yet. Value saved for init.'
+      );
+
+      this.pendingValue = newValue;
+
+      return;
+    }
+
+    // TinyMCE is already initialized
+    const currentContent =
+      this.currentEditor.getContent();
+
+    if (currentContent !== newValue) {
+
+      console.log(
+        'Updating TinyMCE content:',
+        newValue
+      );
+
+      this.currentEditor.setContent(newValue);
+    }
   }
 
-  if (!this.currentEditor) {
-    return;
-  }
+  // ---------------------------------------------------------
+  // FILE UPLOAD
+  // ---------------------------------------------------------
 
-  const newValue = changes['value'].currentValue || '';
-
-  if (this.currentEditor.getContent() !== newValue) {
-    this.currentEditor.setContent(newValue);
-  }
-}
-
-  uploadFile(event: any) {
+  uploadFile(event: any): void {
 
     console.log(event.target.files);
 
   }
 
-  ngOnDestroy() {
+  // ---------------------------------------------------------
+  // FILE SELECTED
+  // ---------------------------------------------------------
 
-    if (this.currentEditor) {
-
-      this.currentEditor.destroy();
-
-    }
-
-  }
-
-
-
-  
-  // Called when user picks a file from the OS dialog
   onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file  = input.files?.[0];
-    if (!file || !this.currentEditor) return;
+
+    const input =
+      event.target as HTMLInputElement;
+
+    const file =
+      input.files?.[0];
+
+    if (!file || !this.currentEditor) {
+      return;
+    }
 
     const allowedTypes = [
       'application/pdf',
@@ -204,30 +254,78 @@ export class TinymceEditorComponent
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      // this.snackBar.open('Only PDF and DOCX files are allowed.', 'Close', { duration: 3000 });
+
       this.toast.error(
         'Only PDF and DOCX files are allowed.'
       );
+
       input.value = '';
+
       return;
     }
 
-    // Create a temporary object URL and insert a download link into the editor
-    const url  = URL.createObjectURL(file);
-    const ext  = file.name.split('.').pop()?.toUpperCase() ?? 'FILE';
-    const html = `<p>
-      <a href="${url}" target="_blank" rel="noopener noreferrer"
-         style="display:inline-flex;align-items:center;gap:6px;
-                padding:6px 14px;border-radius:6px;
-                background:#eff6ff;color:#2563eb;
-                border:1px solid #bfdbfe;text-decoration:none;font-weight:500;">
-        📎 ${file.name} <span style="font-size:0.75em;opacity:0.7;">[${ext}]</span>
-      </a>
-    </p>`;
+    const url =
+      URL.createObjectURL(file);
+
+    const ext =
+      file.name
+        .split('.')
+        .pop()
+        ?.toUpperCase() ?? 'FILE';
+
+    const html = `
+      <p>
+        <a
+          href="${url}"
+          target="_blank"
+          rel="noopener noreferrer"
+          style="
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:6px 14px;
+            border-radius:6px;
+            background:#eff6ff;
+            color:#2563eb;
+            border:1px solid #bfdbfe;
+            text-decoration:none;
+            font-weight:500;
+          "
+        >
+          📎 ${file.name}
+
+          <span
+            style="
+              font-size:0.75em;
+              opacity:0.7;
+            "
+          >
+            [${ext}]
+          </span>
+        </a>
+      </p>
+    `;
 
     this.currentEditor.insertContent(html);
 
-    // Reset so the same file can be re-selected if needed
     input.value = '';
+  }
+
+  // ---------------------------------------------------------
+  // DESTROY
+  // ---------------------------------------------------------
+
+  ngOnDestroy(): void {
+
+    if (this.currentEditor) {
+
+      this.currentEditor.destroy();
+
+      this.currentEditor = null;
+    }
+
+    this.editorInitialized = false;
+
+    this.pendingValue = '';
   }
 }

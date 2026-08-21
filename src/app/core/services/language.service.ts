@@ -1,42 +1,71 @@
+
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+
 
 export interface AppLanguage {
   code: string;
   label: string;
   nativeLabel: string;
+  id: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
+
+
+
 export class LanguageService {
 
   private readonly languages: AppLanguage[] = [
-    { code: 'en', label: 'English',  nativeLabel: 'EN' },
-    { code: 'hi', label: 'Hindi',    nativeLabel: 'हिं' },
-    { code: 'pa', label: 'Punjabi',  nativeLabel: 'ਪੰ' },
+    {
+      id: 1,
+      code: 'en',
+      label: 'English',
+      nativeLabel: 'EN'
+    },
+    {
+      id: 2,
+      code: 'pb',
+      label: 'Punjabi',
+      nativeLabel: 'ਪੰ'
+    },
+    {
+      id: 3,
+      code: 'hi',
+      label: 'Hindi',
+      nativeLabel: 'हिं'
+    }
   ];
 
   constructor(private translate: TranslateService) {
-    // Register all supported language codes
-    this.translate.addLangs(this.languages.map(l => l.code));
 
-    // Fallback language
+    this.translate.addLangs(
+      this.languages.map(l => l.code)
+    );
+
     this.translate.setDefaultLang('en');
 
-    // Restore saved preference or detect browser language
     const browserLang = this.translate.getBrowserLang();
     const savedLang = localStorage.getItem('user_lang');
-    const supportedCodes = this.languages.map(l => l.code);
 
-    const initialLang = savedLang
-      || (browserLang && supportedCodes.includes(browserLang) ? browserLang : 'en');
+    const supportedCodes =
+      this.languages.map(l => l.code);
+
+    const initialLang =
+      savedLang ||
+      (
+        browserLang &&
+        supportedCodes.includes(browserLang)
+          ? browserLang
+          : 'en'
+      );
 
     this.translate.use(initialLang);
   }
 
-  changeLanguage(lang: string) {
+  changeLanguage(lang: string): void {
     this.translate.use(lang);
     localStorage.setItem('user_lang', lang);
   }
@@ -45,25 +74,23 @@ export class LanguageService {
     return this.translate.currentLang || 'en';
   }
 
-  /** Returns all available languages — add a new entry here + a JSON file to support more. */
   getAvailableLanguages(): AppLanguage[] {
     return this.languages;
   }
 
-
   getCurrentLanguageId(): number {
-  switch (this.getCurrentLang()) {
-    case 'en':
-      return 1;
+    const language = this.languages.find(
+      l => l.code === this.getCurrentLang()
+    );
 
-    case 'pa':
-      return 2;
-
-    case 'hi':
-      return 3;
-
-    default:
-      return 1;
+    return language?.id ?? 1;
   }
-}
+
+  getLanguageId(code: string): number {
+    const language = this.languages.find(
+      l => l.code === code
+    );
+
+    return language?.id ?? 1;
+  }
 }

@@ -49,11 +49,7 @@ export class WorkGallery implements OnInit, OnDestroy {
     { id: 3,  imageUrl: 'assets/images/front/gallery/g3.png',  altText: 'Community awareness programme on water conservation',         title: 'Awareness Drive',       caption: 'Community outreach programme promoting responsible water usage.',        category: 'Community'      },
     { id: 4,  imageUrl: 'assets/images/front/gallery/g4.png',  altText: 'Digital monitoring dashboard for water resource management',  title: 'Digital Monitoring',    caption: 'Real-time digital dashboard tracking groundwater levels statewide.',    category: 'Technology'     },
     { id: 5,  imageUrl: 'assets/images/front/gallery/g5.png',  altText: 'Borewell drilling rig in operation at a project site',        title: 'Drilling Operations',   caption: 'Authorised drilling rig operating under permit at a designated site.',  category: 'Field Work'     },
-    // { id: 6,  imageUrl: 'assets/images/front/gallery/g6.jpg',  altText: 'Canal irrigation infrastructure maintenance work',            title: 'Canal Maintenance',     caption: 'Annual maintenance of irrigation canal network across the district.',   category: 'Infrastructure' },
-    // { id: 7,  imageUrl: 'assets/images/front/gallery/g7.jpg',  altText: 'Water conservation workshop for farmers',                     title: 'Farmer Workshop',       caption: 'Training session on drip irrigation and water-efficient farming.',       category: 'Community'      },
-    // { id: 8,  imageUrl: 'assets/images/front/gallery/g8.jpg',  altText: 'GIS mapping of water resources using satellite data',         title: 'GIS Mapping',           caption: 'Satellite-based GIS mapping of groundwater recharge zones.',            category: 'Technology'     },
-    // { id: 9,  imageUrl: 'assets/images/front/gallery/g9.jpg',  altText: 'Water quality testing laboratory analysis',                   title: 'Quality Testing',       caption: 'Laboratory analysis ensuring water quality meets safety standards.',    category: 'Field Work'     },
-  ];
+ ];
 
   get filteredItems(): GalleryItem[] {
     return this.activeFilter === 'All'

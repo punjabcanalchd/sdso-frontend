@@ -7,6 +7,8 @@ export const englishFields: FormField[] = [
     label: 'Title',
     type: 'text',
     tab: 'general-english',
+    languageCode: 'en',
+    languageId: 1,
     placeholder: 'Enter Title',
     required: true,  
     validators: [
@@ -18,7 +20,9 @@ export const englishFields: FormField[] = [
     name: 'description_en',
     label: 'Description',
     type: 'editor',
+    languageId: 1,
     tab: 'general-english',
     required: true
   }
 ];
+
