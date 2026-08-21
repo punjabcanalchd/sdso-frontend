@@ -13,7 +13,8 @@ export const englishFields: FormField[] = [
     required: true,  
     validators: [
       CustomValidators.shortAlpha()
-    ]
+    ],
+    copyKey: 'name'
   },
 
   {
@@ -22,7 +23,8 @@ export const englishFields: FormField[] = [
     type: 'editor',
     languageId: 1,
     tab: 'general-english',
-    required: true
+    required: true,
+    copyKey: 'description'
   }
 ];
 

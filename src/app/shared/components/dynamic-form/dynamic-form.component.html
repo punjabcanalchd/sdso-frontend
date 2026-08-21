@@ -131,8 +131,13 @@
         <!-- CHECKBOX -->
         <div *ngSwitchCase="'checkbox'" class="form-check mt-1 mb-3 d-flex align-items-start gap-2">
 
-          <input type="checkbox" class="form-check-input shadow-none  mt-1" [formControlName]="field.name"
-            [id]="field.name" />
+          <<input
+          type="checkbox"
+          class="form-check-input shadow-none mt-1"
+          [formControlName]="field.name"
+          [id]="field.name"
+          (change)="onCheckboxChange(field, $any($event.target).checked)"
+        />
 
           <label class="form-check-label" [for]="field.name">
             <span *ngIf="field.required" class="text-danger">*</span>

@@ -65,9 +65,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     if (val && this.form) {
 
       const data = this.prepareInitialValue(val);
-
-      console.log('formData received:', data);
-
       this.form.patchValue(data, {
         emitEvent: false
       });
@@ -110,18 +107,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
       // 1. Build the form
   // this.form = buildFormGroup(this.fb, this.schema);
 
-   console.log(
-    'Form controls:',
-    Object.keys(this.form.controls)
-  );
-
   // 2. Patch initial data
   if (this.initialValue) {
 
     const data = this.prepareInitialValue(this.initialValue);
-
-    console.log('Prepared form data:', data);
-
     this.form.patchValue(data, {
       emitEvent: false
     });
@@ -130,10 +119,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   // 3. Also handle initialData if provided
   if (this.initialData) {
 
-    const data = this.prepareInitialValue(this.initialData);
-
-    console.log('Prepared initialData:', data);
-
+    const data = this.prepareInitialValue(this.initialData);    
     this.form.patchValue(data, {
       emitEvent: false
     });
@@ -156,7 +142,7 @@ ngOnChanges(changes: SimpleChanges): void {
         changes['initialValue'].currentValue
       );
 
-      console.log('initialValue changed:', data);
+    
 
       this.form.patchValue(data, {
         emitEvent: false
@@ -171,8 +157,6 @@ ngOnChanges(changes: SimpleChanges): void {
     const data = this.prepareInitialValue(
       changes['initialData'].currentValue
     );
-
-    console.log('initialData changed:', data);
 
     this.form.patchValue(data, {
       emitEvent: false
@@ -191,69 +175,23 @@ ngOnChanges(changes: SimpleChanges): void {
   this.form = buildFormGroup(this.fb, this.schema);
 
   if (this.initialValue) {
-
     const data = this.prepareInitialValue(this.initialValue);
-
-    console.log('INITIAL VALUE AFTER PREPARE:', data);
-
     this.form.patchValue(data, { emitEvent: false });
-
-    console.log('FORM AFTER PATCH:', this.form.getRawValue());
+    
   }
 
   if (this.initialData) {
 
     const data = this.prepareInitialValue(this.initialData);
-
-    console.log('INITIAL DATA AFTER PREPARE:', data);
-
-    this.form.patchValue(data, { emitEvent: false });
-
-    console.log('FORM AFTER PATCH INITIAL DATA:', this.form.getRawValue());
-  }
+    this.form.patchValue(data, { emitEvent: false });  }
 
   if (this._formData) {
 
     const data = this.prepareInitialValue(this._formData);
-
-    console.log('FORM DATA AFTER PREPARE:', data);
-
     this.form.patchValue(data, { emitEvent: false });
-
-    console.log('FORM AFTER PATCH FORM DATA:', this.form.getRawValue());
   }
 }
-//  private initForm(): void {
 
-//   this.form = buildFormGroup(this.fb, this.schema);
-
-//   if (this.initialValue) {
-
-//     this.form.patchValue(
-//       this.prepareInitialValue(this.initialValue),
-//       { emitEvent: false }
-//     );
-
-//   }
-
-//   if (this.initialData) {
-
-//     this.form.patchValue(
-//       this.prepareInitialValue(this.initialData),
-//       { emitEvent: false }
-//     );
-
-//   }
-
-//   if (this._formData) {
-
-//     this.form.patchValue(
-//       this.prepareInitialValue(this._formData),
-//       { emitEvent: false }
-//     );
-
-//   }
-// }
 
   /* ---------------- API STATE ---------------- */
   setLoading(state: boolean) {
@@ -275,9 +213,6 @@ onSubmit(): void {
 
   // Get the complete form data
   const formValue = this.form.getRawValue();
-
-  console.log('FORM SUBMIT DATA:', formValue);
-
   // Validate form
   if (this.form.invalid) {
     this.form.markAllAsTouched();
@@ -286,8 +221,6 @@ onSubmit(): void {
 
 
   const languageData = this.prepareLanguageData();
-
-  console.log('LANGUAGE SUBMIT DATA:', languageData);
 
   // Send complete form data
   this.submitForm.emit({
@@ -616,8 +549,6 @@ onTabChange(tab: string): void {
 }
 
 onChildTabChange(childTab: string): void {
-  console.log('childTab:', childTab);
-
   this.activeChildTab = childTab;
 }
 
@@ -660,16 +591,25 @@ private copyEnglishToPunjabi(): void {
   }
 
 
-  onSameAsEnglishChange(checked: boolean): void {
-
-    if (!checked) {
-      return;
-    }
-
+ onSameAsEnglishChange(checked: boolean): void {
+  if (checked) {
     this.copyEnglishToPunjabi();
   }
+}
 
+  onCheckboxChange(field: FormField, checked: boolean): void {
 
+    switch (field.name) {
+
+      case 'same_as_english_pb':
+        if (checked) {
+          this.copyEnglishToPunjabi();
+        }
+        break;
+
+      // future special checkboxes can be added here
+    }
+  }
 
 private prepareInitialValue(data: any): any {
 
@@ -703,10 +643,6 @@ private prepareInitialValue(data: any): any {
 
 
 onEditorValueChange(fieldName: string, value: string): void {
-
-
-   console.log('EDITOR FIELD:', fieldName);
-  console.log('EDITOR VALUE:', value);
 
   const control = this.form.get(fieldName);
 

@@ -132,12 +132,7 @@ export class TinymceEditorComponent
           this.editorInitialized = true;
 
           const initialValue =
-            this.pendingValue || this.value || '';
-
-          console.log(
-            'TinyMCE initialized. Setting value:',
-            initialValue
-          );
+            this.pendingValue || this.value || '';          
 
           editor.setContent(initialValue);
 
@@ -189,17 +184,8 @@ export class TinymceEditorComponent
     const newValue =
       changes['value'].currentValue || '';
 
-    console.log(
-      'TinyMCE @Input value changed:',
-      newValue
-    );
-
     // TinyMCE is not initialized yet
     if (!this.currentEditor || !this.editorInitialized) {
-
-      console.log(
-        'TinyMCE not initialized yet. Value saved for init.'
-      );
 
       this.pendingValue = newValue;
 
@@ -210,12 +196,7 @@ export class TinymceEditorComponent
     const currentContent =
       this.currentEditor.getContent();
 
-    if (currentContent !== newValue) {
-
-      console.log(
-        'Updating TinyMCE content:',
-        newValue
-      );
+    if (currentContent !== newValue) {   
 
       this.currentEditor.setContent(newValue);
     }
@@ -226,9 +207,7 @@ export class TinymceEditorComponent
   // ---------------------------------------------------------
 
   uploadFile(event: any): void {
-
-    console.log(event.target.files);
-
+ 
   }
 
   // ---------------------------------------------------------
