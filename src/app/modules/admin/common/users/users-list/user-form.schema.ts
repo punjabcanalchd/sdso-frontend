@@ -64,6 +64,73 @@ export const userSchema: FormSchema = {
           validators: [CustomValidators.dateInFuture()],
         },
         {
+          name: 'officelevelcode',
+          label: 'Office Level',
+          type: 'select',
+          className: 'col-md-4',
+          options: [
+            { label: 'CHIEF OFFICE', value: 'CHIEF OFFICE' },
+            { label: 'CIRCLE OFFICE', value: 'CIRCLE OFFICE' },
+            { label: 'DIVISION OFFICE', value: 'DIVISION OFFICE' },
+            { label: 'Gauge Reader/Beldaar', value: 'Gauge Reader/Beldaar' },
+            { label: 'Junior Engineer', value: 'Junior Engineer' },
+            { label: 'Office of PSWR', value: 'Office of PSWR' },
+            { label: 'SUB DIVISION OFFICE', value: 'SUB DIVISION OFFICE' },
+          ]
+        },
+        {
+          name: 'circle_id',
+          label: 'Circle Name',
+          type: 'select',
+          className: 'col-md-4',
+          visibleWhen: { 
+            field: 'officelevelcode', 
+            value: ['CIRCLE OFFICE', 'DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer'] 
+          },
+          options: [
+            { label: 'Circle 1', value: '1' },
+            { label: 'Circle 2', value: '2' }
+          ]
+        },
+        {
+          name: 'division_id',
+          label: 'Division',
+          type: 'select',
+          className: 'col-md-4',
+          visibleWhen: { 
+            field: 'officelevelcode', 
+            value: ['DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer'] 
+          },
+          options: [
+            { label: 'Division A', value: 'A' },
+            { label: 'Division B', value: 'B' }
+          ]
+        },
+        {
+          name: 'subdivision_id',
+          label: 'Sub Division',
+          type: 'select',
+          className: 'col-md-4',
+          // Only show when SUB DIVISION OFFICE is selected
+          visibleWhen: { field: 'officelevelcode', value: 'SUB DIVISION OFFICE' },
+          options: [
+            { label: 'Sub Div X', value: 'X' },
+            { label: 'Sub Div Y', value: 'Y' }
+          ]
+        },
+        {
+          name: 'officecode',
+          label: 'Office',
+          type: 'select',
+          className: 'col-md-4',
+          // Always visible as a fallback, or add a visibleWhen condition if needed
+          options: [
+            { label: 'Office 1', value: 'O1' },
+            { label: 'Office 2', value: 'O2' }
+          ]
+        },
+
+        {
           name: 'password',
           label: 'Password',
           type: 'password',
