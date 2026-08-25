@@ -1,52 +1,57 @@
 import { FormSchema } from '../../../../core/models/form-schema.model';
 import { CustomValidators } from '../../../../common/validation/custom-validators';
+import { englishFields } from '../../../../common/tabs/english-tab';
+import { punjabiFields } from '../../../../common/tabs/punjabi-tab';
 
 export const DivisionSchema: FormSchema = {
   layoutStyle: 'popup',
   submitLabel: 'Save',
   submitIcon: 'bi bi-floppy',
   submitClass: 'btn btn-primary-govt',
-  steps: [
+  tabs: [
+
     {
-      title: 'Division',
-      fields: [
+      id: 'general',
+      label: 'General',
+
+      tabs: [
         {
-          name: 'name',
-          label: 'Name',
-          type: 'text',
-          placeholder: 'Enter Name',
-          required: true,
-          className: 'col-md-4',
-          validators: [CustomValidators.shortAlpha()]
+          id: 'general-english',
+          label: 'English'
         },
+
         {
-          name: 'description',
-          label: 'Description',
-          type: 'textarea',
-          placeholder: 'Enter Description',
-          className: 'col-md-4',
-          validators: [CustomValidators.textContent()]
-        },
-        {
-          name: 'circle_id',
-          label: 'Circle',
-          type: 'select',
-          placeholder: 'Enter Code',
-          className: 'col-md-4',
-          validators: [CustomValidators.digitsOnly()]
-        },
-        {
-          name: 'status',
-          label: 'Status',
-          type: 'toggle',
-          required: true,
-          className: 'col-md-4',
-          options: [
-            { label: 'Active', value: 'ACTIVE' },
-            { label: 'Inactive', value: 'INACTIVE' }
-          ]
-        },
+          id: 'general-punjabi',
+          label: 'Punjabi'
+        }
       ]
     },
-  ]
+
+  ],
+  
+fields: [
+      ...englishFields,
+
+      ...punjabiFields,
+      {
+        name: 'circle_id',
+        label: 'Circle',
+        type: 'select',
+        required: true,
+        placeholder: 'Enter Code',
+        className: 'col-md-4',
+        validators: [CustomValidators.textContent()]
+      },
+      {
+        name: 'status',
+        label: 'Status',
+        type: 'toggle',
+        required: true,
+        className: 'col-md-4',
+        options: [
+          { label: 'Active', value: 'ACTIVE' },
+          { label: 'Inactive', value: 'INACTIVE' }
+        ]
+      },
+    ]
 };

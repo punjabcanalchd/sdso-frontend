@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SubDivision } from '../../../../core/models/subdivision.model';
@@ -10,6 +10,7 @@ import { EncryptionService } from '../../../../core/services/encrypt.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { SubDivisionSchema } from './sub-divisions-form.schema';
 import { ModalHelperService } from '../../../../shared/services/modal-helper';
+import { Division } from '../../../../core/models/division.model';
 
 @Component({
   selector: 'app-sub-divisions',
@@ -21,14 +22,20 @@ export class SubDivisionsComponent implements OnInit {
 
   constructor(private userService: AuthService, private cdr: ChangeDetectorRef) { }
 
-  private encryptService = inject(EncryptionService);
+  @ViewChild(ModalFormComponent) subDivisionModal!: ModalFormComponent;
+
   private toast = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
 
   data: SubDivision[] = [];
   formInitialData: any = {};
-  allDivisionList: any[] = [];
+  allSubDivisionList: any[] = [];
   isEditMode = false;
+  subDivisionId: string | null = null;
+  divisions: Division[] = [];
+  selectedDivision: number | null = null;
 
   SubDivisionSchema = SubDivisionSchema;
   updatingSubDivisionId: string | null = null;
@@ -43,9 +50,11 @@ export class SubDivisionsComponent implements OnInit {
   search = '';
   sortColumn = '';
   sortDirection = 'asc';
+  isLoaded = false;
 
   ngOnInit(): void {
     this.loadSubDivisions();
+    this.getDivisions();
   }
 
   loadSubDivisions(page: number = this.currentPage): void {
@@ -66,11 +75,16 @@ export class SubDivisionsComponent implements OnInit {
 
         this.data = response.data.map((subdivision: any, index: number) => ({
           orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
-          id: subdivision.subdivision_id,
+          id: subdivision.public_id,
           name_en: subdivision.name_en,
           name_pb: subdivision.name_pb,
           division: subdivision.division,
-          status: subdivision.status ? 'Active' : 'In-active',
+          subdivision_id: subdivision.subdivision_id,
+          division_id: subdivision.division_id,
+          description_en: subdivision.description_en,
+          description_pb: subdivision.description_pb,
+          status: subdivision.status,
+          status_value: subdivision.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(subdivision.created_at),
         }));
 
@@ -92,11 +106,44 @@ export class SubDivisionsComponent implements OnInit {
 
   }
 
+  getDivisions(): void {
+    const params = {};
+    this.userService.getAllDivisions(params).subscribe({
+      next: (response) => {
+          this.divisions = response;
+          const divisions = response.data || [];
+          const parentOptions = divisions.map((division: any) => ({
+            label: division.name_en,
+            value: String(division.public_id)
+          }));
+          console.log(parentOptions);
+          const parentField = this.SubDivisionSchema.fields?.find(
+            f => f.name === 'division_id'
+          );
+
+          if (parentField) {
+            parentField.options = [
+              { label: 'Please select division', value: '' },
+              ...parentOptions
+            ];
+          }
+          const form = this.subDivisionModal?.dynamicForm?.form;
+          form.get('division_id')?.setValue('');
+          this.isLoaded = true;
+          this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading divisions:', error);
+      }
+    });
+  }
+
+
   tableColumns: TableColumn[] = [
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'division', label: 'Division', widthClass: 'col-2', sortable: false },
-    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -146,12 +193,109 @@ export class SubDivisionsComponent implements OnInit {
     this.loadSubDivisions();
   }
 
-  openCreateModal(){
+  openCreateModal() {
+    this.isEditMode = false;
+    this.subDivisionId = null;
 
+    this.modalHelper.openModal({
+      modalRef: this.subDivisionModal, 
+      schema: this.SubDivisionSchema,
+      submitLabel: 'Create Division',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
   }
 
-  onSubmit(formData: any){
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
 
+  openEditModal(subdivision: any) {
+
+    this.isEditMode = true;
+    this.subDivisionId = subdivision.id;
+
+    this.SubDivisionSchema.submitLabel = 'Update Sub-Division';
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.subDivisionId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+
+      this.subDivisionModal.open();
+
+      setTimeout(() => {
+
+        const form = this.subDivisionModal?.dynamicForm?.form;
+
+        if (!form) {
+          return;
+        }
+        console.log('subdivision', subdivision);
+        form.patchValue({
+          name_en: subdivision.name_en || '',
+          name_pb: subdivision.name_pb || '',
+          description_en: subdivision.description_en || '',
+          description_pb: subdivision.description_pb || '',
+          division_id: subdivision.division_id,
+          status: subdivision.status
+        });
+
+      }, 100);
+    });
+  }
+
+  onSubmit(formData: any): void {
+    
+    const payload = {
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      name: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      division_id: formData.division_id,
+      status: formData.status,
+      subDivisionId: this.subDivisionId ?? null,
+    };
+
+
+    if (this.isEditMode && this.subDivisionId) {
+
+      this.userService.updateSubDivision(this.subDivisionId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Sub Division updated successfully!', 4000);
+          this.subDivisionModal.close();
+          this.loadSubDivisions();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update Sub Division');
+          console.error('Failed to update Sub Division:', error);
+        }
+      });
+
+    } else {
+       this.userService.createSubDivision(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Sub Division created successfully!', 4000);
+          this.subDivisionModal.close();
+          this.loadSubDivisions();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create Sub Division');
+          console.error('Failed to create Sub Division:', error);
+        }
+      });
+    }
   }
 
   formatDate(dateInput: any): string {
@@ -165,7 +309,8 @@ export class SubDivisionsComponent implements OnInit {
   }
 
   handleAction(event: any): void {
-    if (event.action === 'EDIT' || event.actionName === 'EDIT') {
+    if (event.action === 'edit' || event.actionName === 'edit') {
+      this.openEditModal(event.row);
     }
   }
 }

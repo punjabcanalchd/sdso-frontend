@@ -20,8 +20,9 @@
 <app-modal-form 
     #createOfficeModal
     [title]="isEditMode ? 'Edit Office' : 'Create Office'"
-    [schema]="OfficeSchema"  
+    [schema]="OfficeSchema"
     [initialValue]="formInitialData"
     size="xl"
+    (fieldChange)="onFieldChange($event)"
     (submitForm)="onSubmit($event)">
 </app-modal-form>

@@ -1,9 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Office } from '../../../../core/models/office.model';
+import { OfficeHierarchy } from '../../../../core/models/office-hierarchy.model';
+import { State } from '../../../../core/models/state.model';
 import { CustomValidators } from '../../../../common/validation/custom-validators';
 import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
 import { EncryptionService } from '../../../../core/services/encrypt.service';
@@ -21,21 +23,26 @@ export class OfficesComponent implements OnInit {
 
   constructor(private userService: AuthService, private cdr: ChangeDetectorRef) { }
 
-  private encryptService = inject(EncryptionService);
+  @ViewChild(ModalFormComponent) officeModal!: ModalFormComponent;
+
   private toast = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
 
   data: Office[] = [];
   formInitialData: any = {};
-  allDivisionList: any[] = [];
   isEditMode = false;
 
   OfficeSchema = OfficeSchema;
   updatingOfficeId: string | null = null;
-
+  officeId: string | null = null;
 
   officeInitialData: any = {};
   isOfficeLoading: boolean = false;
+  officeLevels: OfficeHierarchy[] = [];
+  states: State[] = [];
+  isLoaded = false;
 
   currentPage = 1;
   pageSize = 25;
@@ -44,8 +51,72 @@ export class OfficesComponent implements OnInit {
   sortColumn = '';
   sortDirection = 'asc';
 
+  showCircle = false;
+  showDivision = false;
+  showSubdivision = false;
+
+  circleList: any[] = [];
+  divisionList: any[] = [];
+  subdivisionList: any[] = [];
+  districtList: any[] = [];
+
+  allDivisionList: any[] = [];
+  allSubdivisionList: any[] = [];
+  allDistrictList: any[] = [];
+
+  officeLevelRules: Record<string, {
+    showCircle: boolean;
+    showDivision: boolean;
+    showSubdivision: boolean;
+  }> = {
+
+    'Sub division office': {
+      showCircle: true,
+      showDivision: true,
+      showSubdivision: true
+    },
+
+    'Guage Reader': {
+      showCircle: true,
+      showDivision: true,
+      showSubdivision: true
+    },
+
+    'JE': {
+      showCircle: true,
+      showDivision: true,
+      showSubdivision: true
+    },
+
+    'division office': {
+      showCircle: true,
+      showDivision: true,
+      showSubdivision: false
+    },
+
+    'circle office': {
+      showCircle: true,
+      showDivision: false,
+      showSubdivision: false
+    },
+
+    'chief officer': {
+      showCircle: false,
+      showDivision: false,
+      showSubdivision: false
+    },
+
+    'PSWR': {
+      showCircle: false,
+      showDivision: false,
+      showSubdivision: false
+    }
+  };
+
   ngOnInit(): void {
     this.loadOffices();
+    this.getOfficeLevels();
+    this.getStates();
   }
 
   loadOffices(page: number = this.currentPage): void {
@@ -93,6 +164,288 @@ export class OfficesComponent implements OnInit {
       error: err => {
         console.log(err);
       }
+
+    });
+
+  }
+
+  getOfficeLevels(): void {
+    const params = {};
+    this.userService.getAllOfficeHierarchy(params).subscribe({
+      next: (response) => {
+          this.officeLevels = response;
+          const officeLevels = response.data || [];
+          const parentOptions = officeLevels.map((OfficeHierarchy: any) => ({
+            label: OfficeHierarchy.name_en,
+            value: String(OfficeHierarchy.public_id)
+          }));
+          console.log(parentOptions);
+          const parentField = this.OfficeSchema.fields?.find(
+            f => f.name === 'officelevelcode'
+          );
+
+          if (parentField) {
+            parentField.options = [
+              { label: 'Please select Office level', value: '' },
+              ...parentOptions
+            ];
+          }
+          const form = this.officeModal?.dynamicForm?.form;
+          form.get('officelevelcode')?.setValue('');
+          this.isLoaded = true;
+          this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading office level:', error);
+      }
+    });
+  }
+
+  getStates(): void {
+    const params = {};
+    this.userService.getAllStates(params).subscribe({
+      next: (response) => {
+          this.states = response;
+          const states = response.data || [];
+          const parentOptions = states.map((state: any) => ({
+            label: state.name_en,
+            value: String(state.public_id)
+          }));
+          console.log(parentOptions);
+          const parentField = this.OfficeSchema.fields?.find(
+            f => f.name === 'lgdstatecode'
+          );
+
+          if (parentField) {
+            parentField.options = [
+              { label: 'Please select state', value: '' },
+              ...parentOptions
+            ];
+          }
+          const form = this.officeModal?.dynamicForm?.form;
+          form.get('lgdstatecode')?.setValue('');
+          this.isLoaded = true;
+          this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading states:', error);
+      }
+    });
+  }
+
+  onFieldChange(event: any): void {
+
+    const fieldName = event.name;
+    const value = event.value;
+    console.log('fieldName', fieldName);
+    console.log('value', value);
+    if (fieldName === 'officelevelcode') {
+      this.handleOfficeLevelChange(value);
+    }
+
+    if (fieldName === 'circle_id') {
+      this.handleCircleChange(value);
+    }
+
+    if (fieldName === 'division_id') {
+      this.handleDivisionChange(value);
+    }
+
+    if (fieldName === 'lgdstatecode') {
+      this.handleStateChange(value);
+    }
+  }
+
+  handleOfficeLevelChange(officeLevel: string): void {
+
+    const rule = this.officeLevelRules[officeLevel];
+
+    if (!rule) {
+      this.showCircle = false;
+      this.showDivision = false;
+      this.showSubdivision = false;
+      return;
+    }
+
+    this.showCircle = rule.showCircle;
+    this.showDivision = rule.showDivision;
+    this.showSubdivision = rule.showSubdivision;
+
+    /*
+    * Reset unnecessary dependent values
+    */
+
+    if (!this.showCircle) {
+
+      this.formInitialData.circle_id = null;
+      this.formInitialData.division_id = null;
+      this.formInitialData.subdivision_id = null;
+
+      this.divisionList = [];
+      this.subdivisionList = [];
+
+    } else if (!this.showDivision) {
+
+      this.formInitialData.division_id = null;
+      this.formInitialData.subdivision_id = null;
+
+      this.subdivisionList = [];
+
+    } else if (!this.showSubdivision) {
+
+      this.formInitialData.subdivision_id = null;
+
+    }
+
+    this.updateSchemaVisibility();
+  }
+
+  handleCircleChange(circleId: any): void {
+
+    if (!circleId) {
+
+      this.divisionList = [];
+      this.subdivisionList = [];
+
+      this.formInitialData.division_id = null;
+      this.formInitialData.subdivision_id = null;
+
+      this.updateSchemaOptions();
+
+      return;
+    }
+
+    /*
+    * If divisions are already loaded
+    */
+
+    this.divisionList = this.allDivisionList.filter(
+      division => String(division.circle_id) === String(circleId)
+    );
+
+    /*
+    * Reset division and subdivision
+    */
+
+    this.formInitialData.division_id = null;
+    this.formInitialData.subdivision_id = null;
+
+    this.subdivisionList = [];
+
+    this.updateSchemaOptions();
+  }
+
+  handleDivisionChange(divisionId: any): void {
+
+    if (!divisionId) {
+
+      this.subdivisionList = [];
+
+      this.formInitialData.subdivision_id = null;
+
+      this.updateSchemaOptions();
+
+      return;
+    }
+
+    this.subdivisionList = this.allSubdivisionList.filter(
+      subdivision =>
+        String(subdivision.division_id) === String(divisionId)
+    );
+
+    this.formInitialData.subdivision_id = null;
+
+    this.updateSchemaOptions();
+  }
+
+  handleStateChange(lgdstatecode: any): void {
+
+    if (!lgdstatecode) {
+
+      this.districtList = [];
+
+      this.formInitialData.lgddistcode = null;
+
+      this.updateSchemaOptions();
+
+      return;
+    }
+
+    this.districtList = this.allDistrictList.filter(
+      district =>
+        String(district.lgdstatecode) === String(lgdstatecode)
+    );
+
+    this.formInitialData.lgddistcode = null;
+
+    this.updateSchemaOptions();
+  }
+
+  updateSchemaVisibility(): void {
+
+    this.OfficeSchema.fields = this.OfficeSchema.fields?.map(field => {
+
+      if (field.name === 'circle_id') {
+        return {
+          ...field,
+          hidden: !this.showCircle
+        };
+      }
+
+      if (field.name === 'division_id') {
+        return {
+          ...field,
+          hidden: !this.showDivision
+        };
+      }
+
+      if (field.name === 'subdivision_id') {
+        return {
+          ...field,
+          hidden: !this.showSubdivision
+        };
+      }
+
+      return field;
+    });
+
+  }
+
+  updateSchemaOptions(): void {
+
+    this.OfficeSchema.fields = this.OfficeSchema.fields?.map(field => {
+
+      if (field.name === 'circle_id') {
+        return {
+          ...field,
+          options: this.circleList.map(item => ({
+            label: item.name_en,
+            value: item.id
+          }))
+        };
+      }
+
+      if (field.name === 'division_id') {
+        return {
+          ...field,
+          options: this.divisionList.map(item => ({
+            label: item.name_en,
+            value: item.id
+          }))
+        };
+      }
+
+      if (field.name === 'subdivision_id') {
+        return {
+          ...field,
+          options: this.subdivisionList.map(item => ({
+            label: item.name_en,
+            value: item.id
+          }))
+        };
+      }
+
+      return field;
 
     });
 
@@ -151,8 +504,27 @@ export class OfficesComponent implements OnInit {
 
   }
 
-  openCreateModal(){
+  openCreateModal() {
+    this.isEditMode = false;
+    this.officeId = null;
 
+    this.modalHelper.openModal({
+      modalRef: this.officeModal, 
+      schema: this.OfficeSchema,
+      submitLabel: 'Create Division',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
+  }
+
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
   }
 
   onSubmit(formData: any){
@@ -177,6 +549,7 @@ export class OfficesComponent implements OnInit {
   }
 
   handleAction(event: any): void {
+    console.log('event', event);
     if (event.action === 'EDIT' || event.actionName === 'EDIT') {
     }
   }

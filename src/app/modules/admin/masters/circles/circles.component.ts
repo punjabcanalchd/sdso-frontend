@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Circle } from '../../../../core/models/circle.model';
@@ -10,6 +10,8 @@ import { EncryptionService } from '../../../../core/services/encrypt.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { CircleSchema } from './circles-form.schema';
 import { ModalHelperService } from '../../../../shared/services/modal-helper';
+import { State } from '../../../../core/models/state.model';
+
 
 @Component({
   selector: 'app-circles',
@@ -21,14 +23,20 @@ export class CirclesComponent implements OnInit {
 
   constructor(private userService: AuthService, private cdr: ChangeDetectorRef) { }
 
-  private encryptService = inject(EncryptionService);
+  @ViewChild(ModalFormComponent) circleModal!: ModalFormComponent;
+
   private toast = inject(ToastService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
 
   data: Circle[] = [];
   formInitialData: any = {};
   allCircleList: any[] = [];
   isEditMode = false;
+  states: State[] = [];
+  selectedState: number | null = null;
+  circleId: string | null = null;
 
   CircleSchema = CircleSchema;
   updatingCircleId: string | null = null;
@@ -43,9 +51,11 @@ export class CirclesComponent implements OnInit {
   search = '';
   sortColumn = '';
   sortDirection = 'asc';
+  isLoaded = false;
 
   ngOnInit(): void {
     this.loadCircles();
+    this.getStates();
   }
 
   loadCircles(page: number = this.currentPage): void {
@@ -70,7 +80,12 @@ export class CirclesComponent implements OnInit {
           name_en: circle.name_en,
           name_pb: circle.name_pb,
           state: circle.state,
-          status: circle.status ? 'Active' : 'In-active',
+          description_en: circle.description_en,
+          description_pb: circle.description_pb,
+          lgdstatecode: circle.lgdstatecode,
+          lgddistcode: circle.lgddistcode,
+          status: circle.status,
+          status_value: circle.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(circle.created_at),
         }));
 
@@ -96,7 +111,7 @@ export class CirclesComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
       { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'state', label: 'State', widthClass: 'col-2', sortable: false },
-    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -115,6 +130,38 @@ export class CirclesComponent implements OnInit {
       }
     }
   ];
+
+  getStates(): void {
+    const params = {};
+    this.userService.getAllStates(params).subscribe({
+      next: (response) => {
+          this.states = response;
+          const states = response.data || [];
+          const parentOptions = states.map((state: any) => ({
+            label: state.name_en,
+            value: String(state.lgdstatecode)
+          }));
+          console.log(parentOptions);
+          const parentField = this.CircleSchema.fields?.find(
+            f => f.name === 'lgdstatecode'
+          );
+
+          if (parentField) {
+            parentField.options = [
+              { label: 'Please select state', value: '' },
+              ...parentOptions
+            ];
+          }
+          const form = this.circleModal?.dynamicForm?.form;
+          form.get('lgdstatecode')?.setValue('');
+          this.isLoaded = true;
+          this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading states:', error);
+      }
+    });
+  }
 
   changePage(page: number) {
 
@@ -139,12 +186,109 @@ export class CirclesComponent implements OnInit {
 
   }
 
-  openCreateModal(){
+ openCreateModal() {
+    this.isEditMode = false;
+    this.circleId = null;
 
+    this.modalHelper.openModal({
+      modalRef: this.circleModal, 
+      schema: this.CircleSchema,
+      submitLabel: 'Create Circle',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
   }
 
-  onSubmit(formData: any){
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
 
+  openEditModal(Circle: any) {
+
+    this.isEditMode = true;
+    this.circleId = Circle.id;
+
+    this.CircleSchema.submitLabel = 'Update Circle';
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.circleId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+
+      this.circleModal.open();
+
+      setTimeout(() => {
+
+        const form = this.circleModal?.dynamicForm?.form;
+
+        if (!form) {
+          return;
+        }
+
+        form.patchValue({
+          name_en: Circle.name_en || '',
+          name_pb: Circle.name_pb || '',
+          description_en: Circle.description_en || '',
+          description_pb: Circle.description_pb || '',
+          lgdstatecode: Circle.lgdstatecode,
+          status: Circle.status
+        });
+
+      }, 100);
+    });
+  }
+
+  onSubmit(formData: any): void {
+    
+    const payload = {
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      name: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      lgdstatecode: formData.lgdstatecode,
+      same_as_english_pb: formData.same_as_english_pb ?? null,
+      status: formData.status,
+      circleId: this.circleId ?? null,
+    };
+
+    if (this.isEditMode && this.circleId) {
+
+      this.userService.updateCircle(this.circleId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Circle updated successfully!', 4000);
+          this.circleModal.close();
+          this.loadCircles();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update Circle');
+          console.error('Failed to update Circle:', error);
+        }
+      });
+
+    } else {
+       this.userService.createCircle(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Circle created successfully!', 4000);
+          this.circleModal.close();
+          this.loadCircles();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create Circle');
+          console.error('Failed to create Circle:', error);
+        }
+      });
+    }
   }
 
   onPageSizeChange(size: number): void {
@@ -165,7 +309,8 @@ export class CirclesComponent implements OnInit {
   }
 
   handleAction(event: any): void {
-    if (event.action === 'EDIT' || event.actionName === 'EDIT') {
+    if (event.action === 'edit' || event.actionName === 'edit') {
+      this.openEditModal(event.row);
     }
   }
 }

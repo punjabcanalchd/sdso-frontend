@@ -98,7 +98,7 @@ export class States implements OnInit {
         if (!form) {
           return;
         }
-
+        console.log('state', state);
         form.patchValue({
           name_en: state.name_en || '',
           name_pb: state.name_pb || '',
@@ -211,84 +211,83 @@ export class States implements OnInit {
 
     this.loadStates();
   }
-onSubmit(formData: any): void {
 
-  const payload = {
-    lgdstatecode: formData.lgdstatecode,
-    status: formData.status,
+  onSubmit(formData: any): void {
 
-    languages: [
-      {
-        language_id: 1,
-        name: formData.name_en || '',
-        description: formData.description_en || ''
-      },
-      {
-        language_id: 2,
-        name: formData.name_pb || '',
-        description: formData.description_pb || ''
-      }
-    ]
-  };
+    const payload = {
+      lgdstatecode: formData.lgdstatecode,
+      status: formData.status,
 
-  console.log('Update/Create Payload:', payload);
+      languages: [
+        {
+          language_id: 1,
+          name: formData.name_en || '',
+          description: formData.description_en || ''
+        },
+        {
+          language_id: 2,
+          name: formData.name_pb || '',
+          description: formData.description_pb || ''
+        }
+      ]
+    };
 
-  if (this.isEditMode && this.stateId) {
+    if (this.isEditMode && this.stateId) {
 
-    this.userService.updateState(this.stateId, payload).subscribe({
-      next: (res: any) => {
+      this.userService.updateState(this.stateId, payload).subscribe({
+        next: (res: any) => {
 
-        this.toast.show(
-          'success',
-          res.message || 'State updated successfully!',
-          4000
-        );
+          this.toast.show(
+            'success',
+            res.message || 'State updated successfully!',
+            4000
+          );
 
-        this.stateModal.close();
-        this.loadStates();
-      },
+          this.stateModal.close();
+          this.loadStates();
+        },
 
-      error: (error: any) => {
+        error: (error: any) => {
 
-        this.toast.show(
-          'error',
-          error.error?.message || 'Failed to update state'
-        );
+          this.toast.show(
+            'error',
+            error.error?.message || 'Failed to update state'
+          );
 
-        console.error('Failed to update state:', error);
-      }
-    });
+          console.error('Failed to update state:', error);
+        }
+      });
 
-  } else {
+    } else {
 
-    this.userService.createState(payload).subscribe({
-      next: (res: any) => {
+      this.userService.createState(payload).subscribe({
+        next: (res: any) => {
 
-        this.toast.show(
-          'success',
-          res.message || 'State created successfully!',
-          4000
-        );
+          this.toast.show(
+            'success',
+            res.message || 'State created successfully!',
+            4000
+          );
 
-        this.stateModal.close();
-        this.loadStates();
-      },
+          this.stateModal.close();
+          this.loadStates();
+        },
 
-      error: (error: any) => {
+        error: (error: any) => {
 
-        this.toast.show(
-          'error',
-          error.error?.message || 'Failed to create state'
-        );
+          this.toast.show(
+            'error',
+            error.error?.message || 'Failed to create state'
+          );
 
-        console.error('Failed to create state:', error);
-      }
-    });
+          console.error('Failed to create state:', error);
+        }
+      });
+    }
   }
-}
 
 
-   formatDate(dateInput: any): string {
+  formatDate(dateInput: any): string {
     if (!dateInput) return '';
     const date = new Date(dateInput);
     if (isNaN(date.getTime())) return dateInput;
