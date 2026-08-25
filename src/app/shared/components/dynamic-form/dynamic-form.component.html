@@ -50,7 +50,14 @@
       <!-- TABS NAVIGATION -->
       
         
-      <div  *ngIf="isFieldVisible(field) && isFieldInActiveTab(field)" class="col-12" [ngClass]="getFieldClass(field)">
+      <!-- <div  *ngIf="isFieldVisible(field) && isFieldInActiveTab(field)" class="col-12" [ngClass]="getFieldClass(field)">
+         -->
+
+         <div
+          *ngIf="isFieldVisible(field)"
+          [hidden]="!isFieldInActiveTab(field)"
+          class="col-12"
+          [ngClass]="getFieldClass(field)">
       <!-- LABEL -->
       <label class="form-label fw-semibold f_font_size">
         {{ field.label }}

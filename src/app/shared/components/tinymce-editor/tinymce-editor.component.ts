@@ -61,7 +61,8 @@ export class TinymceEditorComponent
 
   editorInitialized = false;
 
-  private pendingValue = '';
+  private pendingValue =  '';
+  private isDestroyed = false;
 
   constructor(
     private toast: ToastService
@@ -72,6 +73,12 @@ export class TinymceEditorComponent
   // ---------------------------------------------------------
 
   ngAfterViewInit(): void {
+    
+
+    if(this.isDestroyed || !this.editor?.nativeElement) 
+      {
+          return;
+      }
 
     tinymce.init({
 
@@ -121,6 +128,11 @@ export class TinymceEditorComponent
 
       setup: (editor: any) => {
 
+         if (this.isDestroyed) {
+          return;
+        }
+
+
         this.currentEditor = editor;
 
         // -----------------------------------------------
@@ -128,6 +140,10 @@ export class TinymceEditorComponent
         // -----------------------------------------------
 
         editor.on('init', () => {
+
+          if (this.isDestroyed ) {
+          return;
+         }
 
           this.editorInitialized = true;
 
@@ -145,9 +161,25 @@ export class TinymceEditorComponent
 
         editor.on('input change undo redo', () => {
 
-          const content = editor.getContent();
+          if (this.isDestroyed) {
+            return;
+          }
 
-          this.valueChange.emit(content);
+          try {
+
+            const content =
+              editor.getContent();
+
+            this.valueChange.emit(content);
+
+          } catch (error) {
+
+            console.warn(
+              'TinyMCE event error:',
+              error
+            );
+
+          }
         });
 
         // -----------------------------------------------
@@ -160,7 +192,15 @@ export class TinymceEditorComponent
 
           onAction: () => {
 
-            this.fileInput.nativeElement.click();
+            if (
+            this.isDestroyed ||
+            !this.fileInput?.nativeElement
+          ) {
+            return;
+          }
+
+          this.fileInput.nativeElement.click();
+        
 
           }
 
@@ -177,7 +217,7 @@ export class TinymceEditorComponent
 
   ngOnChanges(changes: SimpleChanges): void {
 
-    if (!changes['value']) {
+    if (!changes['value'] || this.isDestroyed) {
       return;
     }
 
@@ -295,16 +335,23 @@ export class TinymceEditorComponent
   // ---------------------------------------------------------
 
   ngOnDestroy(): void {
+      this.isDestroyed = true;
 
-    if (this.currentEditor) {
+  if (this.currentEditor) {
+    try {
+      // Remove TinyMCE event listeners first
+      this.currentEditor.off();
 
-      this.currentEditor.destroy();
-
-      this.currentEditor = null;
+      // Properly remove the editor and its DOM/event references
+      this.currentEditor.remove();
+    } catch (error) {
+      console.warn('TinyMCE cleanup error:', error);
     }
 
-    this.editorInitialized = false;
-
-    this.pendingValue = '';
+    this.currentEditor = null;
   }
+
+  this.editorInitialized = false;
+  this.pendingValue = '';
+}
 }
