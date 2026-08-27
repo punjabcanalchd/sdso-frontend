@@ -256,11 +256,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/districts/${districtId}/update`, payload);
   }
 
-  getOfficeHierarchy(data: any): Observable<any> {
+  getOfficeHierarchy(data?: any): Observable<any> {
     return this.api.get<any>('/admin/office_hierarchy', data);
   }
 
-  getAllOfficeHierarchy(data: any): Observable<any> {
+  getAllOfficeHierarchy(data?: any): Observable<any> {
     return this.api.get<any>('/admin/office_hierarchy/all', data);
   }
 
@@ -272,7 +272,7 @@ export class AuthService {
     return this.api.post<any>(`/admin/office_hierarchy/${OfficeHierarchyId}/update`, payload);
   }
 
-  getDesignations(data: any): Observable<any> {
+  getDesignations(data?: any): Observable<any> {
     return this.api.get<any>('/admin/designation', data);
   }
 
@@ -284,11 +284,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/designation/${designationId}/update`, payload);
   }
 
-  getCircles(data: any): Observable<any> {
+  getCircles(data?: any): Observable<any> {
     return this.api.get<any>('/admin/circles', data);
   }
 
-  getAllCircles(data: any): Observable<any> {
+  getAllCircles(data?: any): Observable<any> {
     return this.api.get<any>('/admin/circles/all', data);
   }
 
@@ -300,11 +300,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/circles/${circleId}/update`, payload);
   }
 
-  getDivisions(data: any): Observable<any> {
+  getDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/divisions', data);
   }
 
-  getAllDivisions(data: any): Observable<any> {
+  getAllDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/divisions/all', data);
   }
 
@@ -316,11 +316,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/divisions/${divisionId}/update`, payload);
   }
 
-  getSubDivisions(data: any): Observable<any> {
+  getSubDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/subdivisions', data);
   }
 
-  getAllSubDivisions(data: any): Observable<any> {
+  getAllSubDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/subdivisions/all', data);
   }
 
@@ -332,7 +332,14 @@ export class AuthService {
     return this.api.post<any>(`/admin/subdivisions/${subDivisionId}/update`, payload);
   }
 
-  getOffices(data: any): Observable<any> {
+  getOffices(data?: any): Observable<any> {
     return this.api.get<any>('/admin/offices', data);
+  }
+
+  getDivisionsByCircle(circleId: string): Observable<any> {
+    return this.api.get<any>(`/admin/divisions/${circleId}/getdivisions`);
+  }
+  getSubdivisionsByDivision(divisionId: string): Observable<any> {
+    return this.api.get<any>(`/admin/subdivisions/${divisionId}/getsubdivisions`);
   }
 }

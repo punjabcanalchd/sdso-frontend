@@ -90,7 +90,7 @@ export class CustomPermissionComponent implements OnInit, OnDestroy, ControlValu
 
   toggleCrudPopover(clickedPerm: any) {
     const targetState = !clickedPerm.showCrudPopover;
-    
+
     // Close other popovers
     this.permissionsList.forEach(cat => {
       cat.permissions.forEach((perm: any) => {
@@ -185,14 +185,30 @@ export class CustomPermissionComponent implements OnInit, OnDestroy, ControlValu
     });
   }
 
-  togglePermission(id: number) {
-    if (this.selectedPermissionIds.includes(id)) {
-      this.selectedPermissionIds = this.selectedPermissionIds.filter(x => x !== id);
-    } else {
+   togglePermission(id: number) {
+    // Determine if we are checking or unchecking the box
+    const isNowSelected = !this.selectedPermissionIds.includes(id);
+
+    if (isNowSelected) {
       this.selectedPermissionIds.push(id);
+    } else {
+      this.selectedPermissionIds = this.selectedPermissionIds.filter(x => x !== id);
     }
+
+    // Find the specific permission and update its CRUD actions to match the new state
+    this.permissionsList.forEach(cat => {
+      cat.permissions.forEach((perm: any) => {
+        if (perm.id === id) {
+          Object.keys(perm.crudActions).forEach(action => {
+            perm.crudActions[action] = isNowSelected;
+          });
+        }
+      });
+    });
+
     this.propagateChanges();
   }
+
 
   toggleCrudAction(permission: any, action: string): void {
     permission.crudActions[action] = !permission.crudActions[action];
@@ -206,6 +222,9 @@ export class CustomPermissionComponent implements OnInit, OnDestroy, ControlValu
         if (!allIds.includes(perm.id)) {
           allIds.push(perm.id);
         }
+        Object.keys(perm.crudActions).forEach(action => {
+          perm.crudActions[action] = true;
+        });
       });
     });
     this.selectedPermissionIds = allIds;
@@ -217,6 +236,13 @@ export class CustomPermissionComponent implements OnInit, OnDestroy, ControlValu
     const visibleIds = this.filteredPermissionsList.flatMap(cat => cat.permissions.map((p: any) => p.id));
     this.selectedPermissionIds = this.selectedPermissionIds.filter(id => !visibleIds.includes(id));
     this.propagateChanges();
+    this.filteredPermissionsList.forEach(cat => {
+      cat.permissions.forEach((perm: any) => {
+        Object.keys(perm.crudActions).forEach(action => {
+          perm.crudActions[action] = false;
+        });
+      });
+    });
     this.cdr.detectChanges();
   }
 

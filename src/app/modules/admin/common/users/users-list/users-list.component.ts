@@ -151,6 +151,8 @@ export class Users implements OnInit {
     this.loadUsers();
     this.loadRoles();
     this.loadDistricts();
+    this.loadCircles();
+    this.loadOfficeLevels();
     this.initUpdateEmailSchema();
   }
 
@@ -332,6 +334,11 @@ export class Users implements OnInit {
 
   openCreateModal() {
     this.formInitialData = {
+      officelevelcode: '',
+      circle_id: '',      
+      division_id: '',    
+      subdivision_id: '', 
+      officecode: '',  
       status: 'ACTIVE',
       password: '',
       password_confirmation: '',
@@ -344,6 +351,9 @@ export class Users implements OnInit {
       patchData: this.formInitialData,
       useRouting: false
     });
+     setTimeout(() => {
+      this.setupCascadingDropdowns();
+    }, 200);
   }
 
   onSubmit(formData: any): void {
@@ -581,7 +591,98 @@ export class Users implements OnInit {
         this.cdr.detectChanges();
       }
     });
+    
   }
+  loadCircles(): void {
+    this.userService.getAllCircles().subscribe({
+      next: (response) => {
+        const mappedCircles = response.data.map((circle: any) => ({
+          label: circle.name_en,
+          value: circle.public_id
+        }));
+
+        const circleField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'circle_id');
+        if (circleField) {
+          circleField.options = mappedCircles;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load circles:', err)
+    });
+  }
+
+  loadDivisions(): void {
+    this.userService.getAllDivisions().subscribe({
+      next: (response) => {
+        const mappedDivisions = response.data.map((div: any) => ({
+          label: div.name_en,
+          value: div.public_id
+        }));
+
+        const divisionField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'division_id');
+        if (divisionField) {
+          divisionField.options = mappedDivisions;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load divisions:', err)
+    });
+  }
+
+  loadSubDivisions(): void {
+    this.userService.getAllSubDivisions().subscribe({
+      next: (response) => {
+        const mappedSubDivisions = response.data.map((sub: any) => ({
+          label: sub.name_en,
+          value: sub.public_id
+        }));
+
+        const subdivisionField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'subdivision_id');
+        if (subdivisionField) {
+          subdivisionField.options = mappedSubDivisions;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load subdivisions:', err)
+    });
+  }
+
+  loadOfficeLevels(): void {
+    this.userService.getAllOfficeHierarchy().subscribe({
+      next: (response) => {
+        const mappedLevels = response.data.map((level: any) => ({
+          label: level.name_en,
+          value: level.name_en
+        }));
+
+        const officeLevelField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'officelevelcode');
+        if (officeLevelField) {
+          officeLevelField.options = mappedLevels;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load office levels:', err)
+    });
+  }
+
+  loadOffices(): void {
+    this.userService.getOffices().subscribe({
+      next: (response) => {
+        const mappedOffices = response.data.map((office: any) => ({
+          label: office.name_en,
+          value: office.public_id
+        }));
+
+        const officeField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'officecode');
+        if (officeField) {
+          officeField.options = mappedOffices;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load offices:', err)
+    });
+  }
+
 
   changePage(page: number) {
 
@@ -605,4 +706,54 @@ export class Users implements OnInit {
     this.loadUsers(1);
 
   }
+  
+    setupCascadingDropdowns() {
+    if (this.userModal?.dynamicForm?.form) {
+      
+      // 1. Listen for Circle changes
+      this.userModal.dynamicForm.form.get('circle_id')?.valueChanges.subscribe((circleId: string) => {
+        const divisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'division_id');
+        const subdivisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'subdivision_id');
+        const officeField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'officecode');
+
+        // Clear child dropdowns
+        if (divisionField) divisionField.options = [];
+        if (subdivisionField) subdivisionField.options = [];
+        if (officeField) officeField.options = [];
+        this.userModal.dynamicForm.form.patchValue({ division_id: '', subdivision_id: '', officecode: '' }, { emitEvent: false });
+
+        if (circleId) {
+          this.userService.getDivisionsByCircle(circleId).subscribe(res => {
+            if (divisionField) {
+              divisionField.options = res.data.map((d: any) => ({ label: d.name_en, value: d.public_id }));
+              divisionField.placeholder = 'Select Division';
+            }
+            this.cdr.detectChanges();
+          });
+        }
+      });
+
+      // 2. Listen for Division changes
+      this.userModal.dynamicForm.form.get('division_id')?.valueChanges.subscribe((divisionId: string) => {
+        const subdivisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'subdivision_id');
+        const officeField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'officecode');
+
+        // Clear child dropdowns
+        if (subdivisionField) subdivisionField.options = [];
+        if (officeField) officeField.options = [];
+        this.userModal.dynamicForm.form.patchValue({ subdivision_id: '', officecode: '' }, { emitEvent: false });
+
+        if (divisionId) {
+          this.userService.getSubdivisionsByDivision(divisionId).subscribe(res => {
+            if (subdivisionField) {
+              subdivisionField.options = res.data.map((s: any) => ({ label: s.name_en, value: s.public_id }));
+              subdivisionField.placeholder = 'Select Sub Division';
+            }
+            this.cdr.detectChanges();
+          });
+        }
+      });
+    }   
+  }
+
 }
