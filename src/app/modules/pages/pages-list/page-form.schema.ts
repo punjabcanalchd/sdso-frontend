@@ -110,26 +110,26 @@ export const pageSchema: FormSchema = {
       options: [
         {
           label: 'Active',
-          value: 'active'
+          value: true // or 1 depending on backend return
         },
         {
           label: 'Inactive',
-          value: 'inactive'
+          value: false // or 0
         }
       ]
     },
 
     {
       type: 'number',
-      name: 'pageOrder',
+      name: 'sort_order',
       label: 'Page Order',
       className: 'col-md-4'
     },
 
      {
       type: 'file',
-      name: 'pageBanner',
-      label: 'Default Page Banner (1366p x 350p)',      
+      name: 'page_banner',
+      label: 'Default Page Banner (1366p x 350p)',    
 
     },
 

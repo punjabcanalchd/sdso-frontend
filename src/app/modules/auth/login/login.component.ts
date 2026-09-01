@@ -37,7 +37,7 @@ import { AdminConfig } from '../../../core/models/admin-config.model';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, DynamicFormComponent, CommonModule,HeaderComponent,FooterComponent,NavbarComponent,AccessibilityBarComponent,TickerComponent],
+  imports: [ReactiveFormsModule, DynamicFormComponent, CommonModule,HeaderComponent,FooterComponent,AccessibilityBarComponent,TickerComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   

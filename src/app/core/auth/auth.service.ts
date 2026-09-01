@@ -228,6 +228,18 @@ export class AuthService {
     return this.api.get<any>(`/admin/pages`, payload);
   }
 
+  getPageByPublicId(publicId: string): Observable<any> {
+    return this.api.get<any>(`/admin/pages/${publicId}`);
+  }
+  createPage(payload: FormData): Observable<any> {
+    return this.api.post<any>('/admin/pages', payload);
+  }
+  updatePage(publicId: string, payload: FormData): Observable<any> {
+  return this.api.post<any>(
+    `/admin/pages/${publicId}/update`,
+    payload
+  );
+}
   getStates(data: any): Observable<any> {
     return this.api.get<any>('/admin/states', data);
   }
@@ -299,7 +311,7 @@ export class AuthService {
   updateCircle(circleId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/circles/${circleId}/update`, payload);
   }
-
+ 
   getDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/divisions', data);
   }

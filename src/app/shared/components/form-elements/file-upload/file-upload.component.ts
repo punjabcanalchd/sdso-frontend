@@ -27,7 +27,15 @@ export class FileUploadComponent {
       return value.name;
     }
 
+    // If value is an existing string path/name from the backend (Edit mode)
+    if (typeof value === 'string' && value.trim() !== '') {
+      // Extracts just the file name if it's a URL/path, or returns the string directly
+      return value.substring(value.lastIndexOf('/') + 1);
+    }
+
     return value?.fileName || '';
+
+    // return value?.fileName || '';
   }
 
   onFileBlur() {
