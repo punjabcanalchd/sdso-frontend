@@ -66,12 +66,23 @@ export function buildFormGroup(
     }
 
     group[field.name] = fb.control(
-      { value: field.type === 'multi-checkbox' ? [] : '', disabled: field.disabled || false },
-      {
-        validators,
-        updateOn: field.updateOn ?? 'change' // DEFAULT SAFE
-      }
-    );
+    { value: field.type === 'multi-checkbox' ? [] : '', disabled: field.disabled || false },
+    {
+      validators,
+    asyncValidators: field.asyncValidators?.length
+                    ? field.asyncValidators
+                    : undefined,
+      updateOn: field.updateOn ?? 'change'
+    }
+  );
+
+    // group[field.name] = fb.control(
+    //   { value: field.type === 'multi-checkbox' ? [] : '', disabled: field.disabled || false },
+    //   {
+    //     validators,
+    //     updateOn: field.updateOn ?? 'change' // DEFAULT SAFE
+    //   }
+    // );
   });
 
 

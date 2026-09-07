@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn,AsyncValidatorFn } from '@angular/forms';
 import { PATTERNS } from './patterns';
 
 /**
@@ -365,12 +365,24 @@ static menuTitle(): ValidatorFn {
   * FILE UPLOAD (UX-ONLY VALIDATION)
   * ---------------------------------------------------------------- */
 
-  static fileRequired(): ValidatorFn {
+ static fileRequired(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = control.value;
 
-    // valid if a File exists
+    // No value = required error
+    if (!value) {
+      return {
+        validationMessage: 'Please select a file.'
+      };
+    }
+
+    // New file selected = valid
     if (value instanceof File) {
+      return null;
+    }
+
+    // Existing file from backend = valid in edit mode
+    if (typeof value === 'string' && value.trim() !== '') {
       return null;
     }
 
@@ -438,6 +450,101 @@ static fileMaxSizeKB(maxKB: number): ValidatorFn {
     return null;
   };
 }
+
+
+
+static pageBanner(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const file = control.value;
+
+    // No file selected
+    if (!(file instanceof File)) {
+      return null;
+    }
+
+    // Allowed file types
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      return {
+        validationMessage:
+          'Page Banner must be a JPG, JPEG, PNG, or WEBP image.'
+      };
+    }
+
+    // Check dimensions
+    const image = new Image();
+
+    const validation = {
+      valid: true
+    };
+
+    image.onload = () => {
+      if (image.width !== 1366 || image.height !== 350) {
+        validation.valid = false;
+      };
+
+      URL.revokeObjectURL(image.src);
+    };
+
+    image.src = URL.createObjectURL(file);
+
+    return null;
+  };
+}
+
+
+
+static imageDimensions(
+  requiredWidth: number,
+  requiredHeight: number
+): AsyncValidatorFn {
+  return (control: AbstractControl): Promise<ValidationErrors | null> => {
+    const file = control.value;
+
+    if (!(file instanceof File)) {
+      return Promise.resolve(null);
+    }
+
+    return new Promise((resolve) => {
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      image.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+
+        if (
+          image.width === requiredWidth &&
+          image.height === requiredHeight
+        ) {
+          resolve(null);
+        } else {
+          resolve({
+            validationMessage:
+              `Image dimensions must be exactly ${requiredWidth} x ${requiredHeight} pixels.`
+          });
+        }
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+
+        resolve({
+          validationMessage: 'Unable to read image dimensions.'
+        });
+      };
+
+      image.src = objectUrl;
+    });
+  };
+}
+
+
+
 // static fileTypes(allowedExtensions: string[]): ValidatorFn {
 
 //   const allowed = allowedExtensions.map(
@@ -624,7 +731,11 @@ static suspiciousFileUpload(): ValidatorFn {
       return null;
     }
 
-    const fileName = file.name.toLowerCase();
+   const fileName = file?.name?.toLowerCase();
+
+if (!fileName) {
+  return null;
+}
 
     const blockedExtensions = [
       'exe', 'bat', 'cmd', 'com', 'msi',

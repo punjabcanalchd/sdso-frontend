@@ -1,54 +1,64 @@
+<!-- FILE INPUT -->
+<input
+  type="file"
+  class="form-control"
+  (change)="onFileSelect($event)"
+  
+  (click)="onFileClick()"
+  
+/>
 
 
-  <!-- LABEL -->
-  <!-- <label class="form-label fw-semibold">
-    {{ label }}
-  </label> -->
+<!-- EXISTING / SELECTED FILE -->
+<div class="form-text mt-1">
 
-  <!-- FILE INPUT -->
-  <input
-    type="file"
-    class="form-control"
-    (change)="onFileSelect($event)"
-    (click)="onFileClick()"
-    (blur)="onFileBlur()"
-  />
-  <!-- Validation Messages -->
-  <div
-    class="invalid-feedback d-block"
-    *ngIf="control.touched && control.errors">
-<!-- 
-    <div *ngIf="control.errors['required']">
-      Please select a file.
-    </div> -->
+  <div *ngIf="fileName; else noFile">
 
-    <div *ngIf="control.errors['fileTypes']">
-      {{ control.errors['fileTypes'].message }}
-    </div>
-
-    <div *ngIf="control.errors['fileMaxSizeKB']">
-      {{ control.errors['fileMaxSizeKB'].message }}
-    </div>
-
-    <div *ngIf="control.errors['suspiciousFile']">
-      {{ control.errors['suspiciousFile'].message }}
-    </div>
-
-  </div>
-  <!-- FILE NAME -->
-  <div class="form-text mt-1">
-
-      <span *ngIf="fileName; else noFile">
-      <i class="bi bi-file-earmark-text me-1"></i>
+    <div class="mb-1">
       {{ fileName }}
-    </span>
+    </div>
 
-    <ng-template #noFile>
-
-      <span class="text-muted">
-        No file selected
-      </span>
-
-    </ng-template>
+    <img
+      *ngIf="filePreviewUrl"
+      [src]="filePreviewUrl"
+      alt="Page Banner"
+      class="file-preview"
+    />
 
   </div>
+
+  <ng-template #noFile>
+    <span class="text-muted">
+      No file selected
+    </span>
+  </ng-template>
+
+
+
+  
+<!-- Validation Messages -->
+<div
+  class="invalid-feedback d-block"
+  *ngIf="control.touched && control.errors"
+>
+  <div *ngIf="control.errors['fileTypes']">
+    {{ control.errors['fileTypes'].message }}
+  </div>
+
+  <div *ngIf="control.errors['fileMaxSizeKB']">
+    {{ control.errors['fileMaxSizeKB'].message }}
+  </div>
+
+  <div *ngIf="control.errors['suspiciousFile']">
+    {{ control.errors['suspiciousFile'].message }}
+  </div>
+
+  <div *ngIf="control.errors['imageDimensions']">
+    Page banner dimensions must be exactly
+    {{ control.errors['imageDimensions'].requiredWidth }}
+    x
+    {{ control.errors['imageDimensions'].requiredHeight }}
+    pixels.
+  </div>
+</div>
+</div>

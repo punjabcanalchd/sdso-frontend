@@ -43,28 +43,85 @@ export function isInvalid(form: FormGroup, field: string): boolean {
 //   return 'Invalid input';
 // }
 
-export function getErrorMessage(form: FormGroup, field: string): string {
+// export function getErrorMessage(form: FormGroup, field: string): string {
 
+//   const control = form.get(field);
+
+//   if (!control || !control.errors) {
+//     return '';
+//   }
+
+//   if (control.errors['required']) {
+//     return 'This field is required';
+//   }
+
+//   if (control.errors['validationMessage']) {
+//     return control.errors['validationMessage'];
+//   }
+
+//   if (control.errors['serverError']) {
+//     return control.errors['serverError'];
+//   }
+
+//   if (control.errors['duplicateName']) {
+//     return 'This name is already taken';
+//   }
+
+//   return 'Invalid input';
+// }
+
+
+
+export function getErrorMessage(
+  form: FormGroup,
+  field: string
+): string {
   const control = form.get(field);
 
   if (!control || !control.errors) {
     return '';
   }
 
-  if (control.errors['required']) {
+  const errors = control.errors;
+
+  if (errors['required']) {
     return 'This field is required';
   }
 
-  if (control.errors['validationMessage']) {
-    return control.errors['validationMessage'];
+  if (errors['validationMessage']) {
+    return errors['validationMessage'];
   }
 
-  if (control.errors['serverError']) {
-    return control.errors['serverError'];
+  if (errors['serverError']) {
+    return errors['serverError'];
   }
 
-  if (control.errors['duplicateName']) {
+  if (errors['duplicateName']) {
     return 'This name is already taken';
+  }
+
+  if (errors['fileTypes']) {
+    return errors['fileTypes'].message ||
+           'Invalid file type.';
+  }
+
+  if (errors['fileMaxSizeKB']) {
+    return errors['fileMaxSizeKB'].message ||
+           'File size is too large.';
+  }
+
+  if (errors['fileMaxSizeMB']) {
+    return errors['fileMaxSizeMB'].message ||
+           'File size is too large.';
+  }
+
+  if (errors['suspiciousFile']) {
+    return errors['suspiciousFile'].message ||
+           'Invalid file.';
+  }
+
+  if (errors['imageDimensions']) {
+    return 'Image must be exactly 1366 × 350 pixels.';
   }
 
   return 'Invalid input';

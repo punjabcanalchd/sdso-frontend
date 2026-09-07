@@ -244,7 +244,7 @@ onServerAction(params: {
 
     if (this.pageModal?.dynamicForm) {
       this.pageModal.dynamicForm.form.reset();
-    }
+    } 
     
     this.router.navigate([], {
       relativeTo: this.route,
@@ -256,7 +256,7 @@ onServerAction(params: {
     });
   }
 
-
+  
 
   openEditModal(id: string | number): void {
   this.isEditMode = true;
@@ -273,39 +273,17 @@ onServerAction(params: {
     next: (res: any) => {
       console.log('Page Response:', res);
 
+        console.log('Page Response:', res);
+    console.log('Returned public_id:', res.data?.public_id);
+    console.log('Returned page_banner:', res.data?.page_banner);
+
       if (res.data) {
           const pageData = res.data;
 
           const englishTitle = pageData.name_en || '';
           const punjabiTitle = pageData.name_pb || '';
 
-          // const patchValue = {
-          //   en_title: englishTitle,
-          //   en_description: pageData.description_en || '',
-          //   en_meta_title: pageData.meta_title_en || '',
-          //   en_meta_description: pageData.meta_description_en || '',
-          //   en_meta_keyword: pageData.meta_keyword_en || '',
-
-          //   same_as_english: englishTitle === punjabiTitle,
-
-          //   pa_title: punjabiTitle,
-          //   pa_description: pageData.description_pb || '',
-          //   pa_meta_title: pageData.meta_title_pb || '',
-          //   pa_meta_description: pageData.meta_description_pb || '',
-          //   pa_meta_keyword: pageData.meta_keyword_pb || '',
-
-          //   slug: pageData.slug || '',
-          //   status: !!pageData.status,
-          //   sort_order: pageData.sort_order ?? 0,
-
-          //   page_type:
-          //     pageData.page_type !== undefined &&
-          //     pageData.page_type !== null
-          //       ? String(pageData.page_type)
-          //       : '1',
-
-          //   external_url: pageData.external_url || ''
-          // };
+         
         const patchValue = {
               name_en: pageData.name_en ?? '',
               description_en: pageData.description_en ?? '',
@@ -323,43 +301,54 @@ onServerAction(params: {
               status: !!pageData.status,
               sort_order: pageData.sort_order ?? 0,
               page_type: String(pageData.page_type ?? '1'),
-              external_url: pageData.external_url ?? ''
+              external_url: pageData.external_url ?? '',
+              page_banner: pageData.page_banner ?? ''
           };
 
-          this.pageModal.dynamicForm.form.patchValue(patchValue);
-
-
-          console.log('Page Data:', pageData);
-          console.log('Patch Value:', patchValue);
-
-          if (this.pageModal?.dynamicForm) {
-            // this.pageModal.dynamicForm.form.reset();
-            this.pageModal.dynamicForm.form.patchValue(patchValue);
-          }
-
-          this.pageModal.open();
-
-          setTimeout(() => {
-             const form = this.pageModal?.dynamicForm?.form;
-
-        if (!form) {
-          console.error('Dynamic form is not available');
-          return;
-        }
 
         // form.patchValue(pageData);
-        console.log("pageData==",pageData);
+        // console.log("pageData==",pageData);
 
+     this.pageModal.open();
+
+    setTimeout(() => {
+
+    const form = this.pageModal?.dynamicForm?.form;
+
+      if (!form) {
+        console.error('Dynamic form is not available');
+        return;
+      }
+
+      // IMPORTANT: clear previous page values
+      form.reset();
         console.log(
-          'Form values after patch:',
-          form.getRawValue()
+          'PARENT CONTROL:',
+          form.get('page_banner')
         );
+      // Set current page values
+   console.log('API pageData:', pageData);
+console.log('API page_banner:', pageData.page_banner);
+console.log('patchValue page_banner:', patchValue.page_banner);
 
-        this.bindCheckboxLogic();
-        this.cdr.detectChanges();
-  
-          }, 100);
-        }   
+form.patchValue(patchValue);
+
+console.log('AFTER PATCH page_banner:', form.get('page_banner')?.value);
+
+const parentControl = form.get('page_banner');
+
+const dynamicControl =
+  this.pageModal.dynamicForm.getControl('page_banner');
+
+console.log('Parent value:', parentControl?.value);
+console.log('DynamicForm value:', dynamicControl?.value);
+console.log('Same control:', parentControl === dynamicControl);
+
+      this.bindCheckboxLogic();
+
+      this.cdr.detectChanges();  
+      }, 100);
+    }   
     },
     error: (err: any) => {
       console.log(err);
@@ -381,21 +370,6 @@ onServerAction(params: {
       //   break;
     }
   }
-
-  // deletePage(id: string): void {
-  //   if (confirm('Are you sure you want to delete this page?')) {
-  //     this.pageService.deletePage(id).subscribe({
-  //       next: () => {
-  //         this.toast.show('success', 'Page deleted successfully!', 4000);
-  //         this.loadPages();
-  //       },
-  //       error: (err) => {
-  //         console.error('Failed to delete page:', err);
-  //         this.toast.show('error', err.error?.message || 'Failed to delete page');
-  //       }
-  //     });
-  //   }
-  // }
 
 
 
@@ -472,17 +446,21 @@ onSubmit(formData: any): void {
   );
 
   // ==============================
-  // Same as English
+  // Page Banner
   // ==============================
 
-  payload.append(
-    'same_as_english_pb',
-    formData.same_as_english_pb === true ||
-    formData.same_as_english_pb === '1' ||
-    formData.same_as_english_pb === 1
-      ? '1'
-      : '0'
-  );
+   if (formData.page_banner instanceof File) {
+  payload.append('page_banner', formData.page_banner);
+}
+
+  // payload.append(
+  //   'same_as_english_pb',
+  //   formData.same_as_english_pb === true ||
+  //   formData.same_as_english_pb === '1' ||
+  //   formData.same_as_english_pb === 1
+  //     ? '1'
+  //     : '0'
+  // );
 
   // ==============================
   // Meta - English
@@ -543,6 +521,7 @@ onSubmit(formData: any): void {
   console.log('Edit mode:', this.isEditMode);
   console.log('Page ID:', this.pageId);
   console.log('Form data:', formData);
+   console.log('external_url:',formData.external_url);
 
   payload.forEach((value, key) => {
     console.log(key, value);

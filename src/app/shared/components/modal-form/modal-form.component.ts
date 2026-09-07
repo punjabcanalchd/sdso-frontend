@@ -18,6 +18,7 @@ export class ModalFormComponent implements AfterViewInit {
   @Input() schema!: FormSchema;
   @Input() initialValue: any = {};
   @Input() isLoading: boolean = false;
+  @Input() isEditMode = false;
 
   @Output() submitForm = new EventEmitter<any>();
   @Output() buttonClick = new EventEmitter<any>();

@@ -233,11 +233,13 @@
 
       
 
-          <app-file-upload
-         *ngSwitchCase="'file'" 
-         [control]="getControl(field.name)"
-          [label]="field.label" >
-        </app-file-upload>
+      <app-file-upload
+      *ngSwitchCase="'file'" 
+      [control]="getControl(field.name)"
+      [label]="field.label"
+      [isEditMode]="isEditMode"
+      [label]="field.label" >
+    </app-file-upload>
 
         <!-- TOGGLE -->
         <app-toggle *ngSwitchCase="'toggle'" [control]="getControl(field.name)!"

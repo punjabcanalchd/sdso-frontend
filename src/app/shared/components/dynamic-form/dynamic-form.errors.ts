@@ -15,12 +15,15 @@ export function applyApiErrors(
       err.field ??
       (Array.isArray(err.loc) ? err.loc[err.loc.length - 1] : null);
 
-    const message = err.message || err.msg || 'Invalid input';
-
+    const message = err.message || err.msg || 'Invalid input dddddddddddd';
+    
     const control = field ? form.get(field) : null;
 
     if (control) {
-      control.setErrors({ serverError: message });
+          control.setErrors({
+        ...(control.errors || {}),
+        serverError: message
+      });
       control.markAsTouched();
       control.updateValueAndValidity({ onlySelf: true });
     } else {

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -56,6 +56,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   activeTab = 'general';
   activeChildTab = 'general-english';
   private _formData: any = null;
+
+  @Input() isEditMode = false;
 
   @Input()
   set formData(val: any) {

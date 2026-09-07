@@ -4,6 +4,8 @@ import { englishFields } from '../../../common/tabs/english-tab';
 import { punjabiFields } from '../../../common/tabs/punjabi-tab';
 import { metaPunjabiFields } from '../../../common/tabs/meta-punjabi-tab';
 import { metaEnglishFields } from '../../../common/tabs/meta-english-tab';
+import { CustomValidators } from '../../../common/validation/custom-validators';
+
 
 export const pageSchema: FormSchema = {
 
@@ -118,19 +120,33 @@ export const pageSchema: FormSchema = {
         }
       ]
     },
+    
+    {
+    type: 'text',
+    name: 'external_url',
+    label: 'External Url',
+    className: 'col-md-4'
+    },
 
     {
       type: 'number',
       name: 'sort_order',
       label: 'Page Order',
-      className: 'col-md-4'
+      className: 'col-md-4',
+        validators: [
+        CustomValidators.positiveInt()
+        ]
     },
 
      {
       type: 'file',
       name: 'page_banner',
-      label: 'Default Page Banner (1366p x 350p)',    
-
+      label: 'Default Page Banner (1366p x 350p)',
+        validators: [
+        CustomValidators.fileMaxSizeMB(5),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload(),
+          ],
     },
 
     

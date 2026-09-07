@@ -1,5 +1,5 @@
 import { AfterViewInit, OnInit, Component, ViewChild } from '@angular/core';
-import { ValidatorFn } from "@angular/forms";
+import { ValidatorFn,AsyncValidatorFn  } from "@angular/forms";
 import { TabSchema } from './tab-schema';
 
 export type FormFieldType =
@@ -80,6 +80,7 @@ export interface FormField {
 
   tab?: string;
   validators?: ValidatorFn[];
+  asyncValidators?: AsyncValidatorFn[];
   clickable?: boolean;
   matchField?: string;
   showPasswordToggle?: boolean;
