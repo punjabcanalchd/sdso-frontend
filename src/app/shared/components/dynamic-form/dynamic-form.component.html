@@ -241,6 +241,19 @@
       [label]="field.label" >
     </app-file-upload>
 
+
+        <ng-container [ngSwitch]="field.type">
+
+        <!-- existing fields -->
+
+        <app-time-picker
+        *ngSwitchCase="'time'"
+        [control]="getControl(field.name)"
+        [label]="field.label">
+        </app-time-picker>
+
+        </ng-container>
+
         <!-- TOGGLE -->
         <app-toggle *ngSwitchCase="'toggle'" [control]="getControl(field.name)!"
           [label]="form.get(field.name)?.value ? (field.options?.[0]?.label || 'On') : (field.options?.[1]?.label || 'Off')">

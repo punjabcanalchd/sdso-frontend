@@ -102,7 +102,12 @@ export const pageSchema: FormSchema = {
       label: 'Slug',
       className: 'col-md-4'
     },
-
+      // {
+      //   type: 'time',
+      //   name: 'start_time',
+      //   label: 'Start Time',
+        
+      // },
     {
       type: 'select',
       name: 'status',
@@ -127,6 +132,7 @@ export const pageSchema: FormSchema = {
     label: 'External Url',
     className: 'col-md-4'
     },
+    
 
     {
       type: 'number',

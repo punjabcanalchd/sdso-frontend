@@ -1,0 +1,26 @@
+<div class="time-picker">
+
+  <label
+    *ngIf="label"
+    class="form-label"
+  >
+    {{ label }}
+  </label>
+
+  <input
+    type="time"
+    class="form-control"
+    [formControl]="control"
+    [placeholder]="placeholder"
+  />
+
+  <div
+    *ngIf="control?.touched && control?.invalid"
+    class="text-danger mt-1"
+  >
+    <small *ngIf="control?.errors?.['required']">
+      {{ label || 'Time' }} is required.
+    </small>
+  </div>
+
+</div>

@@ -1,0 +1,14 @@
+.time-picker {
+  width: 100%;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+input[type="time"] {
+  width: 100%;
+  min-height: 38px;
+  cursor: pointer;
+}

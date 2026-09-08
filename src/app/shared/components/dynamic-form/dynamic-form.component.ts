@@ -23,7 +23,8 @@ import { RoleAssignmentComponent } from '../form-elements/role-assignment/role-a
 import { TabsComponent } from '../tabs/tabs.component';
 import { FormField } from '../../../core/models/form-schema.model';
 import { LanguageService } from '../../../core/services/language.service';
-
+import { TimePickerComponent } from
+  '../form-elements/time-picker/time-picker.component';
 import { englishFields } from '../../../common/tabs/english-tab';
 import { punjabiFields } from '../../../common/tabs/punjabi-tab';
 
@@ -32,7 +33,7 @@ import { punjabiFields } from '../../../common/tabs/punjabi-tab';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule, ClearGlobalErrorOnFocusDirective, CaptchaComponent,
     DatepickerComponent, SliderComponent, ToggleComponent, RangeComponent, FileUploadComponent, WizardStepperComponent,
-    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent,TabsComponent],
+    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent,TabsComponent,TimePickerComponent],
 
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']

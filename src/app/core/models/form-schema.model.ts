@@ -21,6 +21,7 @@ export type FormFieldType =
   | 'group'
   | 'multi-checkbox'
   | 'editor'  
+  | 'time'
   | 'custom-permission' | 'role-assignment' | 'html';
 
 export interface FormOption {
