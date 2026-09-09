@@ -25,13 +25,19 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./time-picker.component.css']
 })
 export class TimePickerComponent
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy {;
 
-  @Input() control: FormControl | null = null;
+  @Input({ required: true }) control!: FormControl;
 
   @Input() label = '';
-
   @Input() placeholder = 'Select time';
+
+  @Input() min = '';
+  @Input() max = '';
+
+  @Input() required = false;
+  @Input() readonly = false;
+  @Input() disabled = false;
 
   private controlSubscription?: Subscription;
 
