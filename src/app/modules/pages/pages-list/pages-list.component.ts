@@ -62,6 +62,7 @@ export class PagesComponent implements OnInit {
   search = '';
   sortColumn = '';
   sortDirection = 'asc';
+  // @Input() pageId!: string;
 
 onServerAction(params: {
   page: number;
@@ -256,9 +257,8 @@ onServerAction(params: {
     });
   }
 
-  
-
   openEditModal(id: string | number): void {
+
   this.isEditMode = true;
   this.pageId = String(id);
   this.pageSchema.submitLabel = 'Update Page';
@@ -269,91 +269,111 @@ onServerAction(params: {
     queryParamsHandling: 'merge'
   }).then(() => {
 
-  this.pageService.getPageByPublicId(String(id)).subscribe({
-    next: (res: any) => {
-      console.log('Page Response:', res);
+    // API call - no page reload
+    this.pageService.getPageByPublicId(String(id)).subscribe({
 
-        console.log('Page Response:', res);
-    console.log('Returned public_id:', res.data?.public_id);
-    console.log('Returned page_banner:', res.data?.page_banner);
+      next: (res: any) => {
 
-      if (res.data) {
-          const pageData = res.data;
+        if (!res.data) {
+          console.error('Page data not found');
+          return;
+        }
 
-          const englishTitle = pageData.name_en || '';
-          const punjabiTitle = pageData.name_pb || '';
+        const pageData = res.data;
 
-         
+        console.log('Page ID:', id);
+        console.log('API page_banner:', pageData.page_banner);
+
         const patchValue = {
-              name_en: pageData.name_en ?? '',
-              description_en: pageData.description_en ?? '',
-              meta_title_en: pageData.meta_title_en ?? '',
-              meta_description_en: pageData.meta_description_en ?? '',
-              meta_keyword_en: pageData.meta_keyword_en ?? '',
 
-              name_pb: pageData.name_pb ?? '',
-              description_pb: pageData.description_pb ?? '',
-              meta_title_pb: pageData.meta_title_pb ?? '',
-              meta_description_pb: pageData.meta_description_pb ?? '',
-              meta_keyword_pb: pageData.meta_keyword_pb ?? '',
+          name_en: pageData.name_en ?? '',
+          description_en: pageData.description_en ?? '',
+          meta_title_en: pageData.meta_title_en ?? '',
+          meta_description_en: pageData.meta_description_en ?? '',
+          meta_keyword_en: pageData.meta_keyword_en ?? '',
 
-              slug: pageData.slug ?? '',
-              status: !!pageData.status,
-              sort_order: pageData.sort_order ?? 0,
-              page_type: String(pageData.page_type ?? '1'),
-              external_url: pageData.external_url ?? '',
-              page_banner: pageData.page_banner ?? ''
-          };
+          name_pb: pageData.name_pb ?? '',
+          description_pb: pageData.description_pb ?? '',
+          meta_title_pb: pageData.meta_title_pb ?? '',
+          meta_description_pb: pageData.meta_description_pb ?? '',
+          meta_keyword_pb: pageData.meta_keyword_pb ?? '',
+
+          slug: pageData.slug ?? '',
+          status: !!pageData.status,
+          sort_order: pageData.sort_order ?? 0,
+          page_type: String(pageData.page_type ?? '1'),
+          external_url: pageData.external_url ?? '',
+
+          // Existing image filename
+          page_banner: pageData.page_banner ?? ''
+        };
+
+        console.log(
+          'patchValue page_banner:',
+          patchValue.page_banner
+        );
+
+        // Open modal FIRST
+        this.pageModal.open();
+
+        // Give dynamic form time to initialize
+        setTimeout(() => {
+
+          const form = this.pageModal?.dynamicForm?.form;
+
+          if (!form) {
+            console.error('Dynamic form is not available');
+            return;
+          }
+
+          console.log(
+            'Before patch page_banner:',
+            form.get('page_banner')?.value
+          );
 
 
-        // form.patchValue(pageData);
-        // console.log("pageData==",pageData);
+          
+          // Patch API data
+          form.patchValue(patchValue);
 
-     this.pageModal.open();
+          console.log(
+            'After patch page_banner:',
+            form.get('page_banner')?.value
+          );
 
-    setTimeout(() => {
+          const parentControl = form.get('page_banner');
 
-    const form = this.pageModal?.dynamicForm?.form;
+          const dynamicControl =
+            this.pageModal.dynamicForm.getControl('page_banner');
 
-      if (!form) {
-        console.error('Dynamic form is not available');
-        return;
+          console.log(
+            'Parent value:',
+            parentControl?.value
+          );
+
+          console.log(
+            'DynamicForm value:',
+            dynamicControl?.value
+          );
+
+          console.log(
+            'Same control:',
+            parentControl === dynamicControl
+          );
+
+          this.bindCheckboxLogic();
+
+          this.cdr.detectChanges();
+
+        }, 100);
+
+      },
+
+      error: (err: any) => {
+        console.error('Failed to load page:', err);
       }
 
-      // IMPORTANT: clear previous page values
-      form.reset();
-        console.log(
-          'PARENT CONTROL:',
-          form.get('page_banner')
-        );
-      // Set current page values
-   console.log('API pageData:', pageData);
-console.log('API page_banner:', pageData.page_banner);
-console.log('patchValue page_banner:', patchValue.page_banner);
-
-form.patchValue(patchValue);
-
-console.log('AFTER PATCH page_banner:', form.get('page_banner')?.value);
-
-const parentControl = form.get('page_banner');
-
-const dynamicControl =
-  this.pageModal.dynamicForm.getControl('page_banner');
-
-console.log('Parent value:', parentControl?.value);
-console.log('DynamicForm value:', dynamicControl?.value);
-console.log('Same control:', parentControl === dynamicControl);
-
-      this.bindCheckboxLogic();
-
-      this.cdr.detectChanges();  
-      }, 100);
-    }   
-    },
-    error: (err: any) => {
-      console.log(err);
-    }
-  });
+    });
 
   });
 }
@@ -365,13 +385,66 @@ console.log('Same control:', parentControl === dynamicControl);
         this.openEditModal(event.row.id);
         break;
 
+
+      case 'toggle_status':
+        this.updatePageStatus(
+          event.row.id,
+          event.row.status
+        );
+        break;
+
       // case 'delete':
       //   this.deletePage(event.row.id);
       //   break;
     }
   }
 
+// Update Page Status
 
+updatePageStatus(
+  id: string | number,
+  status: number
+): void {
+
+  const pageId = String(id);
+  const statusValue = status === 1 ? 1 : 0;
+
+  console.log('Updating page status');
+  console.log('Page ID:', pageId);
+  console.log('Status:', statusValue);
+
+  this.pageService
+    .updatePageStatus(pageId, statusValue)
+    .subscribe({
+
+      next: (res: any) => {
+
+        console.log('Status updated successfully:', res);
+
+        this.toast.show(
+          'success',
+          res.message || 'Page status updated successfully',
+          3000
+        );
+
+        this.loadPages();
+      },
+
+      error: (error: any) => {
+
+        console.error('Status update failed:', error);
+
+        this.toast.show(
+          'error',
+          error.error?.message ||
+          'Failed to update page status',
+          3000
+        );
+
+        this.loadPages();
+      }
+    });
+}
 
 onSubmit(formData: any): void {
 

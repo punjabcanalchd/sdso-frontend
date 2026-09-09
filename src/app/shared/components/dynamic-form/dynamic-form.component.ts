@@ -68,9 +68,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     if (val && this.form) {
 
       const data = this.prepareInitialValue(val);
-      this.form.patchValue(data, {
-        emitEvent: false
-      });
+      this.form.patchValue(data);
 
     }
   }
@@ -105,6 +103,31 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+  this.initForm();
+
+
+      // 1. Build the form
+  // this.form = buildFormGroup(this.fb, this.schema);
+
+  // 2. Patch initial data
+  if (this.initialValue) {
+
+    const data = this.prepareInitialValue(this.initialValue);
+    this.form.patchValue(data);
+  }
+
+  // 3. Also handle initialData if provided
+  if (this.initialData) {
+
+    const data = this.prepareInitialValue(this.initialData);    
+    this.form.patchValue(data);
+  }
+   
+  }
+
+ngOnChanges(changes: SimpleChanges): void {
+
+  if (changes['schema'] && this.schema) {
     this.initForm();
 
 
@@ -115,60 +138,56 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     if (this.initialValue) {
 
       const data = this.prepareInitialValue(this.initialValue);
-      this.form.patchValue(data, {
-        emitEvent: false
-      });
+      this.form.patchValue(data);
     }
 
     // 3. Also handle initialData if provided
     if (this.initialData) {
 
       const data = this.prepareInitialValue(this.initialData);
-      this.form.patchValue(data, {
-        emitEvent: false
-      });
+      this.form.patchValue(data);
     }
 
   }
+}
+//   ngOnChanges(changes: SimpleChanges): void {
 
-  ngOnChanges(changes: SimpleChanges): void {
+//     if (changes['schema'] && this.schema) {
+//       this.initForm();
+//       return;
+//     }
 
-    if (changes['schema'] && this.schema) {
-      this.initForm();
-      return;
-    }
+//     if (changes['initialValue'] && !changes['initialValue'].firstChange) {
 
-    if (changes['initialValue'] && !changes['initialValue'].firstChange) {
+//       if (this.form) {
 
-      if (this.form) {
-
-        const data = this.prepareInitialValue(
-          changes['initialValue'].currentValue
-        );
+//         const data = this.prepareInitialValue(
+//           changes['initialValue'].currentValue
+//         );
 
 
 
-        this.form.patchValue(data, {
-          emitEvent: false
-        });
+//         this.form.patchValue(data, {
+//           emitEvent: false
+//         });
 
-      }
+//       }
 
-    }
+//     }
 
-    if (changes['initialData'] && this.form) {
+//     if (changes['initialData'] && this.form) {
 
-      const data = this.prepareInitialValue(
-        changes['initialData'].currentValue
-      );
+//       const data = this.prepareInitialValue(
+//         changes['initialData'].currentValue
+//       );
 
-      this.form.patchValue(data, {
-        emitEvent: false
-      });
+    
 
-    }
+//       this.form.patchValue(data);
 
-  }
+//     }
+
+//   }
   /**
    * Logic to build the form group and patch values if they exist.
    */
@@ -178,21 +197,23 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     this.form = buildFormGroup(this.fb, this.schema);
 
-    if (this.initialValue) {
-      const data = this.prepareInitialValue(this.initialValue);
-      this.form.patchValue(data, { emitEvent: false });
-    }
-    if (this.initialData) {
-      const data = this.prepareInitialValue(this.initialData);
-      this.form.patchValue(data, { emitEvent: false });
-    }
-    if (this._formData) {
-      const data = this.prepareInitialValue(this._formData);
-      this.form.patchValue(data, { emitEvent: false });
-    }
-
-    this.formReady.emit(this.form);
+  if (this.initialValue) {
+    const data = this.prepareInitialValue(this.initialValue);
+    this.form.patchValue(data);
+    
   }
+
+  if (this.initialData) {
+
+    const data = this.prepareInitialValue(this.initialData);
+    this.form.patchValue(data);  }
+
+  if (this._formData) {
+
+    const data = this.prepareInitialValue(this._formData);
+    this.form.patchValue(data);
+  }
+}
 
 
   /* ---------------- API STATE ---------------- */
@@ -263,12 +284,12 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
 
 
-  onFileSelect(event: Event, field: any) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      this.form.patchValue({ [field.name]: file });
-    }
-  }
+  // onFileSelect(event: Event, field: any) {
+  //   const file = (event.target as HTMLInputElement).files?.[0];
+  //   if (file) {
+  //     this.form.patchValue({ [field.name]: file });
+  //   }
+  // }
 
   onOtpInput(event: any, field: any, index: number) {
     // optional OTP aggregation logic

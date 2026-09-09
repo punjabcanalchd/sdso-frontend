@@ -244,6 +244,14 @@ export class AuthService {
     payload
   );
 }
+
+  updatePageStatus(publicId: string, status: number) {
+  return this.api.post(`/admin/pages/${publicId}/status`,
+      {
+        status: status
+      }
+    );
+   }
   getStates(data: any): Observable<any> {
     return this.api.get<any>('/admin/states', data);
   }

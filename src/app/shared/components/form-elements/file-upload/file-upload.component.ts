@@ -62,83 +62,65 @@ export class FileUploadComponent
   // INIT
   // =========================================================
 
-  ngOnInit(): void {
-console.log('FileUploadComponent INIT');
+ ngOnInit(): void {
+
+  console.log('FileUploadComponent INIT');
   console.log('Edit Mode:', this.isEditMode);
   console.log('Existing File:', this.existingFile);
-  
+  console.log('Initial Control Value:', this.control?.value);
 
-    /*
-     * Important:
-     * Load existing image immediately when edit modal opens.
-     */
-    this.loadInitialPreview();
+  this.subscribeToControl();
 
-
-    /*
-     * Listen for:
-     *
-     * 1. patchValue()
-     * 2. setValue()
-     * 3. user selecting a new file
-     */
-    if (this.control) {
-
-      this.controlSubscription =
-        this.control.valueChanges.subscribe(value => {
-
-          console.log(
-            'FileUpload value changed:',
-            value
-          );
-
-          this.setPreview(value);
-
-        });
-
-    }
-
-  }
-
+  // IMPORTANT:
+  // Read the current value immediately.
+  this.loadInitialPreview();
+}
 
   // =========================================================
   // INPUT CHANGES
   // =========================================================
 
-  ngOnChanges(changes: SimpleChanges): void {
+ngOnChanges(changes: SimpleChanges): void {
 
-    /*
-     * If the control instance changes,
-     * reload the preview.
-     */
-    if (changes['control']) {
+  console.log('FileUpload ngOnChanges');
 
-      console.log(
-        'FileUpload control changed:',
-        this.control?.value
-      );
+  if (changes['control']) {
 
-      this.loadInitialPreview();
+    console.log(
+      'NEW CONTROL VALUE:',
+      this.control?.value
+    );
 
-    }
-
-
-    /*
-     * If edit mode changes,
-     * reload preview.
-     */
-    if (changes['isEditMode']) {
-
-      console.log(
-        'FileUpload edit mode changed:',
-        this.isEditMode
-      );
-
-      this.loadInitialPreview();
-
-    }
-
+    this.subscribeToControl();
+    this.loadInitialPreview();
   }
+
+  if (changes['existingFile']) {
+
+    console.log(
+      'NEW EXISTING FILE:',
+      this.existingFile
+    );
+
+    if (this.existingFile) {
+      this.setExistingImagePreview(
+        this.existingFile
+      );
+    } else {
+      this.loadInitialPreview();
+    }
+  }
+
+  if (changes['isEditMode']) {
+
+    console.log(
+      'EDIT MODE:',
+      this.isEditMode
+    );
+
+    this.loadInitialPreview();
+  }
+}
 
 
   // =========================================================
@@ -184,7 +166,7 @@ private loadInitialPreview(): void {
     value
   );
 
-  // Existing image filename from API
+  // Existing image from API
   if (
     typeof value === 'string' &&
     value.trim() !== ''
@@ -193,16 +175,14 @@ private loadInitialPreview(): void {
     return;
   }
 
-  // Newly selected File
+  // New selected file
   if (value instanceof File) {
     this.setFilePreview(value);
     return;
   }
 
-  // Nothing
   this.clearPreview();
 }
-
   // =========================================================
   // SET PREVIEW
   // =========================================================
@@ -402,10 +382,10 @@ private loadInitialPreview(): void {
 
   onFileSelect(event: Event): void {
 
-    const input =event.target as HTMLInputElement;
+    let input =event.target as HTMLInputElement;
 
 
-    const file = input.files?.[0];
+    let file = input.files?.[0];
 
 
     if (!file) {
@@ -711,4 +691,26 @@ private loadInitialPreview(): void {
 
   }
 
+
+
+
+  private subscribeToControl(): void {
+
+  this.controlSubscription?.unsubscribe();
+
+  if (!this.control) {
+    return;
+  }
+
+  this.controlSubscription =
+    this.control.valueChanges.subscribe(value => {
+
+      console.log(
+        'FileUpload control value changed:',
+        value
+      );
+
+      this.setPreview(value);
+    });
+}
 }

@@ -234,7 +234,7 @@
                 <input type="checkbox" role="switch"
                   class="form-check-input ms-0 mt-0 shadow-none cursor-pointer custom-switch-color fs-5"
                   [checked]="row[col.key] == 1 || row[col.key] === true || row[col.key] === '1'"
-                  (change)="onCustomAction('toggle_' + col.key, row)" />
+                 (change)="onToggleChange(col.key, row, $event)" />
               </div>
             </td>
             }

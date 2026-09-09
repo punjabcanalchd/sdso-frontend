@@ -1,18 +1,25 @@
 <div class="time-picker">
 
-  <input
-    type="time"
-    class="form-control"
-    [formControl]="control"
-    [placeholder]="placeholder"
-    [readonly]="readonly"
-    [disabled]="disabled"
-  />
-
-  <div
-    *ngIf="control?.touched && control?.invalid"
-    class="text-danger mt-1"
+  <label
+    *ngIf="label"
+    class="form-label"
   >
-  </div>
+    {{ label }}
+  </label>
 
+ <input
+  type="time"
+  class="form-control"
+  [formControl]="control"
+  [placeholder]="placeholder"
+  (change)="onTimeChange($event)"
+/>
+
+<div
+  class="invalid-feedback d-block"
+  *ngIf="control.touched && control.invalid"
+>
+  <small *ngIf="control.errors?.['required']">
+    Time is required
+  </small>
 </div>

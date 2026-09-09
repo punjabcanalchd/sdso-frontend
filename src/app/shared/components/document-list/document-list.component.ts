@@ -199,6 +199,23 @@ export class DocumentListComponent implements OnChanges {
     }
   }
 
+onToggleChange(
+  key: string,
+  row: any,
+    event: Event
+  ): void {
+    const checked =
+      (event.target as HTMLInputElement).checked;
+
+    this.actionClick.emit({
+      action: `toggle_${key}`,
+      row: {
+        ...row,
+        [key]: checked ? 1 : 0
+      }
+    });
+  }
+
   private getPageNumbers(): number[] {
     const pages: number[] = [];
     const maxVisiblePages = 5;
