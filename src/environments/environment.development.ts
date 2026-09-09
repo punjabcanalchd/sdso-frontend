@@ -3,6 +3,7 @@ export const environment = {
     production: false,
     appName: 'SDSO',
     apiUrl: 'http://localhost:8000/api',
+    uploadUrl: 'http://localhost:8000/uploads',
     appVersion: '1.0.0',
     requestTimeout: 30000,
     enableLogs: true,
