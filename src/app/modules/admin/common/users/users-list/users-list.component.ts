@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../../shared/components/document-list/document-list.component';
@@ -10,11 +11,13 @@ import { EncryptionService } from '../../../../../core/services/encrypt.service'
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { userSchema } from './user-form.schema';
 import { ModalHelperService } from '../../../../../shared/services/modal-helper';
+import { DynamicFilterComponent, FilterField } from '../../../../../shared/components/dynamic-filter/dynamic-filter.component';
+import { OfficeHierarchyService } from '../../../../../core/services/office-hierarchy.service';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [DocumentListComponent, ModalFormComponent, CommonModule],
+  imports: [DocumentListComponent, ModalFormComponent, CommonModule, FormsModule, DynamicFilterComponent],
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss',
 })
@@ -29,6 +32,7 @@ export class Users implements OnInit {
   private toast = inject(ToastService);
   // private router = inject(Router);
   private modalHelper = inject(ModalHelperService);
+  private officeHierarchyService = inject(OfficeHierarchyService);
 
   data: User[] = [];
   formInitialData: any = {};
@@ -38,6 +42,10 @@ export class Users implements OnInit {
   updateProfileSchema: any;
   updateEmailInitialValue: any = {};
   updatingUserId: string | null = null;
+
+isEditMode: boolean = false;
+editingUserId: string | null = null;
+officeLevelNameToPublicId: Record<string, string> = {};
 
 
   profileInitialData: any = {};
@@ -49,6 +57,28 @@ export class Users implements OnInit {
   search = '';
   sortColumn = '';
   sortDirection = 'asc';
+
+  // Filter state
+  filterCircleId = '';
+  filterDivisionId = '';
+  filterSubdivisionId = '';
+  filterOfficecode = '';
+  filterRoleId = '';
+
+  filterSchema: FilterField[] = [
+    { name: 'circle_id', label: 'Circle', type: 'select', options: [] },
+    { name: 'division_id', label: 'Division', type: 'select', options: [], disabled: true },
+    { name: 'subdivision_id', label: 'Sub Division', type: 'select', options: [], disabled: true },
+    { name: 'officecode', label: 'Office', type: 'select', options: [], disabled: true },
+    { name: 'role_id', label: 'Filter By Role', type: 'select', options: [] },
+  ];
+
+  // Filter dropdown options
+  filterCircleOptions: any[] = [];
+  filterDivisionOptions: any[] = [];
+  filterSubdivisionOptions: any[] = [];
+  filterOfficeOptions: any[] = [];
+  filterRoleOptions: any[] = [];
 
   viewProfileSchema: any = {
     layoutStyle: 'popup',
@@ -153,6 +183,7 @@ export class Users implements OnInit {
     this.loadDistricts();
     this.loadCircles();
     this.loadOfficeLevels();
+    this.loadOffices();
     this.initUpdateEmailSchema();
   }
 
@@ -218,13 +249,19 @@ export class Users implements OnInit {
 
     this.currentPage = page;
 
-    const params = {
+    const params: any = {
       page: this.currentPage,
       per_page: this.pageSize,
       search: this.search,
       sort_column: this.sortColumn,
-      sort_direction: this.sortDirection
+      sort_direction: this.sortDirection,
     };
+    
+    if (this.filterCircleId) params.circle_id = this.filterCircleId;
+    if (this.filterDivisionId) params.division_id = this.filterDivisionId;
+    if (this.filterSubdivisionId) params.subdivision_id = this.filterSubdivisionId;
+    if (this.filterOfficecode) params.officecode = this.filterOfficecode;
+    if (this.filterRoleId) params.role_id = this.filterRoleId;
 
     this.userService.getUsers(params).subscribe({
 
@@ -240,6 +277,7 @@ export class Users implements OnInit {
           office: user.office,
           created_at: this.formatDate(user.created_at),
           unlockUser: '',
+          locked: user.locked,
           status:
             user.status === true ||
             String(user.status) === 'true'
@@ -263,14 +301,136 @@ export class Users implements OnInit {
 
   }
 
+  applyFilter(): void {
+    this.loadUsers(1);
+  }
+
+  resetFilter(): void {
+    this.filterCircleId = '';
+    this.filterDivisionId = '';
+    this.filterSubdivisionId = '';
+    this.filterOfficecode = '';
+    this.filterRoleId = '';
+    this.search = '';
+    
+    // Reset schema states
+    this.filterSchema.find(f => f.name === 'division_id')!.disabled = true;
+    this.filterSchema.find(f => f.name === 'division_id')!.options = [];
+    this.filterSchema.find(f => f.name === 'subdivision_id')!.disabled = true;
+    this.filterSchema.find(f => f.name === 'subdivision_id')!.options = [];
+    this.filterSchema.find(f => f.name === 'officecode')!.disabled = true;
+    this.filterSchema.find(f => f.name === 'officecode')!.options = [];
+
+    this.loadUsers(1);
+  }
+
+  onFilter(values: Record<string, any>) {
+    this.filterCircleId = values['circle_id'] || '';
+    this.filterDivisionId = values['division_id'] || '';
+    this.filterSubdivisionId = values['subdivision_id'] || '';
+    this.filterOfficecode = values['officecode'] || '';
+    this.filterRoleId = values['role_id'] || '';
+    this.loadUsers(1);
+  }
+
+  onFilterFieldChange(event: { name: string; value: any }) {
+    if (event.name === 'circle_id') {
+      this.onFilterCircleChange(event.value);
+    } else if (event.name === 'division_id') {
+      this.onFilterDivisionChange(event.value);
+    } else if (event.name === 'subdivision_id') {
+      this.onFilterSubdivisionChange(event.value);
+    } else if (event.name === 'officecode') {
+      this.filterOfficecode = event.value;
+    } else if (event.name === 'role_id') {
+      this.filterRoleId = event.value;
+    }
+  }
+
+  onFilterCircleChange(circleId: string): void {
+    this.filterCircleId = circleId;
+    this.filterDivisionId = '';
+    this.filterSubdivisionId = '';
+    this.filterOfficecode = '';
+    
+    const divField = this.filterSchema.find(f => f.name === 'division_id')!;
+    const subdivField = this.filterSchema.find(f => f.name === 'subdivision_id')!;
+    const offField = this.filterSchema.find(f => f.name === 'officecode')!;
+
+    divField.options = [];
+    divField.disabled = true;
+    subdivField.options = [];
+    subdivField.disabled = true;
+    offField.options = [];
+    offField.disabled = true;
+
+    if (circleId) {
+      this.userService.getDivisionsByCircle(circleId).subscribe(res => {
+        divField.options = res.data.map((d: any) => ({ label: d.name_en, value: d.public_id }));
+        divField.disabled = false;
+        this.filterSchema = [...this.filterSchema];
+        this.cdr.detectChanges();
+      });
+    } else {
+      this.filterSchema = [...this.filterSchema];
+    }
+  }
+
+  onFilterDivisionChange(divisionId: string): void {
+    this.filterDivisionId = divisionId;
+    this.filterSubdivisionId = '';
+    this.filterOfficecode = '';
+    
+    const subdivField = this.filterSchema.find(f => f.name === 'subdivision_id')!;
+    const offField = this.filterSchema.find(f => f.name === 'officecode')!;
+
+    subdivField.options = [];
+    subdivField.disabled = true;
+    offField.options = [];
+    offField.disabled = true;
+
+    if (divisionId) {
+      this.userService.getSubdivisionsByDivision(divisionId).subscribe(res => {
+        subdivField.options = res.data.map((s: any) => ({ label: s.name_en, value: s.public_id }));
+        subdivField.disabled = false;
+        this.filterSchema = [...this.filterSchema];
+        this.cdr.detectChanges();
+      });
+    } else {
+      this.filterSchema = [...this.filterSchema];
+    }
+  }
+
+  onFilterSubdivisionChange(subdivisionId: string): void {
+    this.filterSubdivisionId = subdivisionId;
+    this.filterOfficecode = '';
+    
+    const offField = this.filterSchema.find(f => f.name === 'officecode')!;
+    offField.options = [];
+    offField.disabled = true;
+
+    if (subdivisionId) {
+      this.userService.getOfficesByHierarchy(subdivisionId).subscribe(res => {
+        offField.options = res.data.map((o: any) => ({ label: o.name_en, value: o.public_id }));
+        offField.disabled = false;
+        this.filterSchema = [...this.filterSchema];
+        this.cdr.detectChanges();
+      });
+    } else {
+      this.filterSchema = [...this.filterSchema];
+    }
+  }
+
+
+
   tableColumns: TableColumn[] = [
     { key: 'hrmscode', label: 'HRMS Code', widthClass: 'col-1', sortable: true },
-    { key: 'name', label: 'Name', widthClass: 'col-2', sortable: true },
-    { key: 'email', label: 'Email', widthClass: 'col-2', sortable: true },
-    { key: 'userRole', label: 'User Role', widthClass: 'col-2', sortable: false },
+    { key: 'name', label: 'Name', widthClass: 'col-1', sortable: true },
+    { key: 'email', label: 'Email', widthClass: 'col-1', sortable: true },
+    { key: 'userRole', label: 'User Role', widthClass: 'col-1', sortable: false },
     { key: 'office', label: 'Office', widthClass: 'col-1', sortable: false },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
-    { key: 'unlockUser', type: 'unlock', label: 'Unlock User', widthClass: 'col-1', sortable: false },
+    { key: 'unlockUser', type: 'unlock', label: 'Status', widthClass: 'col-1', sortable: false },
     {
       key: 'action',
       type: 'dropdown',
@@ -281,6 +441,7 @@ export class Users implements OnInit {
         items: (row: any) => {
           const actions = [
             { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
+            { label: 'Delete', actionName: 'delete', class: 'text-danger' }
           ];
           return actions;
           
@@ -304,6 +465,13 @@ export class Users implements OnInit {
           rolesField.options = response.data;
         }
 
+        // Populate filter schema role options
+        const filterRoleField = this.filterSchema.find(f => f.name === 'role_id');
+        if (filterRoleField) {
+          filterRoleField.options = this.allRolesList;
+          this.filterSchema = [...this.filterSchema];
+        }
+
         this.cdr.detectChanges();
       },
       error: err => {
@@ -316,8 +484,8 @@ export class Users implements OnInit {
     this.userService.getDistricts().subscribe({
       next: (response) => {
         const mappedDistricts = response.data.map((district: any) => ({
-          label: district.district_english,
-          value: district.district_code
+          label: district.name_en,
+          value: district.lgddistcode  
         }));
 
         const districtField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'district_code');
@@ -333,7 +501,20 @@ export class Users implements OnInit {
   }
 
   openCreateModal() {
+     this.isEditMode = false;  
+      this.editingUserId = null;  
+      
+      // Make password required for create
+      const passField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'password');
+      if (passField) passField.required = true;
+      const confirmPassField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'password_confirmation');
+      if (confirmPassField) confirmPassField.required = true;
+      
+      // Trigger change detection for dynamic form
+      this.userSchema = { ...this.userSchema };
+
     this.formInitialData = {
+      district_code: '',
       officelevelcode: '',
       circle_id: '',      
       division_id: '',    
@@ -351,25 +532,113 @@ export class Users implements OnInit {
       patchData: this.formInitialData,
       useRouting: false
     });
-     setTimeout(() => {
-      this.setupCascadingDropdowns();
-    }, 200);
   }
+  openEditModal(userId: string): void {
+  this.isEditMode = true;
+  this.editingUserId = userId;
+
+  // Make password optional for edit
+  const passField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'password');
+  if (passField) passField.required = false;
+  const confirmPassField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'password_confirmation');
+  if (confirmPassField) confirmPassField.required = false;
+
+  // Trigger change detection for dynamic form
+  this.userSchema = { ...this.userSchema };
+
+  this.userService.getUserByPublicId(userId).subscribe({
+    next: (res) => {
+      const user = res.data;
+
+     // Translate the public_id back to name_en for dropdown matching
+  const officeLevelName = Object.entries(this.officeLevelNameToPublicId)
+    .find(([name, pid]) => pid === user.officelevelcode)?.[0] || user.officelevelcode || '';
+
+      // Map the backend role names to the non-deterministic encrypted IDs currently stored in allRolesList (which feeds the form)
+      const userMainRoleOption = this.allRolesList.find((o: any) => o.label === user.role);
+      const mainRoleId = userMainRoleOption ? userMainRoleOption.value : null;
+
+      const selectedRoleIds = (user.selected_roles_names || []).map((name: string) => {
+          const opt = this.allRolesList.find((o: any) => o.label === name);
+          return opt ? opt.value : null;
+      }).filter((v: any) => v !== null);
+
+  this.formInitialData = {
+  hrmscode:        user.hrmscode || '',
+  name:            user.name || '',
+  email:           user.email || '',
+  mobile_number:   user.mobileNumber || '',
+  retirementdate:  user.retirementdate || '',
+  officelevelcode: officeLevelName,
+  officecode:      user.officecode || '',
+  district_code:   user.district_code || '',
+  circle_id:       user.circle_id || '',
+  division_id:     user.division_id || '',
+  subdivision_id:  user.subdivision_id || '',
+  status:          user.status === true ? 'ACTIVE' : 'INACTIVE',
+  password:        '',
+  password_confirmation: '',
+  role_assignment: { 
+    role_id: mainRoleId, 
+    selected_roles: selectedRoleIds 
+  }
+};
+
+
+      this.modalHelper.openModal({
+        modalRef: this.userModal,
+        schema: this.userSchema,
+        submitLabel: 'Update User',  // changes the button label
+        patchData: this.formInitialData,
+        useRouting: false
+      });
+    },
+    error: (err) => {
+      this.toast.show('error', 'Failed to load user data.');
+    }
+  });
+}
+
 
   onSubmit(formData: any): void {
     const roleAssignment = formData.role_assignment || { role_id: null, selected_roles: [] };
     const roleId = roleAssignment.role_id;
     const selectedRoles = roleAssignment.selected_roles || [];
+       // Split the single "name" field into first_name and last_name for the backend
+    const nameParts = (formData.name || '').trim().split(' ');
+    const firstName = nameParts[0] || 'Unknown';
+    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'User'; // Fallback if they only type one word
 
-    const payload = {
+      const payload = {
       ...formData,
+      first_name: firstName,
+      last_name: lastName,
+      status: formData.status === 'ACTIVE',
+      district_code: formData.district_code || 1, 
       role_id: roleId,
       additional_role_ids: selectedRoles,
+      // Translate office level name back to public_id for the backend
+      officelevelcode: this.officeLevelNameToPublicId[formData.officelevelcode] || formData.officelevelcode,
       password: this.encryptService.encrypt(formData.password),
       password_confirmation: this.encryptService.encrypt(formData.password_confirmation),
     };
-
-    delete payload.role_assignment;
+    delete payload.name; 
+    delete payload.role_assignment; 
+      if (this.isEditMode && this.editingUserId) {
+    // EDIT MODE
+    this.userService.editUser(this.editingUserId, payload).subscribe({
+      next: (res: any) => {
+        this.toast.show('success', 'User updated successfully!', 4000);
+        this.userModal.close();
+        this.isEditMode = false;
+        this.editingUserId = null;
+        this.loadUsers();
+      },
+      error: (error: any) => {
+        this.toast.show('error', error.error?.message || 'Failed to update user');
+      }
+    });
+  } else {
 
     this.userService.createUser(payload).subscribe({
       next: (res: any) => {
@@ -381,7 +650,9 @@ export class Users implements OnInit {
         this.toast.show('error', error.error?.message || 'Failed to create user');
         console.error('Failed to create user:', error);
       }
+    
     });
+  }
   }
   
   handleAction(event: any): void {
@@ -389,8 +660,24 @@ export class Users implements OnInit {
       this.openViewProfileModal(event.row.id);
     } else if (event.action === 'unlock') {
       this.unlockUser(event.row);
+    } else if (event.action === 'lock') {
+      this.lockUser(event.row);
     } else if (event.action === 'UPDATE' || event.actionName === 'UPDATE') {
       this.openUpdateEmailModal(event.row.id);
+    } else if (event.action === 'edit' || event.actionName === 'edit') {
+      this.openEditModal(event.row.id);
+    } else if (event.action === 'delete' || event.actionName === 'delete') {
+      if (confirm('Are you sure you want to delete this user?')) {
+        this.userService.deleteUser(event.row.id).subscribe({
+          next: () => {
+            this.toast.show('success', 'User has been deleted successfully.', 4000);
+            this.loadUsers();
+          },
+          error: (err: any) => {
+            this.toast.show('error', err.error?.message || 'Failed to delete user.');
+          }
+        });
+      }
     }
   }
 
@@ -469,11 +756,26 @@ export class Users implements OnInit {
     this.userService.updateUser(row.id, { status: true }).subscribe({
       next: (res) => {
         this.toast.show('success', 'User unlocked successfully!', 4000);
-        this.loadUsers();
+        this.loadUsers(this.currentPage);
       },
       error: (err) => {
         console.error('Failed to unlock user:', err);
         this.toast.show('error', err.error?.message || 'Failed to unlock user');
+      }
+    });
+  }
+
+  lockUser(row: any): void {
+    if (row.status === false) return;
+
+    this.userService.updateUser(row.id, { status: false }).subscribe({
+      next: (res) => {
+        this.toast.show('success', 'User locked successfully!', 4000);
+        this.loadUsers(this.currentPage);
+      },
+      error: (err) => {
+        console.error('Failed to lock user:', err);
+        this.toast.show('error', err.error?.message || 'Failed to lock user');
       }
     });
   }
@@ -605,6 +907,14 @@ export class Users implements OnInit {
         if (circleField) {
           circleField.options = mappedCircles;
         }
+
+        // Populate filter schema circle options
+        const filterCircleField = this.filterSchema.find(f => f.name === 'circle_id');
+        if (filterCircleField) {
+          filterCircleField.options = mappedCircles;
+          this.filterSchema = [...this.filterSchema];
+        }
+
         this.cdr.detectChanges();
       },
       error: err => console.error('Failed to load circles:', err)
@@ -652,8 +962,14 @@ export class Users implements OnInit {
       next: (response) => {
         const mappedLevels = response.data.map((level: any) => ({
           label: level.name_en,
-          value: level.name_en
+          value: level.name_en  // use name_en so visibleWhen comparisons work
         }));
+
+        // Store a separate map of name_en -> public_id for submission
+        this.officeLevelNameToPublicId = {};
+        response.data.forEach((level: any) => {
+          this.officeLevelNameToPublicId[level.name_en] = level.public_id;
+        });
 
         const officeLevelField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'officelevelcode');
         if (officeLevelField) {
@@ -670,7 +986,7 @@ export class Users implements OnInit {
       next: (response) => {
         const mappedOffices = response.data.map((office: any) => ({
           label: office.name_en,
-          value: office.public_id
+          value: office.public_id 
         }));
 
         const officeField = this.userSchema.steps?.[0]?.fields?.find(f => f.name === 'officecode');
@@ -690,6 +1006,11 @@ export class Users implements OnInit {
 
   }
 
+  onPageSizeChange(size: number) {
+    this.pageSize = size;
+    this.loadUsers(1);
+  }
+
   searchUsers(text: string) {
     this.search = text;
 
@@ -707,52 +1028,14 @@ export class Users implements OnInit {
 
   }
   
-    setupCascadingDropdowns() {
-    if (this.userModal?.dynamicForm?.form) {
-      
-      // 1. Listen for Circle changes
-      this.userModal.dynamicForm.form.get('circle_id')?.valueChanges.subscribe((circleId: string) => {
-        const divisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'division_id');
-        const subdivisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'subdivision_id');
-        const officeField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'officecode');
-
-        // Clear child dropdowns
-        if (divisionField) divisionField.options = [];
-        if (subdivisionField) subdivisionField.options = [];
-        if (officeField) officeField.options = [];
-        this.userModal.dynamicForm.form.patchValue({ division_id: '', subdivision_id: '', officecode: '' }, { emitEvent: false });
-
-        if (circleId) {
-          this.userService.getDivisionsByCircle(circleId).subscribe(res => {
-            if (divisionField) {
-              divisionField.options = res.data.map((d: any) => ({ label: d.name_en, value: d.public_id }));
-              divisionField.placeholder = 'Select Division';
-            }
-            this.cdr.detectChanges();
-          });
-        }
-      });
-
-      // 2. Listen for Division changes
-      this.userModal.dynamicForm.form.get('division_id')?.valueChanges.subscribe((divisionId: string) => {
-        const subdivisionField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'subdivision_id');
-        const officeField = this.userSchema.steps?.[0]?.fields?.find((f: any) => f.name === 'officecode');
-
-        // Clear child dropdowns
-        if (subdivisionField) subdivisionField.options = [];
-        if (officeField) officeField.options = [];
-        this.userModal.dynamicForm.form.patchValue({ subdivision_id: '', officecode: '' }, { emitEvent: false });
-
-        if (divisionId) {
-          this.userService.getSubdivisionsByDivision(divisionId).subscribe(res => {
-            if (subdivisionField) {
-              subdivisionField.options = res.data.map((s: any) => ({ label: s.name_en, value: s.public_id }));
-              subdivisionField.placeholder = 'Select Sub Division';
-            }
-            this.cdr.detectChanges();
-          });
-        }
-      });
+    setupCascadingDropdowns(form?: any) {
+    // We can accept the form from the (formReady) event directly,
+    // or fallback to the one in the modal view child if undefined.
+    const dynamicForm = form || this.userModal?.dynamicForm?.form;
+    
+    if (dynamicForm) {
+      const schemaFields = this.userSchema.steps?.[0]?.fields || [];
+      this.officeHierarchyService.setupFormCascading(dynamicForm, schemaFields, this.cdr);
     }   
   }
 
