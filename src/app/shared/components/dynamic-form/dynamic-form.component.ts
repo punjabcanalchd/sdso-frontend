@@ -74,8 +74,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     }
   }
-  
-  
+
+
 
   /* ---------------- OUTPUTS ---------------- */
   @Output() submitForm = new EventEmitter<any>();
@@ -84,6 +84,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Output() closed = new EventEmitter<void>();
   @Output() permissionClick = new EventEmitter<void>();
   @Output() buttonClick = new EventEmitter<any>();
+  @Output() formReady = new EventEmitter<FormGroup>();
   @Input() initialData: any;
 
   /* ---------------- INTERNAL STATE ---------------- */
@@ -104,48 +105,62 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-  this.initForm();
-
-
-      // 1. Build the form
-  // this.form = buildFormGroup(this.fb, this.schema);
-
-  // 2. Patch initial data
-  if (this.initialValue) {
-
-    const data = this.prepareInitialValue(this.initialValue);
-    this.form.patchValue(data, {
-      emitEvent: false
-    });
-  }
-
-  // 3. Also handle initialData if provided
-  if (this.initialData) {
-
-    const data = this.prepareInitialValue(this.initialData);    
-    this.form.patchValue(data, {
-      emitEvent: false
-    });
-  }
-   
-  }
-
-ngOnChanges(changes: SimpleChanges): void {
-
-  if (changes['schema'] && this.schema) {
     this.initForm();
-    return;
+
+
+    // 1. Build the form
+    // this.form = buildFormGroup(this.fb, this.schema);
+
+    // 2. Patch initial data
+    if (this.initialValue) {
+
+      const data = this.prepareInitialValue(this.initialValue);
+      this.form.patchValue(data, {
+        emitEvent: false
+      });
+    }
+
+    // 3. Also handle initialData if provided
+    if (this.initialData) {
+
+      const data = this.prepareInitialValue(this.initialData);
+      this.form.patchValue(data, {
+        emitEvent: false
+      });
+    }
+
   }
 
-  if (changes['initialValue'] && !changes['initialValue'].firstChange) {
+  ngOnChanges(changes: SimpleChanges): void {
 
-    if (this.form) {
+    if (changes['schema'] && this.schema) {
+      this.initForm();
+      return;
+    }
+
+    if (changes['initialValue'] && !changes['initialValue'].firstChange) {
+
+      if (this.form) {
+
+        const data = this.prepareInitialValue(
+          changes['initialValue'].currentValue
+        );
+
+
+
+        this.form.patchValue(data, {
+          emitEvent: false
+        });
+
+      }
+
+    }
+
+    if (changes['initialData'] && this.form) {
 
       const data = this.prepareInitialValue(
-        changes['initialValue'].currentValue
+        changes['initialData'].currentValue
       );
-
-    
 
       this.form.patchValue(data, {
         emitEvent: false
@@ -154,20 +169,6 @@ ngOnChanges(changes: SimpleChanges): void {
     }
 
   }
-
-  if (changes['initialData'] && this.form) {
-
-    const data = this.prepareInitialValue(
-      changes['initialData'].currentValue
-    );
-
-    this.form.patchValue(data, {
-      emitEvent: false
-    });
-
-  }
-
-}
   /**
    * Logic to build the form group and patch values if they exist.
    */
@@ -175,25 +176,23 @@ ngOnChanges(changes: SimpleChanges): void {
 
   private initForm(): void {
 
-  this.form = buildFormGroup(this.fb, this.schema);
+    this.form = buildFormGroup(this.fb, this.schema);
 
-  if (this.initialValue) {
-    const data = this.prepareInitialValue(this.initialValue);
-    this.form.patchValue(data, { emitEvent: false });
-    
+    if (this.initialValue) {
+      const data = this.prepareInitialValue(this.initialValue);
+      this.form.patchValue(data, { emitEvent: false });
+    }
+    if (this.initialData) {
+      const data = this.prepareInitialValue(this.initialData);
+      this.form.patchValue(data, { emitEvent: false });
+    }
+    if (this._formData) {
+      const data = this.prepareInitialValue(this._formData);
+      this.form.patchValue(data, { emitEvent: false });
+    }
+
+    this.formReady.emit(this.form);
   }
-
-  if (this.initialData) {
-
-    const data = this.prepareInitialValue(this.initialData);
-    this.form.patchValue(data, { emitEvent: false });  }
-
-  if (this._formData) {
-
-    const data = this.prepareInitialValue(this._formData);
-    this.form.patchValue(data, { emitEvent: false });
-  }
-}
 
 
   /* ---------------- API STATE ---------------- */
@@ -210,29 +209,29 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   /* ---------------- FORM SUBMIT ---------------- */
-onSubmit(): void {
-  this.generalErrorMessage = null;
-  clearServerErrors(this.form);
+  onSubmit(): void {
+    this.generalErrorMessage = null;
+    clearServerErrors(this.form);
 
-  // Get the complete form data
-  const formValue = this.form.getRawValue();
-  // Validate form
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+    // Get the complete form data
+    const formValue = this.form.getRawValue();
+    // Validate form
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+
+    const languageData = this.prepareLanguageData();
+
+    // Send complete form data
+    this.submitForm.emit({
+      ...formValue,
+      languages: languageData
+    });
+
+    // this.submitForm.emit(formValue);
   }
-
-
-  const languageData = this.prepareLanguageData();
-
-  // Send complete form data
-  this.submitForm.emit({
-    ...formValue,
-    languages: languageData
-  });
-
-  // this.submitForm.emit(formValue);
-}
 
   onReloadCaptcha() {
     this.reloadCaptcha.emit();
@@ -247,7 +246,7 @@ onSubmit(): void {
     return this.form.get(name) as FormControl;
   }
 
-  
+
 
   get inputClasses() {
     return {
@@ -340,15 +339,14 @@ onSubmit(): void {
   }
 
   isCurrentStepValid(): boolean {
-
     return this.currentFields.every(field => {
-
       const control = this.form.get(field.name);
-
-      return control?.valid;
-
+      // Use !invalid instead of .valid — a field should only block
+      // navigation when it is definitively INVALID (has errors).
+      // .valid is false for PENDING and DISABLED states too, which
+      // causes false negatives for auto-filled / disabled fields.
+      return !control || !control.invalid;
     });
-
   }
 
   onBlur(event: Event, field: any): void {
@@ -467,7 +465,7 @@ onSubmit(): void {
       return false;
     }
 
-    this.submitForm.emit(this.form.value);
+    this.submitForm.emit(this.form.getRawValue());
 
     return true;
   }
@@ -496,40 +494,40 @@ onSubmit(): void {
 
 
   isFieldInActiveTab(field: any): boolean {
-  // Existing fields without a tab remain visible
-  if (!field.tab) {
-    return true;
+    // Existing fields without a tab remain visible
+    if (!field.tab) {
+      return true;
+    }
+
+    // If the form doesn't use tabs, don't change existing behavior
+    if (!this.schema.tabs?.length) {
+      return true;
+    }
+
+    // Only tab-specific fields are filtered
+    return field.tab === this.activeChildTab;
   }
 
-  // If the form doesn't use tabs, don't change existing behavior
-  if (!this.schema.tabs?.length) {
-    return true;
+  isFieldVisible(field: any): boolean {
+    if (!field.visibleWhen) {
+      return true;
+    }
+
+    const condition = field.visibleWhen;
+    const targetControl = this.form.get(condition.field);
+
+    if (!targetControl) {
+      return false;
+    }
+
+    const currentValue = targetControl.value;
+
+    if (Array.isArray(condition.value)) {
+      return condition.value.includes(currentValue);
+    }
+
+    return currentValue === condition.value;
   }
-
-  // Only tab-specific fields are filtered
-  return field.tab === this.activeChildTab;
-}
-
-isFieldVisible(field: any): boolean {
-  if (!field.visibleWhen) {
-    return true;
-  }
-
-  const condition = field.visibleWhen;
-  const targetControl = this.form.get(condition.field);
-
-  if (!targetControl) {
-    return false;
-  }
-
-  const currentValue = targetControl.value;
-
-  if (Array.isArray(condition.value)) {
-    return condition.value.includes(currentValue);
-  }
-
-  return currentValue === condition.value;
-}
 
   forceNumericText(event: Event, field: any): void {
     if (field.name === 'mobileNumber' || field.name === 'mobile_number') {
@@ -547,18 +545,18 @@ isFieldVisible(field: any): boolean {
 
 
 
-onTabChange(tab: string): void {
-  this.activeTab = tab;
-}
+  onTabChange(tab: string): void {
+    this.activeTab = tab;
+  }
 
-onChildTabChange(childTab: string): void {
-  this.activeChildTab = childTab;
-}
+  onChildTabChange(childTab: string): void {
+    this.activeChildTab = childTab;
+  }
 
 
-// add checkbox english to punjabi 
+  // add checkbox english to punjabi 
 
-private copyEnglishToPunjabi(): void {
+  private copyEnglishToPunjabi(): void {
 
     const allFields: FormField[] = this.schema.fields ?? [];
 
@@ -594,11 +592,11 @@ private copyEnglishToPunjabi(): void {
   }
 
 
- onSameAsEnglishChange(checked: boolean): void {
-  if (checked) {
-    this.copyEnglishToPunjabi();
+  onSameAsEnglishChange(checked: boolean): void {
+    if (checked) {
+      this.copyEnglishToPunjabi();
+    }
   }
-}
 
   onCheckboxChange(field: FormField, checked: boolean): void {
 
@@ -614,69 +612,69 @@ private copyEnglishToPunjabi(): void {
     }
   }
 
-private prepareInitialValue(data: any): any {
+  private prepareInitialValue(data: any): any {
 
-  const result: any = {};
+    const result: any = {};
 
-  if (!Array.isArray(data)) {
-    return data || {};
-  }
-
-  for (const row of data) {
-
-    if (
-      row.language_id ===
-      this.languageService.getLanguageId('en')
-    ) {
-      result.name_en = row.name ?? '';
-      result.description_en = row.description ?? '';
+    if (!Array.isArray(data)) {
+      return data || {};
     }
 
-    if (
-      row.language_id ===
-      this.languageService.getLanguageId('pb')
-    ) {
-      result.name_pb = row.name ?? '';
-      result.description_pb = row.description ?? '';
+    for (const row of data) {
+
+      if (
+        row.language_id ===
+        this.languageService.getLanguageId('en')
+      ) {
+        result.name_en = row.name ?? '';
+        result.description_en = row.description ?? '';
+      }
+
+      if (
+        row.language_id ===
+        this.languageService.getLanguageId('pb')
+      ) {
+        result.name_pb = row.name ?? '';
+        result.description_pb = row.description ?? '';
+      }
     }
+
+    return result;
   }
 
-  return result;
-}
 
+  onEditorValueChange(fieldName: string, value: string): void {
 
-onEditorValueChange(fieldName: string, value: string): void {
+    const control = this.form.get(fieldName);
 
-  const control = this.form.get(fieldName);
+    if (!control) {
+      console.error(`Editor control not found: ${fieldName}`);
+      return;
+    }
 
-  if (!control) {
-    console.error(`Editor control not found: ${fieldName}`);
-    return;
+    control.setValue(value);
+    control.markAsDirty();
   }
 
-  control.setValue(value);
-  control.markAsDirty();
-}
 
 
 
+  private prepareLanguageData(): any[] {
 
-private prepareLanguageData(): any[] {
+    const value = this.form.getRawValue();
 
-  const value = this.form.getRawValue();
-
-  return [
-    {
-      language_id: this.languageService.getLanguageId('en'),
-      name: value.name_en ?? '',
-      description: value.description_en ?? ''
-    },
-    {
-      language_id: this.languageService.getLanguageId('pb'),
-      name: value.name_pb ?? '',
-      description: value.description_pb ?? ''
-    }
-  ];
-}
+    return [
+      {
+        language_id: this.languageService.getLanguageId('en'),
+        name: value.name_en ?? '',
+        description: value.description_en ?? ''
+      },
+      {
+        language_id: this.languageService.getLanguageId('pb'),
+        name: value.name_pb ?? '',
+        description: value.description_pb ?? ''
+      }
+    ];
+  }
 
 }

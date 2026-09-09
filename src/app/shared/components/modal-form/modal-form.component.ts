@@ -23,6 +23,7 @@ export class ModalFormComponent implements AfterViewInit {
   @Output() submitForm = new EventEmitter<any>();
   @Output() buttonClick = new EventEmitter<any>();
   @Output() modalClosed = new EventEmitter<void>();
+  @Output() formReady = new EventEmitter<any>();
 
   @ViewChild('modalElement') modalElement!: ElementRef;
   @ViewChild(DynamicFormComponent) dynamicForm!: DynamicFormComponent;
@@ -54,5 +55,9 @@ export class ModalFormComponent implements AfterViewInit {
 
   onButtonClick(event: any) {
     this.buttonClick.emit(event);
+  }
+
+  onFormReady(event: any) {
+    this.formReady.emit(event);
   }
 }

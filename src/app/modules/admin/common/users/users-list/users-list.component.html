@@ -1,4 +1,14 @@
 <div class="container-fluid p-3">
+
+  <!-- ── FILTER PANEL ──────────────────────────────────────────── -->
+  <app-dynamic-filter
+    [schema]="filterSchema"
+    (filter)="onFilter($event)"
+    (reset)="resetFilter()"
+    (fieldChange)="onFilterFieldChange($event)">
+  </app-dynamic-filter>
+  <!-- ── END FILTER PANEL ──────────────────────────────────────── -->
+
     <app-document-list 
         title="Users"
         [isAdmin]="true" 
@@ -10,6 +20,7 @@
         [pageSize]="pagination.per_page"
         [totalItems]="pagination.total"
         (pageChange)="loadUsers($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
         (searchChange)="searchUsers($event)"
         (sortChange)="sortUsers($event)"
         (createClick)="openCreateModal()"
@@ -22,7 +33,8 @@
     [schema]="userSchema"  
     [initialValue]="formInitialData"
     size="xl"
-    (submitForm)="onSubmit($event)">
+    (submitForm)="onSubmit($event)"
+    (formReady)="setupCascadingDropdowns($event)">
 </app-modal-form>
 
 <app-modal-form 

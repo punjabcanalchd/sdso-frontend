@@ -75,9 +75,9 @@ export const userSchema: FormSchema = {
           label: 'Circle Name',
           type: 'select',
           className: 'col-md-4',
-          visibleWhen: { 
-            field: 'officelevelcode', 
-            value: ['CIRCLE OFFICE', 'DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer'] 
+          visibleWhen: {
+            field: 'officelevelcode',
+            value: ['CIRCLE OFFICE', 'DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer']
           },
           options: []
         },
@@ -87,9 +87,9 @@ export const userSchema: FormSchema = {
           type: 'select',
           placeholder: 'Please Select Circle First...',
           className: 'col-md-4',
-          visibleWhen: { 
-            field: 'officelevelcode', 
-            value: ['DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer'] 
+          visibleWhen: {
+            field: 'officelevelcode',
+            value: ['DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer']
           },
           options: []
         },
@@ -107,7 +107,17 @@ export const userSchema: FormSchema = {
           label: 'Office',
           type: 'select',
           className: 'col-md-4',
-          placeholder: 'Please Select Hierarchy First...',
+          placeholder: 'Please Select Office',
+          required: false,
+          options: []
+        },
+        {
+          name: 'district_code',
+          label: 'District',
+          type: 'select',
+          placeholder: 'Select District',
+          required: false,
+          className: 'col-md-4',
           options: []
         },
 

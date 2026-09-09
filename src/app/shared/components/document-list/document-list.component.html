@@ -170,12 +170,17 @@
               @if(row.status === false) {
                 <button type="button"
                  class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
-                  (click)="onCustomAction('unlock', row)" [attr.aria-label]="'Unlock '"
-                  [attr.title]="'Unlock ' + row.description">
-                  <i class="bi bi-lock fs-6" aria-hidden="true"></i>
+                  (click)="onCustomAction('unlock', row)" [attr.aria-label]="'Unlock User'"
+                  title="Unlock User">
+                  <i class="bi bi-lock-fill fs-6" aria-hidden="true"></i>
                 </button>
               } @else {
-                <span class="text-secondary">-</span>
+                <button type="button"
+                 class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                  (click)="onCustomAction('lock', row)" [attr.aria-label]="'Lock User'"
+                  title="Lock User">
+                  <i class="bi bi-unlock-fill fs-6" aria-hidden="true"></i>
+                </button>
               }
             </td>
           }

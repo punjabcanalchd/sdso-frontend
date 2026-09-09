@@ -22,7 +22,8 @@
           [schema]="schema"
           [initialValue]="initialValue"
           (submitForm)="onSubmit($event)"
-          (buttonClick)="onButtonClick($event)">
+          (buttonClick)="onButtonClick($event)"
+          (formReady)="onFormReady($event)">
         </app-dynamic-form>
 
       </div>

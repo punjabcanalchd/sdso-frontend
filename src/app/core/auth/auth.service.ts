@@ -192,6 +192,10 @@ export class AuthService {
     return this.api.post<any>(`/admin/users/${publicId}/updateStatus`, payload);
   }
 
+  deleteUser(publicId: string): Observable<any> {
+    return this.api.post<any>(`/admin/users/${publicId}/delete`, {});
+  }
+
   updateEmailAndPhone(publicId: string, payload: FormData): Observable<any> {
     return this.api.post<any>(`/admin/users/${publicId}/email-update`, payload);
   }
@@ -354,4 +358,12 @@ export class AuthService {
   getSubdivisionsByDivision(divisionId: string): Observable<any> {
     return this.api.get<any>(`/admin/subdivisions/${divisionId}/getsubdivisions`);
   }
+  getOfficesByHierarchy(publicId: string): Observable<any> {
+  return this.api.get(`/admin/offices/${publicId}/getoffices`);
+  }
+  editUser(publicId: string, payload: any): Observable<any> {
+  return this.api.post<any>(`/admin/users/${publicId}/update`, payload);
+  }
+
+
 }
