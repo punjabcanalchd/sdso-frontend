@@ -1,5 +1,6 @@
 <!-- FILE INPUT -->
 <input
+#fileInput
   type="file"
   class="form-control"
   (change)="onFileSelect($event)"
@@ -12,20 +13,16 @@
 <!-- EXISTING / SELECTED FILE -->
 <div class="form-text mt-1">
 
-  <div *ngIf="fileName; else noFile">
-
-    <div class="mb-1">
-      {{ fileName }}
-    </div>
-
-    <img
-      *ngIf="filePreviewUrl"
-      [src]="filePreviewUrl"
-      alt="Page Banner"
-      class="file-preview"
-    />
-
-  </div>
+  <span *ngIf="fileName; else noFile">
+      <i class="bi bi-file-earmark-text me-1"></i>
+      <a href="javascript:void(0)" (click)="openFile($event)" class="text-primary text-decoration-underline">
+        {{ fileName }}
+      </a>
+        <!-- Quick remove button -->
+  <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1" title="Remove file" (click)="clearFile($event)">
+    <i class="bi bi-x-circle"></i>
+  </button>
+    </span>
 
   <ng-template #noFile>
     <span class="text-muted">

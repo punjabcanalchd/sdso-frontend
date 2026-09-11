@@ -4,7 +4,10 @@ import {
   OnInit,
   OnChanges,
   OnDestroy,
-  SimpleChanges
+  SimpleChanges,
+  ViewChild,
+  ElementRef,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -46,6 +49,9 @@ export class FileUploadComponent
   @Input() existingFile: string | null = null;
 
   filePreviewUrl: string | null = null;
+    
+  constructor(private cdr: ChangeDetectorRef) {} 
+
 
 
   private readonly REQUIRED_WIDTH = 1366;
@@ -57,24 +63,31 @@ export class FileUploadComponent
 
   private controlSubscription?: Subscription;
 
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+
 
   // =========================================================
   // INIT
   // =========================================================
 
- ngOnInit(): void {
-
+  ngOnInit(): void {
   console.log('FileUploadComponent INIT');
   console.log('Edit Mode:', this.isEditMode);
   console.log('Existing File:', this.existingFile);
   console.log('Initial Control Value:', this.control?.value);
 
+ 
   this.subscribeToControl();
-
-  // IMPORTANT:
-  // Read the current value immediately.
   this.loadInitialPreview();
+
+  // Reset listener for native input:
+  this.control?.valueChanges.subscribe(val => {
+    if (!val && this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+  });
 }
+
 
   // =========================================================
   // INPUT CHANGES
@@ -172,16 +185,19 @@ private loadInitialPreview(): void {
     value.trim() !== ''
   ) {
     this.setExistingImagePreview(value);
+    this.cdr.detectChanges(); 
     return;
   }
 
   // New selected file
   if (value instanceof File) {
     this.setFilePreview(value);
+    this.cdr.detectChanges(); 
     return;
   }
 
   this.clearPreview();
+  this.cdr.detectChanges(); 
 }
   // =========================================================
   // SET PREVIEW
@@ -296,7 +312,7 @@ private loadInitialPreview(): void {
       return value.name;
 
     }
-
+  
 
     /*
      * Existing filename.
@@ -340,6 +356,28 @@ private loadInitialPreview(): void {
     return '';
 
   }
+
+     openFile(event?: Event): void {
+    if (event) event.preventDefault();
+
+    if (this.filePreviewUrl) {
+      window.open(this.filePreviewUrl, '_blank');
+      return;
+    }
+
+    const value = this.control?.value;
+    if (!value) return;
+
+    if (value instanceof File) {
+      window.open(URL.createObjectURL(value), '_blank');
+    } else if (typeof value === 'string') {
+      const baseUrl = window.location.origin.replace(':4200', ':8000');
+      const url = value.startsWith('http') ? value : `${baseUrl}/uploads/${value}`;
+      window.open(url, '_blank');
+    }
+  }
+
+
 
 
   // =========================================================
@@ -561,6 +599,7 @@ private loadInitialPreview(): void {
 
 
     this.filePreviewUrl = null;
+    this.cdr.detectChanges(); 
 
   }
 
@@ -711,6 +750,18 @@ private loadInitialPreview(): void {
       );
 
       this.setPreview(value);
+        this.cdr.detectChanges(); 
     });
 }
+  clearFile(event?: Event): void {
+    if (event) event.preventDefault();
+    if (this.fileInput?.nativeElement) {
+      this.fileInput.nativeElement.value = '';
+    }
+    this.control?.setValue(null);
+    this.control?.markAsDirty();
+    this.control?.markAsTouched();
+    this.clearPreview();
+  }
+
 }

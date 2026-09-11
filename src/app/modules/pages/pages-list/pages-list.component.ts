@@ -238,27 +238,52 @@ onServerAction(params: {
 
 
  
-  openCreateModal(){
+  openCreateModal() {
     this.isEditMode = false;
     this.pageId = null;
     this.pageSchema.submitLabel = 'Create Page';
 
-    if (this.pageModal?.dynamicForm) {
-      this.pageModal.dynamicForm.form.reset();
-    } 
-    
+    // Reset immediately before opening
+    const form = this.pageModal?.dynamicForm?.form;
+    if (form) {
+      form.reset({
+        status: true,
+        sort_order: 0,
+        page_type: '1',
+        same_as_english: false,
+        page_banner: null
+      });
+      form.get('page_banner')?.setValue(null);
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { public_id: null },
       queryParamsHandling: 'merge'
     }).then(() => {
       this.pageModal.open();
-      setTimeout(() => this.bindCheckboxLogic(), 100);
+
+      setTimeout(() => {
+        const f = this.pageModal?.dynamicForm?.form;
+        if (f) {
+          f.reset({
+            status: true,
+            sort_order: 0,
+            page_type: '1',
+            same_as_english: false,
+            page_banner: null
+          });
+          f.get('page_banner')?.setValue(null);
+        }
+        this.bindCheckboxLogic();
+        this.cdr.detectChanges();
+      }, 50);
     });
   }
 
-  openEditModal(id: string | number): void {
 
+
+  openEditModal(id: string | number): void {
   this.isEditMode = true;
   this.pageId = String(id);
   this.pageSchema.submitLabel = 'Update Page';
@@ -305,7 +330,8 @@ onServerAction(params: {
           external_url: pageData.external_url ?? '',
 
           // Existing image filename
-          page_banner: pageData.page_banner ?? ''
+          // page_banner: pageData.page_banner ?? ''
+          page_banner: pageData.page_banner || null
         };
 
         console.log(
@@ -695,11 +721,25 @@ onSubmit(formData: any): void {
     this.pageModal.close();
   }
 
-  onModalClosed(): void {
+    onModalClosed(): void {
+    const form = this.pageModal?.dynamicForm?.form;
+    if (form) {
+      form.reset({
+        status: true,
+        sort_order: 0,
+        page_type: '1',
+        same_as_english: false,
+        page_banner: null
+      });
+      form.get('page_banner')?.setValue(null);
+    }
+    this.cdr.detectChanges();
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { public_id: null },
       queryParamsHandling: 'merge'
     });
   }
+
+
 }
