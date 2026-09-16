@@ -1,10 +1,17 @@
 <div class="container-fluid p-3">
   <app-document-list
-     title="Notice Board"
+    title="Notice Board"
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
     [showCreateButton]="true"
+    [currentPage]="pagination.current_page"
+    [lastPage]="pagination.last_page"
+    [pageSize]="pagination.per_page"
+    [totalItems]="pagination.total"
+    (pageChange)="loadNotices($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (searchChange)="onSearchChange($event)"
     (createClick)="openCreateModal()"
     (actionClick)="handleAction($event)"
   >

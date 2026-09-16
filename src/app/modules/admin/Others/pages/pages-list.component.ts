@@ -55,8 +55,8 @@ export class PagesComponent implements OnInit {
   pagination: any = {};
   search = '';
   sortColumn = '';
-  sortDirection = 'asc';
-
+  sortDirection = 'desc';
+  // @Input() pageId!: string;
 
 onServerAction(params: {
   page: number;
