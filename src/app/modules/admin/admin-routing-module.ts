@@ -19,7 +19,7 @@ import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.
 
 
 import { PagesComponent } from '../pages/pages-list/pages-list.component';
-// import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
+import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
 
 const routes: Routes = [
   {
@@ -48,7 +48,7 @@ const routes: Routes = [
       { path: 'offices', component: OfficesComponent, title: 'Offices – Admin' },
       { path: 'menu-management', component: MenuManagementComponent, title: 'Menu Management – Admin' },
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
-      // { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
+      { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
       { path: 'noticeboard', component: NoticeboardListComponent, title: 'Notice Board – Admin' },
 
     ],

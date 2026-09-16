@@ -182,10 +182,15 @@ export class OfficeHierarchyService {
     } else if (circleId) {
       filteredOffices = this.allOffices.filter(o => o.circle_id === circleId);
     } else if (officeLevel) {
-      // If no hierarchy is selected (e.g. Chief Office), filter by office level name
-      // The office response has 'officelevel' string e.g. 'CHIEF OFFICE'
-      filteredOffices = this.allOffices.filter(o => o.officelevel && o.officelevel.toUpperCase() === officeLevel.toUpperCase());
+      // Safely convert to string and handle both name (e.g. 'SUB DIVISION OFFICE') and code/public_id
+      const targetLevel = String(officeLevel).trim().toUpperCase();
+      filteredOffices = this.allOffices.filter(o => {
+        const oLevelName = o.officelevel ? String(o.officelevel).trim().toUpperCase() : '';
+        const oLevelCode = o.officelevelcode ? String(o.officelevelcode).trim().toUpperCase() : '';
+        return (oLevelName && oLevelName === targetLevel) || (oLevelCode && oLevelCode === targetLevel);
+      });
     }
+
 
     // If the selected hierarchy level has no offices associated with it yet,
     // fallback to showing all offices so the user can still proceed.

@@ -372,6 +372,23 @@ export class AuthService {
   editUser(publicId: string, payload: any): Observable<any> {
   return this.api.post<any>(`/admin/users/${publicId}/update`, payload);
   }
+  // Additional Roles CRUD
+getAdditionalRoles(params: any): Observable<any> {
+  return this.api.get<any>('/admin/additional-roles', params);
+}
+
+getAdditionalRoleById(publicId: string): Observable<any> {
+  return this.api.get<any>(`/admin/additional-roles/${publicId}`);
+}
+
+createAdditionalRole(payload: any): Observable<any> {
+  return this.api.post<any>('/admin/additional-roles', payload);
+}
+
+updateAdditionalRole(publicId: string, payload: any): Observable<any> {
+  return this.api.post<any>(`/admin/additional-roles/${publicId}/update`, payload);
+}
+
 
 
 }
