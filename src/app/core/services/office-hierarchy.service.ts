@@ -22,12 +22,18 @@ export class OfficeHierarchyService {
   setupFormCascading(form: FormGroup, schemaFields: any[], cdr: ChangeDetectorRef) {
     if (!form || !schemaFields) return;
 
+    if ((form as any)._cascadingAttached) {
+      const officeField = schemaFields.find((f: any) => f.name === 'officecode');
+      this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
+      return;
+    }
+    (form as any)._cascadingAttached = true;
+
     const officeField = schemaFields.find((f: any) => f.name === 'officecode');
 
-    // 0. Fetch all offices once so we can filter them by ANY level
     if (!this.officesLoaded) {
       this.authService.getOffices().subscribe(res => {
-        this.allOffices = res.data;
+        this.allOffices = res.data || [];
         this.officesLoaded = true;
         this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
       });
@@ -35,7 +41,6 @@ export class OfficeHierarchyService {
       this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
     }
 
-    // 1. Listen for Circle changes
     form.get('circle_id')?.valueChanges.subscribe((circleId: string) => {
       const divisionField = schemaFields.find((f: any) => f.name === 'division_id');
       const subdivisionField = schemaFields.find((f: any) => f.name === 'subdivision_id');
@@ -54,10 +59,11 @@ export class OfficeHierarchyService {
 
       if (circleId) {
         this.authService.getDivisionsByCircle(circleId).subscribe(res => {
-          if (divisionField) {
-            divisionField.options = res.data.map((d: any) => ({ label: d.name_en, value: d.public_id }));
-            divisionField.placeholder = 'Select Division';
-            this.updateSchemaField(schemaFields, 'division_id', divisionField);
+          const currentDivField = schemaFields.find((f: any) => f.name === 'division_id');
+          if (currentDivField) {
+            currentDivField.options = (res.data || []).map((d: any) => ({ label: d.name_en, value: d.public_id }));
+            currentDivField.placeholder = 'Select Division';
+            this.updateSchemaField(schemaFields, 'division_id', currentDivField);
           }
           cdr.detectChanges();
         });
@@ -65,7 +71,6 @@ export class OfficeHierarchyService {
       this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
     });
 
-    // 2. Listen for Division changes
     form.get('division_id')?.valueChanges.subscribe((divisionId: string) => {
       const subdivisionField = schemaFields.find((f: any) => f.name === 'subdivision_id');
 
@@ -78,10 +83,11 @@ export class OfficeHierarchyService {
 
       if (divisionId) {
         this.authService.getSubdivisionsByDivision(divisionId).subscribe(res => {
-          if (subdivisionField) {
-            subdivisionField.options = res.data.map((s: any) => ({ label: s.name_en, value: s.public_id }));
-            subdivisionField.placeholder = 'Select Sub Division';
-            this.updateSchemaField(schemaFields, 'subdivision_id', subdivisionField);
+          const currentSubdivField = schemaFields.find((f: any) => f.name === 'subdivision_id');
+          if (currentSubdivField) {
+            currentSubdivField.options = (res.data || []).map((s: any) => ({ label: s.name_en, value: s.public_id }));
+            currentSubdivField.placeholder = 'Select Sub Division';
+            this.updateSchemaField(schemaFields, 'subdivision_id', currentSubdivField);
           }
           cdr.detectChanges();
         });
@@ -89,13 +95,11 @@ export class OfficeHierarchyService {
       this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
     });
 
-    // 3. Listen for Subdivision changes
     form.get('subdivision_id')?.valueChanges.subscribe(() => {
       form.patchValue({ officecode: '' }, { emitEvent: false });
       this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
     });
 
-    // 4. Listen for Office Level changes
     form.get('officelevelcode')?.valueChanges.subscribe(() => {
       form.patchValue({ 
         circle_id: '', 
@@ -107,7 +111,6 @@ export class OfficeHierarchyService {
       this.updateOfficeDropdown(form, officeField, cdr, schemaFields);
     });
 
-    // 5. Listen for Office changes to auto-select district
     form.get('officecode')?.valueChanges.subscribe((officecode: string) => {
       const districtControl = form.get('district_code');
       if (officecode && this.allOffices.length > 0) {
@@ -124,7 +127,6 @@ export class OfficeHierarchyService {
       }
     });
 
-    // 6. Trigger initial load if editing a user
     const existingCircleId = form.get('circle_id')?.value;
     const existingDivisionId = form.get('division_id')?.value;
     const existingOfficeCode = form.get('officecode')?.value;
@@ -133,7 +135,7 @@ export class OfficeHierarchyService {
       const divisionField = schemaFields.find((f: any) => f.name === 'division_id');
       this.authService.getDivisionsByCircle(existingCircleId).subscribe(res => {
         if (divisionField) {
-          divisionField.options = res.data.map((d: any) => ({ label: d.name_en, value: d.public_id }));
+          divisionField.options = (res.data || []).map((d: any) => ({ label: d.name_en, value: d.public_id }));
           divisionField.placeholder = 'Select Division';
           this.updateSchemaField(schemaFields, 'division_id', divisionField);
         }
@@ -145,7 +147,7 @@ export class OfficeHierarchyService {
       const subdivisionField = schemaFields.find((f: any) => f.name === 'subdivision_id');
       this.authService.getSubdivisionsByDivision(existingDivisionId).subscribe(res => {
         if (subdivisionField) {
-          subdivisionField.options = res.data.map((s: any) => ({ label: s.name_en, value: s.public_id }));
+          subdivisionField.options = (res.data || []).map((s: any) => ({ label: s.name_en, value: s.public_id }));
           subdivisionField.placeholder = 'Select Sub Division';
           this.updateSchemaField(schemaFields, 'subdivision_id', subdivisionField);
         }
@@ -153,7 +155,6 @@ export class OfficeHierarchyService {
       });
     }
 
-    // Auto-fill district initially if office is pre-selected
     if (existingOfficeCode && this.officesLoaded) {
       const selectedOffice = this.allOffices.find(o => o.public_id === existingOfficeCode);
       if (selectedOffice && selectedOffice.district_code) {
@@ -163,6 +164,7 @@ export class OfficeHierarchyService {
       }
     }
   }
+
 
   private updateOfficeDropdown(form: FormGroup, officeField: any, cdr: ChangeDetectorRef, schemaFields?: any[]) {
     if (!officeField) return;
@@ -174,7 +176,6 @@ export class OfficeHierarchyService {
 
     let filteredOffices = this.allOffices;
 
-    // First filter by hierarchy ID if present
     if (subdivisionId) {
       filteredOffices = this.allOffices.filter(o => o.subdivision_id === subdivisionId);
     } else if (divisionId) {
@@ -192,13 +193,11 @@ export class OfficeHierarchyService {
     }
 
 
-    // If the selected hierarchy level has no offices associated with it yet,
-    // fallback to showing all offices so the user can still proceed.
+   
     if (filteredOffices.length === 0) {
       filteredOffices = this.allOffices;
     }
 
-    // Re-assign a new array reference to force Angular change detection
     officeField.options = [...filteredOffices.map((o: any) => ({ label: o.name_en, value: o.public_id }))];
     officeField.placeholder = 'Select Office';
     
