@@ -15,9 +15,11 @@ import { OfficesComponent } from './masters/offices/offices.component';
 import { SubDivisionsComponent } from './masters/sub-divisions/sub-divisions.component';
 import { OfficeHierarchyComponent } from './masters/office-hierarchy/office-hierarchy.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
+import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.component';
+
 
 import { PagesComponent } from '../pages/pages-list/pages-list.component';
-
+// import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
 
 const routes: Routes = [
   {
@@ -46,6 +48,9 @@ const routes: Routes = [
       { path: 'offices', component: OfficesComponent, title: 'Offices – Admin' },
       { path: 'menu-management', component: MenuManagementComponent, title: 'Menu Management – Admin' },
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
+      // { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
+      { path: 'noticeboard', component: NoticeboardListComponent, title: 'Notice Board – Admin' },
+
     ],
     canActivate: [AuthGuard],
     data: {
