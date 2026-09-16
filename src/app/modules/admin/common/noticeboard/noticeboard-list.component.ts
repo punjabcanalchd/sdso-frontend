@@ -20,10 +20,15 @@ export class NoticeboardListComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private api = inject(ApiService);
 
-currentPage = 1;
-pageSize = 25;
-search = '';
-totalRecords = 0;
+  pagination: any = {
+    current_page: 1,
+    last_page: 1,
+    per_page: 25,
+    total: 0
+  };
+  search = '';
+ 
+
 
   noticeboardSchema = noticeboardSchema;
   isEditMode = false;
@@ -47,55 +52,80 @@ totalRecords = 0;
   this.loadNotices();
 }
 
-loadNotices(): void {
-  this.isLoading = true;
+  loadNotices(page: number = this.pagination.current_page): void {
+    this.pagination.current_page = page;
+    this.isLoading = true;
 
-  this.api.get<any>('/admin/noticeboard', { per_page: 25 }).subscribe({
-    next: (res) => {
-      this.isLoading = false;
-      const notices = res.data || [];
+    const params: any = {
+      page: this.pagination.current_page,
+      per_page: this.pagination.per_page,
+      search: this.search,
+    };
 
-      this.data = notices.map((item: any) => {
-        const punjabiTitle = item.name_pb
-          ? `<div class="text-dark lh-1 pt-2"><span class="text-muted fw-bold small">PB:</span> ${item.name_pb}</div>`
-          : '';
+    this.api.get<any>('/admin/noticeboard', params).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        const notices = res.data || [];
 
-        return {
-          id: item.id,
-          canEdit: true,
-          title: `
-            <div class="text-dark pb-1 lh-1">
-              <span class="text-muted fw-bold small">EN:</span> ${item.name_en}
-            </div>
-            ${punjabiTitle}
-          `,
-          category: item.category_name,
-          publishDate: item.publish_date || '—',
-          lastSubmissionDate: item.last_submission_date || '',
-          status: item.status,
-          nameEn: item.name_en,
-          namePb: item.name_pb,
-          descriptionEn: item.description_en || '',
-          descriptionPb: item.description_pb || '',
-          categoryId: item.category_id,
-          uploadNotice: item.upload_notice,
-          languageId: item.language_id || 1,
-          isLatestNews: item.is_latest_news ?? false,
-          accessType: item.access_type || 'public',
-          raw: item
-        };
-      });
+        this.data = notices.map((item: any, index: number) => {
+          const punjabiTitle = item.name_pb
+            ? `<div class="text-dark lh-1 pt-2"><span class="text-muted fw-bold small">PB:</span> ${item.name_pb}</div>`
+            : '';
 
+          return {
+            orignalSeq: (this.pagination.current_page - 1) * this.pagination.per_page + index + 1,
+            id: item.id,
+            canEdit: true,
+            title: `
+              <div class="text-dark pb-1 lh-1">
+                <span class="text-muted fw-bold small">EN:</span> ${item.name_en}
+              </div>
+              ${punjabiTitle}
+            `,
+            category: item.category_name,
+            publishDate: item.publish_date || '—',
+            lastSubmissionDate: item.last_submission_date || '',
+            status: item.status,
+            nameEn: item.name_en,
+            namePb: item.name_pb,
+            descriptionEn: item.description_en || '',
+            descriptionPb: item.description_pb || '',
+            categoryId: item.category_id,
+            uploadNotice: item.upload_notice,
+            languageId: item.language_id || 1,
+            isLatestNews: item.is_latest_news ?? false,
+            accessType: item.access_type || 'public',
+            raw: item
+          };
+        });
 
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      this.isLoading = false;
-      console.error('Error fetching notices:', err);
-      this.toast.show('error', 'Failed to load notices from database.');
-    }
-  });
-}
+        // Store pagination from API response
+        if (res.pagination) {
+          this.pagination = res.pagination;
+        } else if (res.recordsTotal !== undefined) {
+          this.pagination.total = res.recordsTotal;
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error fetching notices:', err);
+        this.toast.show('error', 'Failed to load notices from database.');
+      }
+    });
+  }
+
+  onPageSizeChange(newSize: number): void {
+    this.pagination.per_page = newSize;
+    this.loadNotices(1);
+  }
+
+  onSearchChange(search: string): void {
+    this.search = search;
+    this.loadNotices(1);
+  }
+
 
   loadCategories(): void {
   this.api.get<any>('/admin/noticeboard/categories').subscribe({
