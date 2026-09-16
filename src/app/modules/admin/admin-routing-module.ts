@@ -1,3 +1,4 @@
+import { Slider } from './../../core/models/slider.model';
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../../core/guards/auth.guard';
@@ -18,8 +19,14 @@ import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
 import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.component';
 
 
-import { PagesComponent } from '../pages/pages-list/pages-list.component';
+
 import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
+import { PagesComponent } from './Others/pages/pages-list.component';
+import { SlidersListComponent } from './Others/slider/slider.component';
+import { SliderImageComponent } from './Others/slider-image/slider-image.component';
+
+
+
 
 const routes: Routes = [
   {
@@ -31,6 +38,36 @@ const routes: Routes = [
 
       { path: 'pages', component: PagesComponent, title: 'Pages' },
       { path: 'page', redirectTo: 'pages', pathMatch: 'full' },
+
+
+      { path: 'sliders', component: SlidersListComponent, title: 'Slider' },
+      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },
+
+
+      
+   
+      // =========================
+      // Slider Images
+      // =========================
+
+      // Add slider image
+      {
+        path: 'slider-images/:slider_id/create',component: SliderImageComponent,
+        title: 'Add Slider Image'
+      },
+
+      // Edit slider image
+      {
+        path: 'slider-images/edit/:id',component: SliderImageComponent,
+        title: 'Edit Slider Image'
+      },
+
+      // Slider image listing
+      {
+        path: 'slider-images/:slider_id',component: SliderImageComponent,
+        title: 'Slider Images'
+      },
+
 
       { path: 'users', component: Users, title: 'Users – Admin' },
       { path: 'user-role', redirectTo: 'roles', pathMatch: 'full' },
