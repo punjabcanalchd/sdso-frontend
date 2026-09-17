@@ -231,16 +231,17 @@ export class Districts implements OnInit {
         if (!form) {
           return;
         }
-        console.log('district', district);
-
+        // console.log('District state:', district.state);
+        // console.log('State options:', this.districtSchema);
+        // console.log('district', district);
         form.patchValue({
           name_en: district.name_en || '',
           name_pb: district.name_pb || '',
           description_en: district.description_en || '',
           description_pb: district.description_pb || '',
-          lgdstatecode: district.lgdstatecode,
+          lgdstatecode: String(district.lgdstatecode),
           lgddistcode: district.lgddistcode,
-          status: district.status_value
+          status: district.status_value ? 'ACTIVE' : 'INACTIVE'
         });
 
       }, 100);

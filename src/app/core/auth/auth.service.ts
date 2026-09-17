@@ -440,79 +440,36 @@ deleteSlider(publicId: string): Observable<any> {
     `${this.sliderUrl}/${publicId}/delete`,
     {}
   );
-}
-
-
-  
-  // END Slider API
-
-
-
-
+} 
+// END Slider API
 
   // ================================
 // Slider Image APIs
 // ================================
-
-getSliderImages(
-  sliderId: string,
-  params?: any
-): Observable<any> {
-
-  return this.api.get(
-    `/admin/slider-image/${sliderId}`,
-    {
-      params
-    }
-  );
+getSliderImages(sliderId: string, params: any) {
+  return this.api.get(`/admin/slider-image/${sliderId}`, { params });
 }
 
-
-getSliderImage(
-  id: string
-): Observable<any> {
-
-  return this.api.get(
-    `/admin/slider-image/edit/${id}`
-  );
+getSliderImageById(sliderId: string, imageId: string) {
+  return this.api.get(`/admin/slider-image/${sliderId}/${imageId}`);
 }
 
-
-createSliderImage(
-  sliderId: string,
-  formData: FormData
-): Observable<any> {
-
-  return this.api.post(
-    `/admin/slider-image/${sliderId}`,
-    formData
-  );
+createSliderImage(sliderId: string, data: FormData) {
+  return this.api.post(`/admin/slider-image/${sliderId}`, data);
 }
 
-
-updateSliderImage(
-  id: string,
-  formData: FormData
-): Observable<any> {
-
-  return this.api.post(
-    `/admin/slider-image/update/${id}`,
-    formData
-  );
+updateSliderImage(sliderId: string, imageId: string, data: FormData) {
+  return this.api.post(`/admin/slider-image/${sliderId}/${imageId}/update`, data);
 }
 
-
-deleteSliderImage(
-  id: string
-): Observable<any> {
-
-  return this.api.post(
-    `/admin/slider-image/delete/${id}`,
-    {}
-  );
+deleteSliderImage(sliderId: string, imageId: string) {
+  return this.api.post(`/admin/slider-image/${sliderId}/${imageId}/delete`, {});
 }
 
-
+updateSliderImageStatus(sliderId: string, imageId: string, status: number) {
+  return this.api.post(`/admin/slider-image/${sliderId}/${imageId}/status`, { status });
+}
+// end SliderImage
 
 
   getAllOffices(data: any): Observable<any> {

@@ -237,7 +237,7 @@ export class CirclesComponent implements OnInit {
           name_pb: Circle.name_pb || '',
           description_en: Circle.description_en || '',
           description_pb: Circle.description_pb || '',
-          lgdstatecode: Circle.lgdstatecode,
+          lgdstatecode: String(Circle.lgdstatecode),
           status: Circle.status_value
         });
 

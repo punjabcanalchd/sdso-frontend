@@ -48,32 +48,29 @@ const routes: Routes = [
       { path: 'users', component: Users, title: 'Users - Admin' },
 
       { path: 'sliders', component: SlidersListComponent, title: 'Slider' },
-      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },
-
-
-      
+      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },   
    
       // =========================
       // Slider Images
       // =========================
 
-      // Add slider image
-      {
-        path: 'slider-images/:slider_id/create',component: SliderImageComponent,
-        title: 'Add Slider Image'
-      },
+     {
+      path: 'slider-image/:slider_id',
+      component: SliderImageComponent,
+      title: 'Slider Images'
+    },
+    {
+      path: 'slider-image/:slider_id/create',
+      component: SliderImageComponent,
+      title: 'Add Slider Image'
+    },
+    {
+      path: 'slider-image/:slider_id/edit/:image_id',
+      component: SliderImageComponent,
+      title: 'Edit Slider Image'
+    },
 
-      // Edit slider image
-      {
-        path: 'slider-images/edit/:id',component: SliderImageComponent,
-        title: 'Edit Slider Image'
-      },
 
-      // Slider image listing
-      {
-        path: 'slider-images/:slider_id',component: SliderImageComponent,
-        title: 'Slider Images'
-      },
 
 
       { path: 'users', component: Users, title: 'Users – Admin' },

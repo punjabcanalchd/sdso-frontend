@@ -102,17 +102,13 @@ export const pageSchema: FormSchema = {
       label: 'Slug',
       className: 'col-md-4'
     },
-      // {
-      //   type: 'time',
-      //   name: 'start_time',
-      //   label: 'Start Time',
-        
-      // },
+     
     {
       type: 'select',
       name: 'status',
       label: 'Status',
       className: 'col-md-4',
+      placeholder: "Select Status",
 
       options: [
         {

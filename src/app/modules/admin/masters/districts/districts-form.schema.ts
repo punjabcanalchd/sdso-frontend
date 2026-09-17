@@ -41,6 +41,7 @@ export const districtSchema: FormSchema = {
         required: true,
         options: [
           { label: 'Please select state', value: '' },
+          
         ],
         className: 'col-md-4 rounded-0',
       },

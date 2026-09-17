@@ -1,31 +1,36 @@
-<!-- <div class="container-fluid p-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
 
-    <app-document-list
-        title="Pages"
-        [isAdmin]="true"
-        [isAdmin]="true" 
-        [data]="data" 
-        [columns]="tableColumns" 
-        [showCreateButton]="true"
-        [currentPage]="pagination.current_page"
-        [lastPage]="pagination.last_page"
-        [pageSize]="pagination.per_page"
-        [totalItems]="pagination.total"
-        (pageSizeChange)="onPageSizeChange($event)"
-        (pageChange)="loadPages($event)"
-        (searchChange)="searchPages($event)"
-        (sortChange)="sortPages($event)"
-        (createClick)="openCreateModal()"
-        (actionClick)="handleAction($event)">
-    </app-document-list>
+  <h5 class="mb-0">
+    Slider Images
+  </h5>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    /* (click)="openCreateModal()" */
+  >
+    <i class="bi bi-plus-lg"></i>
+    Add Image
+  </button>
 
 </div>
 
-<app-modal-form 
-    [title]="isEditMode ? 'Edit Page' : 'Create Page'"
-    [schema]="pageSchema"
-    [initialValue]="formInitialData"
-    size="xl"
-    (submitForm)="onSubmit($event)"
-    (modalClosed)="onModalClosed()">
-</app-modal-form> -->
+<app-document-list
+  [data]="data"
+  [columns]="tableColumns"
+  /* [loading]="isLoading"
+  [totalRecords]="totalRecords"
+  [currentPage]="currentPage"
+  [pageSize]="pageSize"
+  (serverAction)="onServerAction($event)"
+  (action)="handleAction($event)" */
+>
+</app-document-list>
+
+<app-modal-form
+  #sliderImageModal
+  /* [schema]="sliderImageSchema"
+  (formSubmit)="onSubmit($event)"
+  (closed)="onModalClosed()" */
+>
+</app-modal-form>
