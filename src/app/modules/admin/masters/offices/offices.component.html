@@ -23,5 +23,6 @@
     [schema]="OfficeSchema"
     [initialValue]="formInitialData"
     size="xl"
-    (submitForm)="onSubmit($event)">
+    (submitForm)="onSubmit($event)"
+    (formReady)="setupCascadingDropdowns($event)">
 </app-modal-form>

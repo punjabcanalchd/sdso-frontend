@@ -6,13 +6,13 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { Office } from '../../../../core/models/office.model';
 import { OfficeHierarchy } from '../../../../core/models/office-hierarchy.model';
 import { State } from '../../../../core/models/state.model';
-import { CustomValidators } from '../../../../common/validation/custom-validators';
+// import { CustomValidators } from '../../../../common/validation/custom-validators';
 import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
-import { EncryptionService } from '../../../../core/services/encrypt.service';
-import { ToastService } from '../../../../shared/services/toast.service';
+// import { EncryptionService } from '../../../../core/services/encrypt.service';
+// import { ToastService } from '../../../../shared/services/toast.service';
 import { OfficeSchema } from './offices-form.schema';
 import { ModalHelperService } from '../../../../shared/services/modal-helper';
-import { DynamicFilterComponent, FilterField } from '../../../../shared/components/dynamic-filter/dynamic-filter.component';
+import {  FilterField } from '../../../../shared/components/dynamic-filter/dynamic-filter.component';
 import { OfficeHierarchyService } from '../../../../core/services/office-hierarchy.service';
 
 
@@ -29,7 +29,7 @@ export class OfficesComponent implements OnInit {
 
   @ViewChild(ModalFormComponent) officeModal!: ModalFormComponent;
 
-  private toast = inject(ToastService);
+  // private toast = inject(ToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
@@ -221,33 +221,34 @@ getOfficeLevels(): void {
     const params = {};
     this.userService.getAllStates(params).subscribe({
       next: (response) => {
-          this.states = response;
-          const states = response.data || [];
-          const parentOptions = states.map((state: any) => ({
-            label: state.name_en,
-            value: String(state.public_id)
-          }));
-          console.log(parentOptions);
-          const parentField = this.OfficeSchema.fields?.find(
-            f => f.name === 'lgdstatecode'
-          );
+        this.states = response;
+        const states = response.data || [];
+        const parentOptions = states.map((state: any) => ({
+          label: state.name_en,
+          value: String(state.lgdstatecode_enc || state.public_id)
+        }));
 
-          if (parentField) {
-            parentField.options = [
-              { label: 'Please select state', value: '' },
-              ...parentOptions
-            ];
-          }
-          const form = this.officeModal?.dynamicForm?.form;
-          form.get('lgdstatecode')?.setValue('');
-          this.isLoaded = true;
-          this.cdr.detectChanges();
+        const parentField = this.OfficeSchema.fields?.find(
+          f => f.name === 'lgdstatecode'
+        );
+
+        if (parentField) {
+          parentField.options = [
+            { label: 'Please select state', value: '' },
+            ...parentOptions
+          ];
+        }
+        const form = this.officeModal?.dynamicForm?.form;
+        form?.get('lgdstatecode')?.setValue('');
+        this.isLoaded = true;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error loading states:', error);
       }
     });
   }
+
 
 
   loadCircles(): void {
@@ -263,7 +264,6 @@ getOfficeLevels(): void {
           circleField.options = mappedCircles;
         }
 
-        // Populate filter schema circle options
         const filterCircleField = this.filterSchema.find(f => f.name === 'circle_id');
         if (filterCircleField) {
           filterCircleField.options = mappedCircles;
@@ -425,7 +425,7 @@ getOfficeLevels(): void {
       widthClass: 'col-2',
       dropdownConfig: {
         label: 'Choose Action',
-        items: (row: any) => {
+        items: (_row: any) => {
           const actions = [
             { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
           ];
@@ -463,16 +463,36 @@ getOfficeLevels(): void {
     this.isEditMode = false;
     this.officeId = null;
 
+    this.formInitialData = {
+      en_title: '',
+      pa_title: '',
+      email: '',
+      phonelandline: '',
+      mobilenumber: '',
+      pincode: '',
+      officelevelcode: '',
+      circle_id: '',
+      division_id: '',
+      subdivision_id: '',
+      lgdstatecode: '',
+      lgddistcode: '',
+      status: 'ACTIVE'
+    };
+
     this.modalHelper.openModal({
       modalRef: this.officeModal, 
       schema: this.OfficeSchema,
-      submitLabel: 'Create Division',
-      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      submitLabel: 'Create Office',
+      patchData: this.formInitialData,
       useRouting: true,        
       route: this.route,
-      queryParamId: null   
+      queryParamId: null,
+      onOpen: () => {
+        this.setupCascadingDropdowns();
+      }
     });
   }
+
 
   onModalClosed() {
     this.router.navigate([], {
@@ -482,7 +502,7 @@ getOfficeLevels(): void {
     });
   }
 
-  onSubmit(formData: any){
+  onSubmit(_formData: any){
 
   }
 
@@ -510,14 +530,53 @@ getOfficeLevels(): void {
   }
 
   setupCascadingDropdowns(form?: any) {
-    // We can accept the form from the (formReady) event directly,
-    // or fallback to the one in the modal view child if undefined.
     const dynamicForm = form || this.officeModal?.dynamicForm?.form;
-    
-    if (dynamicForm) {
-      const schemaFields = this.OfficeSchema.fields || [];
-      this.officeHierarchyService.setupFormCascading(dynamicForm, schemaFields, this.cdr);
-    }   
+
+    if (!dynamicForm) return;
+
+    const schemaFields = this.OfficeSchema.fields || [];
+
+    this.officeHierarchyService.setupFormCascading(dynamicForm, schemaFields, this.cdr);
+
+    if ((dynamicForm as any)._districtCascadingAttached) {
+      return;
+    }
+    (dynamicForm as any)._districtCascadingAttached = true;
+
+    const districtField = schemaFields.find(f => f.name === 'lgddistcode');
+
+    dynamicForm.get('lgdstatecode')?.valueChanges.subscribe((stateId: string) => {
+      if (districtField) {
+        districtField.options = [];
+        districtField.placeholder = 'Please Select District';
+      }
+      dynamicForm.patchValue({ lgddistcode: '' }, { emitEvent: false });
+
+      if (stateId) {
+        this.userService.getDistrictsByState(stateId, { state_id: stateId }).subscribe({
+          next: (res: any) => {
+            const districts = res.data || [];
+            if (districtField) {
+              districtField.options = [
+                { label: 'Please select district', value: '' },
+                ...districts.map((d: any) => ({
+                  label: d.name_en,
+                  value: String(d.lgddistcode_enc || d.public_id || d.lgddistcode)
+                }))
+              ];
+            }
+            this.cdr.detectChanges();
+          },
+          error: (err: any) => {
+            console.error('Failed to load districts:', err);
+          }
+        });
+      }
+      this.cdr.detectChanges();
+    });
   }
+
+
+
   
 }

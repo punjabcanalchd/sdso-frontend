@@ -109,20 +109,23 @@ export const OfficeSchema: FormSchema = {
 
     {
       name: 'lgdstatecode',
-      label: 'State Code',
+      label: 'State',
       type: 'select',
-      placeholder: 'Enter Code',
+      placeholder: 'Please Select State...',
       className: 'col-md-4',
+      options: [],
       validators: [CustomValidators.textContent()]
     },
     {
       name: 'lgddistcode',
-      label: 'District Code',
+      label: 'District',
       type: 'select',
-      placeholder: 'Enter Code',
+      placeholder: 'Please Select State First...',
       className: 'col-md-4',
+      options: [],
       validators: [CustomValidators.textContent()]
     },
+
     {
       name: 'status',
       label: 'Status',
