@@ -1,10 +1,10 @@
-import { FormSchema } from '../../../core/models/form-schema.model';
+import { FormSchema } from '../../../../core/models/form-schema.model';
 
-import { englishFields } from '../../../common/tabs/english-tab';
-import { punjabiFields } from '../../../common/tabs/punjabi-tab';
-import { metaPunjabiFields } from '../../../common/tabs/meta-punjabi-tab';
-import { metaEnglishFields } from '../../../common/tabs/meta-english-tab';
-import { CustomValidators } from '../../../common/validation/custom-validators';
+import { englishFields } from '../../../../common/tabs/english-tab';
+import { punjabiFields } from '../../../../common/tabs/punjabi-tab';
+import { metaPunjabiFields } from '../../../../common/tabs/meta-punjabi-tab';
+import { metaEnglishFields } from '../../../../common/tabs/meta-english-tab';
+import { CustomValidators } from '../../../../common/validation/custom-validators';
 
 
 export const pageSchema: FormSchema = {

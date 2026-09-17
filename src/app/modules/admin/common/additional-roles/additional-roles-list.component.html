@@ -1,0 +1,40 @@
+<div class="container-fluid p-3">
+
+  <!-- ── DYNAMIC FILTER PANEL ── -->
+  <app-dynamic-filter
+    [schema]="filterSchema"
+    (filter)="onFilter($event)"
+    (reset)="resetFilter()"
+    (fieldChange)="onFilterFieldChange($event)">
+  </app-dynamic-filter>
+
+
+  <!-- ──  DOCUMENT LIST ── -->
+  <app-document-list
+    title="ADDITIONAL ROLE"
+    [isAdmin]="true"
+    [data]="data"
+    [columns]="tableColumns"
+    [showCreateButton]="true"
+    [currentPage]="pagination.current_page"
+    [lastPage]="pagination.last_page"
+    [pageSize]="pagination.per_page"
+    [totalItems]="pagination.total"
+    (pageChange)="loadAdditionalRoles($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (sortChange)="sortRoles($event)"
+    (createClick)="openCreateModal()"
+    (actionClick)="handleAction($event)">
+  </app-document-list>
+</div>
+
+<!-- ──  CREATE / EDIT MODAL FORM ── -->
+<app-modal-form
+  #roleModal
+  [title]="isEditMode ? 'EDIT ADDITIONAL ROLE' : 'CREATE ADDITIONAL ROLE'"
+  [schema]="formSchema"
+  [initialValue]="formInitialData"
+  size="xl"
+  (submitForm)="onSubmit($event)"
+  (formReady)="setupFormCascadingDropdowns($event)">
+</app-modal-form>

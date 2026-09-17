@@ -11,7 +11,7 @@ export interface DropdownItem {
 export interface TableColumn {
   key: string;           // The object property ( 'description', 'email', 'name')
   label: string;         // The Table Header text ('Description', 'Email Address')
-  type?: 'text' | 'html' | 'download' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete'; // How to render the cell
+  type?: 'text' | 'select' | 'html' | 'download' | 'image' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete'; // How to render the cell
   widthClass?: string;   // Bootstrap column classes ( 'col-7', 'col-2')
   sortable?: boolean;
 

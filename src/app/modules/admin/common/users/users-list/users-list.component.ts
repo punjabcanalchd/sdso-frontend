@@ -530,7 +530,10 @@ officeLevelNameToPublicId: Record<string, string> = {};
       schema: this.userSchema, 
       submitLabel: 'Create User',
       patchData: this.formInitialData,
-      useRouting: false
+      useRouting: false,
+        onOpen: () => {
+        this.setupCascadingDropdowns();
+      }
     });
   }
   openEditModal(userId: string): void {
@@ -590,7 +593,10 @@ officeLevelNameToPublicId: Record<string, string> = {};
         schema: this.userSchema,
         submitLabel: 'Update User',  // changes the button label
         patchData: this.formInitialData,
-        useRouting: false
+        useRouting: false,
+         onOpen: () => {
+          this.setupCascadingDropdowns();
+        }
       });
     },
     error: (err) => {

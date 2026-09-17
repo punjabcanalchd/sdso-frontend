@@ -1,3 +1,4 @@
+import { Slider } from './../../core/models/slider.model';
 import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../../core/guards/auth.guard';
@@ -21,8 +22,16 @@ import { ActivityLogsComponent } from './log-management/activity-logs/activity-l
 import { ActivityLogDetailsComponent } from './log-management/activity-logs/activity-log-detail/activity-log-detail.component';
 import { ExceptionLogDetailComponent } from './log-management/exception-logs/exception-log-detail/exception-log-detail.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
+import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.component';
 
-import { PagesComponent } from '../pages/pages-list/pages-list.component';
+
+
+import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
+import { PagesComponent } from './Others/pages/pages-list.component';
+import { SlidersListComponent } from './Others/slider/slider.component';
+import { SliderImageComponent } from './Others/slider-image/slider-image.component';
+
+
 
 
 const routes: Routes = [
@@ -35,8 +44,38 @@ const routes: Routes = [
 
       { path: 'pages', component: PagesComponent, title: 'Pages' },
       { path: 'page', redirectTo: 'pages', pathMatch: 'full' },
-
       { path: 'users', component: Users, title: 'Users - Admin' },
+
+      { path: 'sliders', component: SlidersListComponent, title: 'Slider' },
+      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },
+
+
+      
+   
+      // =========================
+      // Slider Images
+      // =========================
+
+      // Add slider image
+      {
+        path: 'slider-images/:slider_id/create',component: SliderImageComponent,
+        title: 'Add Slider Image'
+      },
+
+      // Edit slider image
+      {
+        path: 'slider-images/edit/:id',component: SliderImageComponent,
+        title: 'Edit Slider Image'
+      },
+
+      // Slider image listing
+      {
+        path: 'slider-images/:slider_id',component: SliderImageComponent,
+        title: 'Slider Images'
+      },
+
+
+      { path: 'users', component: Users, title: 'Users – Admin' },
       { path: 'user-role', redirectTo: 'roles', pathMatch: 'full' },
 
       { path: 'roles', component: Roles, title: 'Roles – Admin' },
@@ -58,6 +97,9 @@ const routes: Routes = [
       { path: 'logs', component: ActivityLogsComponent, title: 'Activity Logs – Admin' },
       { path: 'logs/:id', component: ActivityLogDetailsComponent, title: 'Activity Log Details – Admin' },
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
+      { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
+      { path: 'noticeboard', component: NoticeboardListComponent, title: 'Notice Board – Admin' },
+
     ],
     canActivate: [AuthGuard],
     data: {

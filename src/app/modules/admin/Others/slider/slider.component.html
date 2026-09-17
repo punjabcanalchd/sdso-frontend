@@ -1,0 +1,29 @@
+<div class="container-fluid p-3">
+    <app-document-list
+        title="Sliders"
+        [isAdmin]="true"
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadSliders($event)"
+        (searchChange)="searchPages($event)"
+        (sortChange)="sortPages($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+
+
+<app-modal-form
+    [title]="isEditMode ? 'Edit Slider' : 'Create Slider'"
+    /* [schema]="sliderSchema" */
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)"
+    (modalClosed)="onModalClosed()">
+</app-modal-form>

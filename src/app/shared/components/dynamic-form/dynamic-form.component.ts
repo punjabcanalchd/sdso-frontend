@@ -213,6 +213,9 @@ ngOnChanges(changes: SimpleChanges): void {
     const data = this.prepareInitialValue(this._formData);
     this.form.patchValue(data);
   }
+    setTimeout(() => {
+      this.formReady.emit(this.form);
+    });
 }
 
 

@@ -1,20 +1,16 @@
 import { Component, OnInit, ViewChild, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-
-// import { DynamicFormComponent } from '../../../shared/components/dynamic-form/dynamic-form.component';
 import {
   DocumentListComponent,
   TableColumn
-} from '../../../shared/components/document-list/document-list.component';
-import { ModalFormComponent } from '../../../shared/components/modal-form/modal-form.component';
+} from '../../../../shared/components/document-list/document-list.component';
+import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
+import { ToastService } from '../../../../shared/services/toast.service';
 
-import { ToastService } from '../../../shared/services/toast.service';
-// import { TabsComponent } from '../../../shared/components/tabs/tabs.component';
-
-import { AuthService } from '../../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { pageSchema } from './page-form.schema';
-import { LanguageService } from '../../../core/services/language.service';
+import { LanguageService } from '../../../../core/services/language.service';
 
 
 @Component({
@@ -24,13 +20,12 @@ import { LanguageService } from '../../../core/services/language.service';
   imports: [
     DocumentListComponent,
     ModalFormComponent,
-    // TabsComponent
-
   ],
   templateUrl: './pages-list.component.html',
   styleUrl: './pages-list.component.scss'
 })
 export class PagesComponent implements OnInit {
+
   @ViewChild(ModalFormComponent)
   pageModal!: ModalFormComponent;
 
@@ -45,7 +40,6 @@ export class PagesComponent implements OnInit {
   ) {}
 
    data: any[] = [];
-  tableColumns: TableColumn[] = [];
 
   formInitialData: any = {};
 
@@ -57,11 +51,11 @@ export class PagesComponent implements OnInit {
   isLoading: boolean = false;
 
   currentPage = 1;
-  pageSize = 25;
+  pageSize =25;
   pagination: any = {};
   search = '';
   sortColumn = '';
-  sortDirection = 'asc';
+  sortDirection = 'desc';
   // @Input() pageId!: string;
 
 onServerAction(params: {
@@ -81,13 +75,7 @@ onServerAction(params: {
 }
 
   ngOnInit(): void {
-    this.tableColumns = [
-      { key: 'titleHtml', label: 'Title', type: 'html' },
-      { key: 'status', label: 'Status', type: 'toggle', toggleConfig: { trueLabel: 'Active', falseLabel: 'Inactive' } },
-      { key: 'sortOrder', label: 'Page Order', type: 'text' },
-      { key: 'createdAt', label: 'Created at', type: 'text' },
-      { key: 'action', label: 'Action', type: 'edit' }
-    ];
+   
     this.loadPages();
   }
 
@@ -134,8 +122,34 @@ onServerAction(params: {
     }
   }
 
+  
+  tableColumns: TableColumn[] = [
+    { key: 'titleHtml', label: 'Title', widthClass: 'col-2', sortable: true,type: 'html' },
+    { key: 'status', label: 'Status', type: 'toggle', toggleConfig: { trueLabel: 'Active', falseLabel: 'Inactive' } },
+    // { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
+    {
+      key: 'action',
+      type: 'dropdown',
+      label: 'Choose Action',
+      widthClass: 'col-2',
+      dropdownConfig: {
+        label: 'Choose Action',
+        items: (row: any) => {
+          const actions = [
+            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
+          ];
+          return actions;
+          
+        }
+      }
+    }
+  ];
+
+
+ 
   loadPages(page: number = this.currentPage): void {
-    const params = {
+     this.currentPage = page;
+     const params = {
       page: this.currentPage,
       per_page: this.pageSize,
       search: this.search,
@@ -145,48 +159,50 @@ onServerAction(params: {
     this.isLoading = true;
     this.pageService.getPages(params).subscribe({
     next: (res) => {
-      console.log(res.data);
+      console.log("Total data",res.data);
+      console.log('API PAGINATION:', res.pagination);
 
-      this.data = (res.data || []).map((page: any, index: number) => {
+      // this.data = (res.data || []).map((page: any, index: number) => {
+     this.data = res.data.map((page: any, index: number) => {
 
-        const englishTitle = page.name_en || 'N/A';
+  const englishTitle = page.name_en || 'N/A';
 
-        const punjabiTitleStr = page.name_pb
-          ? `<div class="text-dark lh-1 pt-2">
-              <span class="text-muted fw-bold small">PB:</span> 
-              ${page.name_pb}
-            </div>`
-          : '';
+  const punjabiTitleStr = page.name_pb
+    ? `<div class="text-dark lh-1 pt-2">
+        <span class="text-muted fw-bold small">PB:</span>
+        ${page.name_pb}
+      </div>`
+    : '';
 
-        return {
-          id: page.public_id,
+  return {
+    id: page.public_id,
+    orignalSeq: (params.page - 1) * params.per_page + index + 1,
 
-          orignalSeq: (params.page - 1) * params.per_page + index + 1,
+    titleHtml: `
+      <div class="text-dark pb-2 lh-1">
+        <span class="text-muted fw-bold small">EN:</span>
+        ${englishTitle}
+      </div>
+      ${punjabiTitleStr}
+    `,
 
-          titleHtml: `
-            <div class="text-dark pb-2 lh-1">
-              <span class="text-muted fw-bold small">EN:</span> 
-              ${englishTitle}
-            </div>
-            ${punjabiTitleStr}
-          `,
+    statusText: page.status ? 'Active' : 'In active',
+    status: page.status,
+    sortOrder: page.sort_order ?? 0,
+    createdAt: this.formatDate(page.created_at),
+    canEdit: true,
+    description: page.description || ''
+  };
+});
+  this.isLoading = false;
+  this.totalRecords = res.pagination.total;
 
-          statusText: page.status ? 'Active' : 'In active',
+  this.pagination = res.pagination;
 
-          status: page.status,
+  this.currentPage = res.pagination.current_page;
 
-          sortOrder: page.sort_order ?? 0,
+  this.pageSize = res.pagination.per_page;
 
-          createdAt: this.formatDate(page.created_at),
-
-          canEdit: true,
-
-          description: page.description || ''
-        };
-    });
-
-    this.isLoading = false;
-    this.totalRecords = res.pagination.total;
 
     this.cdr.detectChanges();
   },
@@ -197,93 +213,55 @@ onServerAction(params: {
     this.toast.show('error', err.message);
   }
 });
-    // this.pageService.getPages(params).subscribe({
-    //   next: (res) => {
-    //     this.data = (res.data || []).map((page: any, index: number) => {
-    //         console.log(res.data);
-
-            
-
-    //       const englishTitle = page.name_en?.title || 'N/A';
-    //       const punjabiTitleStr = page.name_pb?.title 
-    //         ? `<div class="text-dark lh-1 pt-2"><span class="text-muted fw-bold small">PB:</span> ${page.punjabi_description.title}</div>` 
-    //         : '';
-    //         console.log(englishTitle);
-    //         console.log(punjabiTitleStr);
-
-
-    //       return {
-    //         id: page.public_id,
-    //         orignalSeq: (params.page - 1) * params.per_page + index + 1,
-    //         titleHtml: `<div class="text-dark pb-2 lh-1"><span class="text-muted fw-bold small">EN:</span> ${englishTitle}</div>${punjabiTitleStr}`,
-    //         statusText: page.status ? 'Active' : 'In active',
-    //         status: page.status,
-    //         sortOrder: page.sort_order ?? 0,
-    //         createdAt: this.formatDate(page.created_at),
-    //         canEdit: true,
-    //         description: page.english_description?.description || ''
-    //       };
-    //     });
-    //     this.isLoading = false;
-    //     this.totalRecords = res.pagination.total;
-    //     this.cdr.detectChanges();
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //     this.isLoading = false;
-    //     this.toast.show('error', err.message);
-    //   }
-    // });
+  
   }
 
+  // Actions  
+changePage(page: number): void {
+  this.loadPages(page);
+}
 
+searchPages(text: string): void {
+  this.search = text;
+  this.currentPage = 1;
+  this.loadPages(1);
+}
+
+sortPages(event: any): void {
+  this.sortColumn = event.column;
+  this.sortDirection = event.direction;
+  this.currentPage = 1;
+  this.loadPages(1);
+}
+
+onPageSizeChange(size: number): void {
+  this.pageSize = size;
+  console.log('Page size',size);
+  this.currentPage = 1;
+  this.loadPages(1);
+}
  
-  openCreateModal() {
+  openCreateModal(){
     this.isEditMode = false;
     this.pageId = null;
     this.pageSchema.submitLabel = 'Create Page';
 
-    // Reset immediately before opening
-    const form = this.pageModal?.dynamicForm?.form;
-    if (form) {
-      form.reset({
-        status: true,
-        sort_order: 0,
-        page_type: '1',
-        same_as_english: false,
-        page_banner: null
-      });
-      form.get('page_banner')?.setValue(null);
-    }
-
+    if (this.pageModal?.dynamicForm) {
+      this.pageModal.dynamicForm.form.reset();
+    } 
+    
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { public_id: null },
       queryParamsHandling: 'merge'
     }).then(() => {
       this.pageModal.open();
-
-      setTimeout(() => {
-        const f = this.pageModal?.dynamicForm?.form;
-        if (f) {
-          f.reset({
-            status: true,
-            sort_order: 0,
-            page_type: '1',
-            same_as_english: false,
-            page_banner: null
-          });
-          f.get('page_banner')?.setValue(null);
-        }
-        this.bindCheckboxLogic();
-        this.cdr.detectChanges();
-      }, 50);
+      setTimeout(() => this.bindCheckboxLogic(), 100);
     });
   }
 
-
-
   openEditModal(id: string | number): void {
+
   this.isEditMode = true;
   this.pageId = String(id);
   this.pageSchema.submitLabel = 'Update Page';
@@ -330,8 +308,7 @@ onServerAction(params: {
           external_url: pageData.external_url ?? '',
 
           // Existing image filename
-          // page_banner: pageData.page_banner ?? ''
-          page_banner: pageData.page_banner || null
+          page_banner: pageData.page_banner ?? ''
         };
 
         console.log(
@@ -372,20 +349,20 @@ onServerAction(params: {
           const dynamicControl =
             this.pageModal.dynamicForm.getControl('page_banner');
 
-          console.log(
-            'Parent value:',
-            parentControl?.value
-          );
+          // console.log(
+          //   'Parent value:',
+          //   parentControl?.value
+          // );
 
-          console.log(
-            'DynamicForm value:',
-            dynamicControl?.value
-          );
+          // console.log(
+          //   'DynamicForm value:',
+          //   dynamicControl?.value
+          // );
 
-          console.log(
-            'Same control:',
-            parentControl === dynamicControl
-          );
+          // console.log(
+          //   'Same control:',
+          //   parentControl === dynamicControl
+          // );
 
           this.bindCheckboxLogic();
 
@@ -435,9 +412,9 @@ updatePageStatus(
   const pageId = String(id);
   const statusValue = status === 1 ? 1 : 0;
 
-  console.log('Updating page status');
-  console.log('Page ID:', pageId);
-  console.log('Status:', statusValue);
+  // console.log('Updating page status');
+  // console.log('Page ID:', pageId);
+  // console.log('Status:', statusValue);
 
   this.pageService
     .updatePageStatus(pageId, statusValue)
@@ -552,14 +529,7 @@ onSubmit(formData: any): void {
   payload.append('page_banner', formData.page_banner);
 }
 
-  // payload.append(
-  //   'same_as_english_pb',
-  //   formData.same_as_english_pb === true ||
-  //   formData.same_as_english_pb === '1' ||
-  //   formData.same_as_english_pb === 1
-  //     ? '1'
-  //     : '0'
-  // );
+
 
   // ==============================
   // Meta - English
@@ -616,11 +586,6 @@ onSubmit(formData: any): void {
   // ==============================
   // Debug
   // ==============================
-
-  console.log('Edit mode:', this.isEditMode);
-  console.log('Page ID:', this.pageId);
-  console.log('Form data:', formData);
-   console.log('external_url:',formData.external_url);
 
   payload.forEach((value, key) => {
     console.log(key, value);
@@ -721,25 +686,11 @@ onSubmit(formData: any): void {
     this.pageModal.close();
   }
 
-    onModalClosed(): void {
-    const form = this.pageModal?.dynamicForm?.form;
-    if (form) {
-      form.reset({
-        status: true,
-        sort_order: 0,
-        page_type: '1',
-        same_as_english: false,
-        page_banner: null
-      });
-      form.get('page_banner')?.setValue(null);
-    }
-    this.cdr.detectChanges();
+  onModalClosed(): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { public_id: null },
       queryParamsHandling: 'merge'
     });
   }
-
-
 }

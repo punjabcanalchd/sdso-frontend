@@ -218,10 +218,10 @@ onSubmit(value: any): void {
       this.toast.show('success', response?.message || 'Login successful');      
     
         // Clear sensitive fields
-        this.dynamicForm.form.patchValue({ password: '' });
-        if (this.setcaptchaFromAdmin) {
-          this.dynamicForm.form.patchValue({ captcha_input: '' });
-        }
+        // this.dynamicForm.form.patchValue({ password: '' });
+        // if (this.setcaptchaFromAdmin) {
+        //   this.dynamicForm.form.patchValue({ captcha_input: '' });
+        // }
       console.log('Login successful', this.auth);
       console.log('Login successful', this.auth.getDashboardRoute());
       this.router.navigateByUrl(this.auth.getDashboardRoute());
