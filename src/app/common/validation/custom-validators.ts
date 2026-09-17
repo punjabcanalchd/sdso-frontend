@@ -148,6 +148,46 @@ static menuTitle(): ValidatorFn {
     );
   }
 
+  static latitude(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const latitude = Number(value);
+
+    if (isNaN(latitude) || latitude < -90 || latitude > 90) {
+      return {
+        latitude: 'Latitude must be between -90 and 90.'
+      };
+    }
+
+    return null;
+  };
+}
+
+static longitude(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+
+    const longitude = Number(value);
+
+    if (isNaN(longitude) || longitude < -180 || longitude > 180) {
+      return {
+        longitude: 'Longitude must be between -180 and 180.'
+      };
+    }
+
+    return null;
+  };
+}
+
   static positiveInt(): ValidatorFn {
     return CustomValidators.regex(
       PATTERNS.POSITIVE_INT,
@@ -240,6 +280,19 @@ static menuTitle(): ValidatorFn {
       const date = new Date(control.value);
       return isNaN(date.getTime())
         ? { validationMessage: 'Enter a valid date.' }
+        : null;
+    };
+  }
+
+  // VALID DATE & TIME
+  static validDateTime(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+
+      const dateTime = new Date(control.value);
+
+      return isNaN(dateTime.getTime())
+        ? { validationMessage: 'Enter a valid date and time.' }
         : null;
     };
   }

@@ -84,8 +84,8 @@ export class CirclesComponent implements OnInit {
           description_pb: circle.description_pb,
           lgdstatecode: circle.lgdstatecode,
           lgddistcode: circle.lgddistcode,
-          status: circle.status,
-          status_value: circle.status == 1 ? 'Active' : 'In-active',
+          status_value: circle.status,
+          status: circle.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(circle.created_at),
         }));
 
@@ -111,7 +111,7 @@ export class CirclesComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
       { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'state', label: 'State', widthClass: 'col-2', sortable: false },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -238,7 +238,7 @@ export class CirclesComponent implements OnInit {
           description_en: Circle.description_en || '',
           description_pb: Circle.description_pb || '',
           lgdstatecode: Circle.lgdstatecode,
-          status: Circle.status
+          status: Circle.status_value
         });
 
       }, 100);

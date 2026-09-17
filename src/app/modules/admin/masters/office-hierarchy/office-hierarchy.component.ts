@@ -107,7 +107,7 @@ export class OfficeHierarchyComponent  implements OnInit {
           description_en: OfficeHierarchy.description_en || '',
           description_pb: OfficeHierarchy.description_pb || '',
           officesenioritylevel: OfficeHierarchy.officesenioritylevel,
-          status: OfficeHierarchy.status
+          status: OfficeHierarchy.status_value
         });
 
       }, 100);
@@ -138,8 +138,8 @@ export class OfficeHierarchyComponent  implements OnInit {
           officesenioritylevel: officeHierarchy.officesenioritylevel,
           description_en: officeHierarchy.description_en,
           description_pb: officeHierarchy.description_pb,
-          status: officeHierarchy.status,
-          status_value: officeHierarchy.status == 1 ? 'Active' : 'In-active',
+          status_value: officeHierarchy.status,
+          status: officeHierarchy.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(officeHierarchy.created_at),
         }));
 
@@ -165,7 +165,7 @@ export class OfficeHierarchyComponent  implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'officesenioritylevel', label: 'Level', widthClass: 'col-2', sortable: true },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -251,10 +251,12 @@ export class OfficeHierarchyComponent  implements OnInit {
         next: (res: any) => {
           this.toast.show('success', res.message || 'Office Hierarchy created successfully!', 4000);
           this.officeHierarchyModal.close();
+          this.loadOfficeHierarchy();
         },
         error: (error: any) => {
           this.toast.show('error', error.error?.message || 'Failed to create Office Hierarchy');
           console.error('Failed to create Office Hierarchy:', error);
+          this.loadOfficeHierarchy();
         }
       });
     }

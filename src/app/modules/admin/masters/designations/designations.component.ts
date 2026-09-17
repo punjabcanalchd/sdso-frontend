@@ -104,7 +104,7 @@ export class DesignationsComponent implements OnInit {
           description_en: Designation.description_en || '',
           description_pb: Designation.description_pb || '',
           desigsenioritylevel: Designation.desigsenioritylevel,
-          status: Designation.status
+          status: Designation.status_value
         });
 
       }, 100);
@@ -135,8 +135,8 @@ export class DesignationsComponent implements OnInit {
           description_en: designation.description_en,
           description_pb: designation.description_pb,
           desigsenioritylevel: designation.desigsenioritylevel,
-          status: designation.status,
-          status_value: designation.status == 1 ? 'Active' : 'In-active',
+          status_value: designation.status,
+          status: designation.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(designation.created_at),
         }));
 
@@ -162,7 +162,7 @@ export class DesignationsComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'desigsenioritylevel', label: 'Level', widthClass: 'col-2', sortable: true },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',

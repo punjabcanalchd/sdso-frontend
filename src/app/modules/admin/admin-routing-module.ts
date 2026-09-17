@@ -14,6 +14,12 @@ import { CirclesComponent } from './masters/circles/circles.component';
 import { OfficesComponent } from './masters/offices/offices.component';
 import { SubDivisionsComponent } from './masters/sub-divisions/sub-divisions.component';
 import { OfficeHierarchyComponent } from './masters/office-hierarchy/office-hierarchy.component';
+import { DamHeadworksComponent } from './sdso/dam-headworks/dam-headworks.component';
+import { DamHeadworksReadingsComponent } from './sdso/dam-headworks-readings/dam-headworks-readings.component';
+import { ExceptionLogsComponent } from './log-management/exception-logs/exception-logs.component';
+import { ActivityLogsComponent } from './log-management/activity-logs/activity-logs.component';
+import { ActivityLogDetailsComponent } from './log-management/activity-logs/activity-log-detail/activity-log-detail.component';
+import { ExceptionLogDetailComponent } from './log-management/exception-logs/exception-log-detail/exception-log-detail.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
 
 import { PagesComponent } from '../pages/pages-list/pages-list.component';
@@ -30,7 +36,7 @@ const routes: Routes = [
       { path: 'pages', component: PagesComponent, title: 'Pages' },
       { path: 'page', redirectTo: 'pages', pathMatch: 'full' },
 
-      { path: 'users', component: Users, title: 'Users – Admin' },
+      { path: 'users', component: Users, title: 'Users - Admin' },
       { path: 'user-role', redirectTo: 'roles', pathMatch: 'full' },
 
       { path: 'roles', component: Roles, title: 'Roles – Admin' },
@@ -45,6 +51,12 @@ const routes: Routes = [
       { path: 'subdivisions', component: SubDivisionsComponent, title: 'SubDivisions – Admin' },
       { path: 'offices', component: OfficesComponent, title: 'Offices – Admin' },
       { path: 'menu-management', component: MenuManagementComponent, title: 'Menu Management – Admin' },
+      { path: 'dam-headworks', component: DamHeadworksComponent, title: 'Dam HeadWorks – Admin' },
+      { path: 'damdailyreading', component: DamHeadworksReadingsComponent, title: 'Dam Daily Readings – Admin' },
+      { path: 'exception-log', component: ExceptionLogsComponent, title: 'Exception Logs – Admin' },
+      { path: 'exception-log/:id', component: ExceptionLogDetailComponent, title: 'Exception Log Details – Admin' },
+      { path: 'logs', component: ActivityLogsComponent, title: 'Activity Logs – Admin' },
+      { path: 'logs/:id', component: ActivityLogDetailsComponent, title: 'Activity Log Details – Admin' },
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
     ],
     canActivate: [AuthGuard],

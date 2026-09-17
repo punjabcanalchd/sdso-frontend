@@ -244,14 +244,6 @@ export class AuthService {
     payload
   );
 }
-
-  updatePageStatus(publicId: string, status: number) {
-  return this.api.post(`/admin/pages/${publicId}/status`,
-      {
-        status: status
-      }
-    );
-   }
   getStates(data: any): Observable<any> {
     return this.api.get<any>('/admin/states', data);
   }
@@ -278,6 +270,10 @@ export class AuthService {
 
   updateDistrict(districtId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/districts/${districtId}/update`, payload);
+  }
+
+  getDistrictsByState(stateId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/districts/${stateId}/get-districts`, payload);
   }
 
   getOfficeHierarchy(data?: any): Observable<any> {
@@ -374,4 +370,59 @@ export class AuthService {
   }
 
 
+  getAllOffices(data: any): Observable<any> {
+    return this.api.get<any>('/admin/offices/all', data);
+  }
+
+  getOfficesByDistrict(districtId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/offices/${districtId}/get-offices`, payload);
+  }
+
+  getDamHeadWorks(data: any): Observable<any> {
+    return this.api.get<any>('/admin/dam-headworks', data);
+  }
+
+  getAllDamHeadWorks(data: any): Observable<any> {
+    return this.api.get<any>('/admin/dam-headworks/all', data);
+  }
+
+  createDamHeadWorks(payload: any) {
+    return this.api.post('/admin/dam-headworks',payload);
+  }
+
+  updateDamHeadWorks(damHeadWorksId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/dam-headworks/${damHeadWorksId}/update`, payload);
+  }
+
+  getDamHeadWorksReadings(data: any): Observable<any> {
+    return this.api.get<any>('/admin/dam-headworks-readings', data);
+  }
+
+  getAllDamHeadWorksReadings(data: any): Observable<any> {
+    return this.api.get<any>('/admin/dam-headworks-readings/all', data);
+  }
+
+  createDamHeadWorksReading(payload: any) {
+    return this.api.post('/admin/dam-headworks-readings',payload);
+  }
+
+  updateDamHeadWorksReading(damHeadWorksReadingId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/dam-headworks-readings/${damHeadWorksReadingId}/update`, payload);
+  }
+
+  getExceptionLogs(data?: any): Observable<any> {
+    return this.api.get<any>('/admin/exception-logs', data);
+  }
+
+  getExceptionLog(damHeadWorksReadingId: string, data?: any): Observable<any> {
+    return this.api.get<any>(`/admin/exception-logs/${damHeadWorksReadingId}`, data);
+  }
+
+  getActivityLogs(data?: any): Observable<any> {
+    return this.api.get<any>('/admin/activity-logs', data);
+  }
+
+  getActivityLog(activityId: string, data?: any): Observable<any> {
+    return this.api.get<any>(`/admin/activity-logs/${activityId}`, data);
+  }
 }

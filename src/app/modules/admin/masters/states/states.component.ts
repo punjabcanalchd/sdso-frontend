@@ -105,7 +105,7 @@ export class States implements OnInit {
           description_en: state.description_en || '',
           description_pb: state.description_pb || '',
           lgdstatecode: state.lgdstatecode,
-          status: state.status
+          status: state.status_value
         });
 
       }, 100);
@@ -136,8 +136,8 @@ export class States implements OnInit {
           description_en: state.description_en,
           description_pb: state.description_pb,
           lgdstatecode: state.lgdstatecode,
-          status: state.status,
-          status_value: state.status == 1 ? 'Active' : 'In-active',
+          status: state.status == 1 ? 'Active' : 'In-active',
+          status_value: state.status,
           created_at: this.formatDate(state.created_at),
         }));
 
@@ -162,7 +162,7 @@ export class States implements OnInit {
   tableColumns: TableColumn[] = [
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',

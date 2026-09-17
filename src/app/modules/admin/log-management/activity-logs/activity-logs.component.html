@@ -1,0 +1,18 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Activity Logs"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="false"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadActivityLogs($event)"
+        (searchChange)="searchActivityLogs($event)"
+        (sortChange)="sortActivityLogs($event)"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>

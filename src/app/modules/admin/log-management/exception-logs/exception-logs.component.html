@@ -1,0 +1,18 @@
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="Exception Logs"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="false"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadExceptionLogs($event)"
+        (searchChange)="searchExceptionLogs($event)"
+        (sortChange)="sortExceptionLogs($event)"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>

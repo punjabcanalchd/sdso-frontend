@@ -1,11 +1,16 @@
 <div class="time-picker">
 
-  <label
-    *ngIf="label"
-    class="form-label"
-  >
-    {{ label }}
-  </label>
+  <input
+    type="time"
+    class="form-control"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [readonly]="readonly"
+    [disabled]="disabled"
+  />
+
+  <div *ngIf="control.touched && control.invalid" class="text-danger mt-1">
+  </div>
 
  <input
   type="time"

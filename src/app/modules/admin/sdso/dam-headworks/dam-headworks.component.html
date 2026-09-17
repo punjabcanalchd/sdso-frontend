@@ -1,1 +1,28 @@
-<p>dam-headworks works!</p>
+<div class="container-fluid p-3">
+    <app-document-list 
+        title="DAM/ HeadWorks"
+        [isAdmin]="true" 
+        [data]="data" 
+        [columns]="tableColumns" 
+        [showCreateButton]="true"
+        [currentPage]="pagination.current_page"
+        [lastPage]="pagination.last_page"
+        [pageSize]="pagination.per_page"
+        [totalItems]="pagination.total"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (pageChange)="loadDamHeadWorks($event)"
+        (searchChange)="searchDamHeadWorks($event)"
+        (sortChange)="sortDamHeadWorks($event)"
+        (createClick)="openCreateModal()"
+        (actionClick)="handleAction($event)">
+    </app-document-list>
+</div>
+<app-modal-form 
+    #createDamHeadWorksModal
+    [title]="isEditMode ? 'Edit DAM/ HeadWorks' : 'Create DAM/ HeadWorks'"
+    [schema]="DamHeadWorksSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (selectChange)="onSelectChange($event)"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

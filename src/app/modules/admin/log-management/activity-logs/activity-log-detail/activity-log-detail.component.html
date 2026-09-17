@@ -1,0 +1,130 @@
+<div class="container-fluid p-3">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+      <h4 class="mb-1">Activity Log Details</h4>
+      <small class="text-muted">
+        View complete activity information
+      </small>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="goBack()">
+      <i class="fa fa-arrow-left me-1"></i>
+      Back
+    </button>
+
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border"></div>
+  </div>
+
+  <div *ngIf="!loading && activityLog">
+
+    <!-- Basic Information -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Activity Information</strong>
+      </div>
+
+      <div class="card-body">
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Log Name</label>
+            <div class="fw-bold">
+              {{ activityLog.log_name }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Username</label>
+            <div class="fw-bold">
+              {{ activityLog.causer?.name }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Table Name</label>
+            <div class="fw-bold">
+              {{ activityLog.table_name }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Created At</label>
+            <div class="fw-bold">
+              {{ activityLog.created_at }}
+            </div>
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="text-muted">Description</label>
+            <div class="fw-bold">
+              {{ activityLog.description }}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- Attribute Changes -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Attribute Changes</strong>
+      </div>
+
+      <div class="card-body">
+
+        <pre class="mb-0">{{ activityLog.attribute_changes | json }}</pre>
+
+      </div>
+
+    </div>
+
+
+    <!-- Properties -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Properties</strong>
+      </div>
+
+      <div class="card-body">
+
+        <pre class="mb-0">{{ activityLog.properties | json }}</pre>
+
+      </div>
+
+    </div>
+
+
+    <!-- Full Data -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Full Data</strong>
+      </div>
+
+      <div class="card-body">
+
+        <pre class="mb-0">{{ activityLog.subject?.data | json }}</pre>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

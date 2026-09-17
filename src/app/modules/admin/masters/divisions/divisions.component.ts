@@ -83,8 +83,8 @@ export class DivisionsComponent implements OnInit {
           description_en: division.description_en,
           description_pb: division.description_pb,
           circle_id: division.circle_id,
-          status: division.status,
-          status_value: division.status == 1 ? 'Active' : 'In-active',
+          status_value: division.status,
+          status: division.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(division.created_at),
         }));
 
@@ -142,7 +142,7 @@ export class DivisionsComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'circle', label: 'Circle', widthClass: 'col-2', sortable: false },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -244,7 +244,7 @@ export class DivisionsComponent implements OnInit {
           description_en: division.description_en || '',
           description_pb: division.description_pb || '',
           circle_id: division.circle_id,
-          status: division.status
+          status: division.status_value
         });
 
       }, 100);

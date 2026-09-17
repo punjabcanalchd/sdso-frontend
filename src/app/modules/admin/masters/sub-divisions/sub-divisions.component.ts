@@ -83,8 +83,8 @@ export class SubDivisionsComponent implements OnInit {
           division_id: subdivision.division_id,
           description_en: subdivision.description_en,
           description_pb: subdivision.description_pb,
-          status: subdivision.status,
-          status_value: subdivision.status == 1 ? 'Active' : 'In-active',
+          status_value: subdivision.status,
+          status: subdivision.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(subdivision.created_at),
         }));
 
@@ -143,7 +143,7 @@ export class SubDivisionsComponent implements OnInit {
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
     { key: 'division', label: 'Division', widthClass: 'col-2', sortable: false },
-    { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
+    { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
       key: 'action',
@@ -245,7 +245,7 @@ export class SubDivisionsComponent implements OnInit {
           description_en: subdivision.description_en || '',
           description_pb: subdivision.description_pb || '',
           division_id: subdivision.division_id,
-          status: subdivision.status
+          status: subdivision.status_value
         });
 
       }, 100);

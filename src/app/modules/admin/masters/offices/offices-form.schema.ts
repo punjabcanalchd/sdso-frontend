@@ -71,7 +71,6 @@ export const OfficeSchema: FormSchema = {
       name: 'officelevelcode',
       label: 'Office Level',
       type: 'select',
-      placeholder: 'Enter Code',
       className: 'col-md-4',
       validators: [CustomValidators.textContent()]
     },
@@ -79,26 +78,35 @@ export const OfficeSchema: FormSchema = {
       name: 'circle_id',
       label: 'Circle',
       type: 'select',
-      placeholder: 'Enter Code',
       className: 'col-md-4',
-      validators: [CustomValidators.textContent()]
+      visibleWhen: {
+        field: 'officelevelcode',
+        value: ['CIRCLE OFFICE', 'DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer']
+      },
+      options: []
     },
     {
       name: 'division_id',
       label: 'Division',
       type: 'select',
-      placeholder: 'Enter Code',
+      placeholder: 'Please Select Circle First...',
       className: 'col-md-4',
-      validators: [CustomValidators.textContent()]
+      visibleWhen: {
+        field: 'officelevelcode',
+        value: ['DIVISION OFFICE', 'SUB DIVISION OFFICE', 'Gauge Reader/Beldaar', 'Junior Engineer']
+      },
+      options: []
     },
     {
       name: 'subdivision_id',
-      label: 'Sub-Division',
+      label: 'Sub Division',
       type: 'select',
-      placeholder: 'Enter Code',
       className: 'col-md-4',
-      validators: [CustomValidators.textContent()]
+      placeholder: 'Please Select Division First...',
+      visibleWhen: { field: 'officelevelcode', value: 'SUB DIVISION OFFICE' },
+      options: []
     },
+
     {
       name: 'lgdstatecode',
       label: 'State Code',

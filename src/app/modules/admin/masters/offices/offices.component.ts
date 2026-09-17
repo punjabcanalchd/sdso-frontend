@@ -12,6 +12,10 @@ import { EncryptionService } from '../../../../core/services/encrypt.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { OfficeSchema } from './offices-form.schema';
 import { ModalHelperService } from '../../../../shared/services/modal-helper';
+import { DynamicFilterComponent, FilterField } from '../../../../shared/components/dynamic-filter/dynamic-filter.component';
+import { OfficeHierarchyService } from '../../../../core/services/office-hierarchy.service';
+
+
 
 @Component({
   selector: 'app-offices',
@@ -29,6 +33,7 @@ export class OfficesComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
+  private officeHierarchyService = inject(OfficeHierarchyService);
 
   data: Office[] = [];
   formInitialData: any = {};
@@ -37,6 +42,7 @@ export class OfficesComponent implements OnInit {
   OfficeSchema = OfficeSchema;
   updatingOfficeId: string | null = null;
   officeId: string | null = null;
+  officeLevelNameToPublicId: Record<string, string> = {};
 
   officeInitialData: any = {};
   isOfficeLoading: boolean = false;
@@ -63,6 +69,22 @@ export class OfficesComponent implements OnInit {
   allDivisionList: any[] = [];
   allSubdivisionList: any[] = [];
   allDistrictList: any[] = [];
+
+  // Filter state
+  filterCircleId = '';
+  filterDivisionId = '';
+  filterSubdivisionId = '';
+
+  filterSchema: FilterField[] = [
+    { name: 'circle_id', label: 'Circle', type: 'select', options: [] },
+    { name: 'division_id', label: 'Division', type: 'select', options: [], disabled: true },
+    { name: 'subdivision_id', label: 'Sub Division', type: 'select', options: [], disabled: true },
+  ];
+
+  // Filter dropdown options
+  filterCircleOptions: any[] = [];
+  filterDivisionOptions: any[] = [];
+  filterSubdivisionOptions: any[] = [];
 
   officeLevelRules: Record<string, {
     showCircle: boolean;
@@ -116,6 +138,7 @@ export class OfficesComponent implements OnInit {
   ngOnInit(): void {
     this.loadOffices();
     this.getOfficeLevels();
+    this.loadCircles();
     this.getStates();
   }
 
@@ -140,13 +163,14 @@ export class OfficesComponent implements OnInit {
           id: office.office_id,
           name_en: office.name_en,
           name_pb: office.name_pb,
-          division: office.division,
-          officelevel: office.officelevel,
-          state: office.state,
-          circle: office.circle,
-          subdivision: office.subdivision,
+          division: office.division ?? 'N/A',
+          officelevel: office.officelevel ?? 'N/A',
+          state: office.state ?? 'N/A',
+          circle: office.circle ?? 'N/A',
+          subdivision: office.subdivision ?? 'N/A',
           email: office.email,
           mobile: office.mobile,
+          status_value: office.status,
           status: office.status ? 'Active' : 'In-active',
           created_at: this.formatDate(office.created_at),
         }));
@@ -169,35 +193,27 @@ export class OfficesComponent implements OnInit {
 
   }
 
-  getOfficeLevels(): void {
-    const params = {};
-    this.userService.getAllOfficeHierarchy(params).subscribe({
+getOfficeLevels(): void {
+    this.userService.getAllOfficeHierarchy().subscribe({
       next: (response) => {
-          this.officeLevels = response;
-          const officeLevels = response.data || [];
-          const parentOptions = officeLevels.map((OfficeHierarchy: any) => ({
-            label: OfficeHierarchy.name_en,
-            value: String(OfficeHierarchy.public_id)
-          }));
-          console.log(parentOptions);
-          const parentField = this.OfficeSchema.fields?.find(
-            f => f.name === 'officelevelcode'
-          );
+        const mappedLevels = response.data.map((level: any) => ({
+          label: level.name_en,
+          value: level.name_en  // use name_en so visibleWhen comparisons work
+        }));
 
-          if (parentField) {
-            parentField.options = [
-              { label: 'Please select Office level', value: '' },
-              ...parentOptions
-            ];
-          }
-          const form = this.officeModal?.dynamicForm?.form;
-          form.get('officelevelcode')?.setValue('');
-          this.isLoaded = true;
-          this.cdr.detectChanges();
+        // Store a separate map of name_en -> public_id for submission
+        this.officeLevelNameToPublicId = {};
+        response.data.forEach((level: any) => {
+          this.officeLevelNameToPublicId[level.name_en] = level.public_id;
+        });
+
+        const officeLevelField = this.OfficeSchema.fields?.find(f => f.name === 'officelevelcode');
+        if (officeLevelField) {
+          officeLevelField.options = mappedLevels;
+        }
+        this.cdr.detectChanges();
       },
-      error: (error) => {
-        console.error('Error loading office level:', error);
-      }
+      error: err => console.error('Failed to load office levels:', err)
     });
   }
 
@@ -233,129 +249,67 @@ export class OfficesComponent implements OnInit {
     });
   }
 
-  onFieldChange(event: any): void {
 
-    const fieldName = event.name;
-    const value = event.value;
-    console.log('fieldName', fieldName);
-    console.log('value', value);
-    if (fieldName === 'officelevelcode') {
-      this.handleOfficeLevelChange(value);
-    }
+  loadCircles(): void {
+    this.userService.getAllCircles().subscribe({
+      next: (response) => {
+        const mappedCircles = response.data.map((circle: any) => ({
+          label: circle.name_en,
+          value: circle.public_id
+        }));
 
-    if (fieldName === 'circle_id') {
-      this.handleCircleChange(value);
-    }
+        const circleField = this.OfficeSchema.fields?.find(f => f.name === 'circle_id');
+        if (circleField) {
+          circleField.options = mappedCircles;
+        }
 
-    if (fieldName === 'division_id') {
-      this.handleDivisionChange(value);
-    }
+        // Populate filter schema circle options
+        const filterCircleField = this.filterSchema.find(f => f.name === 'circle_id');
+        if (filterCircleField) {
+          filterCircleField.options = mappedCircles;
+          this.filterSchema = [...this.filterSchema];
+        }
 
-    if (fieldName === 'lgdstatecode') {
-      this.handleStateChange(value);
-    }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load circles:', err)
+    });
   }
 
-  handleOfficeLevelChange(officeLevel: string): void {
+  loadDivisions(): void {
+    this.userService.getAllDivisions().subscribe({
+      next: (response) => {
+        const mappedDivisions = response.data.map((div: any) => ({
+          label: div.name_en,
+          value: div.public_id
+        }));
 
-    const rule = this.officeLevelRules[officeLevel];
-
-    if (!rule) {
-      this.showCircle = false;
-      this.showDivision = false;
-      this.showSubdivision = false;
-      return;
-    }
-
-    this.showCircle = rule.showCircle;
-    this.showDivision = rule.showDivision;
-    this.showSubdivision = rule.showSubdivision;
-
-    /*
-    * Reset unnecessary dependent values
-    */
-
-    if (!this.showCircle) {
-
-      this.formInitialData.circle_id = null;
-      this.formInitialData.division_id = null;
-      this.formInitialData.subdivision_id = null;
-
-      this.divisionList = [];
-      this.subdivisionList = [];
-
-    } else if (!this.showDivision) {
-
-      this.formInitialData.division_id = null;
-      this.formInitialData.subdivision_id = null;
-
-      this.subdivisionList = [];
-
-    } else if (!this.showSubdivision) {
-
-      this.formInitialData.subdivision_id = null;
-
-    }
-
-    this.updateSchemaVisibility();
+        const divisionField = this.OfficeSchema.fields?.find(f => f.name === 'division_id');
+        if (divisionField) {
+          divisionField.options = mappedDivisions;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load divisions:', err)
+    });
   }
 
-  handleCircleChange(circleId: any): void {
+  loadSubDivisions(): void {
+    this.userService.getAllSubDivisions().subscribe({
+      next: (response) => {
+        const mappedSubDivisions = response.data.map((sub: any) => ({
+          label: sub.name_en,
+          value: sub.public_id
+        }));
 
-    if (!circleId) {
-
-      this.divisionList = [];
-      this.subdivisionList = [];
-
-      this.formInitialData.division_id = null;
-      this.formInitialData.subdivision_id = null;
-
-      this.updateSchemaOptions();
-
-      return;
-    }
-
-    /*
-    * If divisions are already loaded
-    */
-
-    this.divisionList = this.allDivisionList.filter(
-      division => String(division.circle_id) === String(circleId)
-    );
-
-    /*
-    * Reset division and subdivision
-    */
-
-    this.formInitialData.division_id = null;
-    this.formInitialData.subdivision_id = null;
-
-    this.subdivisionList = [];
-
-    this.updateSchemaOptions();
-  }
-
-  handleDivisionChange(divisionId: any): void {
-
-    if (!divisionId) {
-
-      this.subdivisionList = [];
-
-      this.formInitialData.subdivision_id = null;
-
-      this.updateSchemaOptions();
-
-      return;
-    }
-
-    this.subdivisionList = this.allSubdivisionList.filter(
-      subdivision =>
-        String(subdivision.division_id) === String(divisionId)
-    );
-
-    this.formInitialData.subdivision_id = null;
-
-    this.updateSchemaOptions();
+        const subdivisionField = this.OfficeSchema.fields?.find(f => f.name === 'subdivision_id');
+        if (subdivisionField) {
+          subdivisionField.options = mappedSubDivisions;
+        }
+        this.cdr.detectChanges();
+      },
+      error: err => console.error('Failed to load subdivisions:', err)
+    });
   }
 
   handleStateChange(lgdstatecode: any): void {
@@ -451,15 +405,16 @@ export class OfficesComponent implements OnInit {
 
   }
 
+
   tableColumns: TableColumn[] = [
     { key: 'name_en', label: 'Name EN', widthClass: 'col-2', sortable: true },
     { key: 'name_pb', label: 'Name PB', widthClass: 'col-2', sortable: true },
-    { key: 'officelevel', label: 'Office Level', widthClass: 'col-2', sortable: false },
-    { key: 'state', label: 'State', widthClass: 'col-2', sortable: false },
+    //{ key: 'officelevel', label: 'Office Level', widthClass: 'col-2', sortable: false },
+    //{ key: 'state', label: 'State', widthClass: 'col-2', sortable: false },
     { key: 'circle', label: 'Circle', widthClass: 'col-2', sortable: false },
     { key: 'division', label: 'Division', widthClass: 'col-2', sortable: false },
     { key: 'subdivision', label: 'Subdivision', widthClass: 'col-2', sortable: false },
-    { key: 'email', label: 'Email', widthClass: 'col-2', sortable: true },
+    //{ key: 'email', label: 'Email', widthClass: 'col-2', sortable: true },
     //{ key: 'mobile', label: 'Mobile', widthClass: 'col-2', sortable: false },
     { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
@@ -553,4 +508,16 @@ export class OfficesComponent implements OnInit {
     if (event.action === 'EDIT' || event.actionName === 'EDIT') {
     }
   }
+
+  setupCascadingDropdowns(form?: any) {
+    // We can accept the form from the (formReady) event directly,
+    // or fallback to the one in the modal view child if undefined.
+    const dynamicForm = form || this.officeModal?.dynamicForm?.form;
+    
+    if (dynamicForm) {
+      const schemaFields = this.OfficeSchema.fields || [];
+      this.officeHierarchyService.setupFormCascading(dynamicForm, schemaFields, this.cdr);
+    }   
+  }
+  
 }

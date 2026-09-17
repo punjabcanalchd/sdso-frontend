@@ -1,0 +1,111 @@
+<div class="container-fluid p-3">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+      <h4 class="mb-1">Exception Log Details</h4>
+      <small class="text-muted">
+        View complete exception information
+      </small>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="goBack()">
+      <i class="fa fa-arrow-left me-1"></i>
+      Back
+    </button>
+
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border"></div>
+  </div>
+
+  <div *ngIf="!loading && exceptionLog">
+
+    <!-- Basic Information -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Exception Information</strong>
+      </div>
+
+      <div class="card-body">
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Message</label>
+            <div class="fw-bold">
+              {{ exceptionLog.message }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Line</label>
+            <div class="fw-bold">
+              {{ exceptionLog.line }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">URL</label>
+            <div class="fw-bold">
+              {{ exceptionLog.url }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">IP Address</label>
+            <div class="fw-bold">
+              {{ exceptionLog.ip }}
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="text-muted">Created At</label>
+            <div class="fw-bold">
+              {{ exceptionLog.created_at }}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Body -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Body</strong>
+      </div>
+
+      <div class="card-body">
+
+        <pre class="mb-0">{{ exceptionLog.body | json }}</pre>
+
+    </div>
+
+
+      <!-- Trace -->
+    <div class="card mb-3">
+
+      <div class="card-header">
+        <strong>Trace</strong>
+      </div>
+
+      <div class="card-body">
+
+        <pre class="mb-0">{{ exceptionLog.trace | json }}</pre>
+
+    </div>
+
+
+
+  </div>
+
+</div>
