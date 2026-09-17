@@ -23,6 +23,7 @@ import { ActivityLogDetailsComponent } from './log-management/activity-logs/acti
 import { ExceptionLogDetailComponent } from './log-management/exception-logs/exception-log-detail/exception-log-detail.component';
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
 import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.component';
+import { EmailTemplatesListComponent } from './Others/email-templates-list/email-templates-list.component';
 
 
 
@@ -99,6 +100,7 @@ const routes: Routes = [
       { path: 'menus', redirectTo: 'menu-management', pathMatch: 'full' },
       { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
       { path: 'noticeboard', component: NoticeboardListComponent, title: 'Notice Board – Admin' },
+      { path: 'email-template', component: EmailTemplatesListComponent, title: 'Email Templates – Admin' },
 
     ],
     canActivate: [AuthGuard],

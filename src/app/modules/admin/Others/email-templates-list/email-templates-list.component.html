@@ -1,0 +1,18 @@
+<div class="container-fluid p-3">
+  <app-document-list
+    title="Email Templates"
+    [isAdmin]="true"
+    [data]="data"
+    [columns]="tableColumns"
+    [showCreateButton]="false"
+    [currentPage]="pagination.current_page || 1"
+    [lastPage]="pagination.last_page || 1"
+    [pageSize]="pagination.per_page || 25"
+    [totalItems]="pagination.total || 0"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (pageChange)="loadTemplates($event)"
+    (searchChange)="searchTemplates($event)"
+    (sortChange)="sortTemplates($event)"
+    (actionClick)="handleAction($event)">
+  </app-document-list>
+</div>
