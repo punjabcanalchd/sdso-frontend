@@ -239,11 +239,19 @@ export class AuthService {
     return this.api.post<any>('/admin/pages', payload);
   }
   updatePage(publicId: string, payload: FormData): Observable<any> {
-  return this.api.post<any>(
-    `/admin/pages/${publicId}/update`,
-    payload
-  );
-}
+    return this.api.post<any>(
+      `/admin/pages/${publicId}/update`,
+      payload
+    );
+  }
+  
+  updatePageStatus(publicId: string, status: number) {
+  return this.api.post(`/admin/pages/${publicId}/status`,
+      {
+        status: status
+      }
+    );
+   }
   getStates(data: any): Observable<any> {
     return this.api.get<any>('/admin/states', data);
   }
