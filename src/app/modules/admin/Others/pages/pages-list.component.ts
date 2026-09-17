@@ -411,10 +411,6 @@ updatePageStatus(
   const pageId = String(id);
   const statusValue = status === 1 ? 1 : 0;
 
-  // console.log('Updating page status');
-  // console.log('Page ID:', pageId);
-  // console.log('Status:', statusValue);
-
   this.pageService
     .updatePageStatus(pageId, statusValue)
     .subscribe({

@@ -140,8 +140,9 @@ export class SlidersListComponent implements OnInit {
           const englishTitle = slider.name || 'N/A';
 
           return {
-           id: slider.slider_id,
-           slider_id: slider.slider_id,
+            id: slider.slider_id,
+            public_id: slider.public_id,
+            slider_id: slider.slider_id,
             orignalSeq:
               (params.page - 1) * params.per_page + index + 1,
             titleHtml: `
@@ -174,7 +175,6 @@ export class SlidersListComponent implements OnInit {
 
         this.cdr.detectChanges();
       },
-
       error: (err: any) => {
         console.error('Failed to load sliders:', err);
         this.isLoading = false;
@@ -190,132 +190,115 @@ export class SlidersListComponent implements OnInit {
   }
 
   openCreateModal(): void {
+    this.isEditMode = false;
+    this.sliderId = null;
 
-  this.isEditMode = false;
-  this.sliderId = null;
+    this.sliderSchema.submitLabel = 'Create Slider';
 
-  this.sliderSchema.submitLabel = 'Create Slider';
+    if (this.sliderModal?.dynamicForm) {
+      this.sliderModal.dynamicForm.form.reset();
+    }
 
-  if (this.sliderModal?.dynamicForm) {
-    this.sliderModal.dynamicForm.form.reset();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { public_id: null },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      this.sliderModal.open();
+    });
   }
 
-  this.router.navigate([], {
-    relativeTo: this.route,
-    queryParams: { public_id: null },
-    queryParamsHandling: 'merge'
-  }).then(() => {
+  openEditModal(id: string | number): void {
+    this.isEditMode = true;
+    this.sliderId = String(id);
 
-    this.sliderModal.open();
+    this.sliderSchema.submitLabel = 'Update Slider';
 
-  });
-}
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        public_id: this.sliderId
+      },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      this.sliderService
+        .getSliderByPublicId(this.sliderId!)
+        .subscribe({
+          next: (res: any) => {
+            console.log('Slider response:', res);
 
-openEditModal(id: string | number): void {
+            if (!res.data) {
+              console.error('Slider data not found');
+              return;
+            }
 
-  this.isEditMode = true;
-  this.sliderId = String(id);
+            const sliderData = res.data;
 
-  this.sliderSchema.submitLabel = 'Update Slider';
+            const patchValue = {
+              name: sliderData.name ?? '',
+              status: !!sliderData.status
+            };
 
-  this.router.navigate([], {
-    relativeTo: this.route,
-    queryParams: {
-      public_id: this.sliderId
-    },
-    queryParamsHandling: 'merge'
-  }).then(() => {
+            console.log('Slider patch value:', patchValue);
 
-    this.sliderService
-      .getSliderByPublicId(this.sliderId!)
-      .subscribe({
+            this.sliderModal.open();
 
-        next: (res: any) => {
+            setTimeout(() => {
+              const dynamicForm =
+                this.sliderModal?.dynamicForm;
 
-          console.log('Slider response:', res);
+              console.log(
+                'Dynamic form:',
+                dynamicForm
+              );
 
-          if (!res.data) {
-            console.error('Slider data not found');
-            return;
+              if (!dynamicForm) {
+                console.error(
+                  'Dynamic form is not available'
+                );
+                return;
+              }
+
+              const form =
+                dynamicForm.form;
+
+              if (!form) {
+                console.error(
+                  'FormGroup is not available'
+                );
+                return;
+              }
+
+              console.log(
+                'Before patch:',
+                form.value
+              );
+
+              form.patchValue(patchValue);
+
+              console.log(
+                'After patch:',
+                form.value
+              );
+
+              this.cdr.detectChanges();
+            }, 300);
+          },
+          error: (err: any) => {
+            console.error(
+              'Failed to load slider:',
+              err
+            );
+
+            this.toast.show(
+              'error',
+              err.error?.message ||
+              'Failed to load slider'
+            );
           }
-
-          const sliderData = res.data;
-
-          const patchValue = {
-            name: sliderData.name ?? '',
-            status: !!sliderData.status
-          };
-
-          console.log('Slider patch value:', patchValue);
-
-          // Open modal
-          this.sliderModal.open();
-
-          // Wait for modal + dynamic form
-          setTimeout(() => {
-
-            const dynamicForm =
-              this.sliderModal?.dynamicForm;
-
-            console.log(
-              'Dynamic form:',
-              dynamicForm
-            );
-
-            if (!dynamicForm) {
-              console.error(
-                'Dynamic form is not available'
-              );
-              return;
-            }
-
-            const form =
-              dynamicForm.form;
-
-            if (!form) {
-              console.error(
-                'FormGroup is not available'
-              );
-              return;
-            }
-
-            console.log(
-              'Before patch:',
-              form.value
-            );
-
-            form.patchValue(patchValue);
-
-            console.log(
-              'After patch:',
-              form.value
-            );
-
-            this.cdr.detectChanges();
-
-          }, 300);
-
-        },
-
-        error: (err: any) => {
-
-          console.error(
-            'Failed to load slider:',
-            err
-          );
-
-          this.toast.show(
-            'error',
-            err.error?.message ||
-            'Failed to load slider'
-          );
-
-        }
-
-      });
-
-  });
-}
+        });
+    });
+  }
 
   onSubmit(formData: any): void {
     const payload = new FormData();
@@ -325,7 +308,6 @@ openEditModal(id: string | number): void {
       formData.name || ''
     );
 
-    
     payload.append(
       'status',
       formData.status === true ||
@@ -335,23 +317,13 @@ openEditModal(id: string | number): void {
         : '0'
     );
 
-    
-    // if (formData.image instanceof File) {
-    //   payload.append(
-    //     'image',
-    //     formData.image
-    //   );
-    // }
-
-    console.log('Edit mode:', this.isEditMode);
-    console.log('Slider ID:', this.sliderId);
-    console.log('Form data:', formData);
-
     payload.forEach((value, key) => {
       console.log(key, value);
     });
 
     if (this.isEditMode && this.sliderId) {
+      console.log("Slider===", this.sliderId);
+
       this.sliderService
         .updateSlider(this.sliderId, payload)
         .subscribe({
@@ -366,7 +338,6 @@ openEditModal(id: string | number): void {
             this.closeModal();
             this.loadSliders();
           },
-
           error: (error: any) => {
             console.error(
               'Failed to update Slider:',
@@ -401,7 +372,6 @@ openEditModal(id: string | number): void {
         this.closeModal();
         this.loadSliders();
       },
-
       error: (error: any) => {
         console.error(
           'Failed to create Slider:',
@@ -422,36 +392,41 @@ openEditModal(id: string | number): void {
     });
   }
 
-updateSliderStatus(
-  id: string | number,
-  status: boolean | number
-): void {
-  const sliderId = String(id);
-  const statusValue = Number(status) === 1 ? 0 : 1;
+  updateSliderStatus(
+    id: string | number,
+    status: boolean | number
+  ): void {
+    const sliderId = String(id);
+    const statusValue = Number(status);
 
-  this.sliderService
-    .updateSliderStatus(sliderId, statusValue)
-    .subscribe({
-      next: (res: any) => {
-        this.toast.show(
-          'success',
-          res.message || 'Slider status updated successfully',
-          3000
-        );
+    this.sliderService
+      .updateSliderStatus(sliderId, statusValue)
+      .subscribe({
+        next: (res: any) => {
+          this.toast.show(
+            'success',
+            res.message ||
+            'Slider status updated successfully',
+            3000
+          );
 
-        this.loadSliders();
-      },
-      error: (error: any) => {
-        console.error('Slider status update failed:', error);
+          this.loadSliders();
+        },
+        error: (error: any) => {
+          console.error(
+            'Slider status update failed:',
+            error
+          );
 
-        this.toast.show(
-          'error',
-          error.error?.message || 'Failed to update slider status',
-          3000
-        );
-      }
-    });
-}
+          this.toast.show(
+            'error',
+            error.error?.message ||
+            'Failed to update slider status',
+            3000
+          );
+        }
+      });
+  }
 
   deleteSlider(id: string | number): void {
     const sliderId = String(id);
@@ -475,7 +450,6 @@ updateSliderStatus(
 
           this.loadSliders();
         },
-
         error: (error: any) => {
           console.error(
             'Slider delete failed:',
@@ -493,35 +467,47 @@ updateSliderStatus(
   }
 
   handleAction(event: any): void {
-    console.log('Slider action:', event);
+    const action = event?.action || event?.actionName;
 
-    switch (
-      event.action ||
-      event.actionName
-    ) {
+    switch (action) {
       case 'edit':
-        this.openEditModal(
-          event.row.id
-        );
+        if (!event?.row?.public_id) {
+          console.error('EDIT: public_id is missing');
+          return;
+        }
+
+        this.openEditModal(event.row.public_id);
         break;
 
-   
-
       case 'toggle_status':
-    console.log('Toggle event:', event);
-    console.log('Toggle row:', event.row);
-    console.log('Public ID:', event.row?.public_id);
+        if (!event?.row?.public_id) {
+          console.error(
+            'TOGGLE: public_id is missing',
+            event.row
+          );
+          return;
+        }
+
         this.updateSliderStatus(
-          event.row.id,
+          event.row.public_id,
           event.row.status
         );
         break;
 
       case 'delete':
-        this.deleteSlider(
-          event.row.id
-        );
+        if (!event?.row?.public_id) {
+          console.error('DELETE: public_id is missing');
+          return;
+        }
+
+        this.deleteSlider(event.row.public_id);
         break;
+
+      default:
+        console.warn(
+          'Unknown slider action:',
+          action
+        );
     }
   }
 
@@ -544,8 +530,7 @@ updateSliderStatus(
   }
 
   onPageSizeChange(size: number): void {
-    this.pageSize = size;
-    console.log('Page size', size);
+    this.pageSize = size;   
     this.currentPage = 1;
     this.loadSliders(1);
   }
