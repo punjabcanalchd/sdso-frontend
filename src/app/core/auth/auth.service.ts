@@ -417,8 +417,7 @@ createSlider(data: FormData): Observable<any> {
   );
 }
 
-updateSlider(
-  publicId: string,
+updateSlider( publicId: string,
   data: FormData
 ): Observable<any> {
   return this.api.post<any>(
@@ -427,12 +426,9 @@ updateSlider(
   );
 }
 
-updateSliderStatus(
-  publicId: string,
-  status: number
-): Observable<any> {
-  return this.api.post<any>(
-    `${this.sliderUrl}/${publicId}/status`,
+updateSliderStatus(publicId: string, status: number) {
+  return this.api.post(
+    `/admin/sliders/${publicId}/status`,
     {
       status: status
     }

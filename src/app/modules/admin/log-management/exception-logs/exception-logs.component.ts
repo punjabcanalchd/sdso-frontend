@@ -9,7 +9,7 @@ import { ModalHelperService } from '../../../../shared/services/modal-helper';
 
 @Component({
   selector: 'app-exception-logs',
-  imports: [DocumentListComponent, ModalFormComponent, CommonModule],
+  imports: [DocumentListComponent, CommonModule],
   templateUrl: './exception-logs.component.html',
   styleUrl: './exception-logs.component.scss',
 })

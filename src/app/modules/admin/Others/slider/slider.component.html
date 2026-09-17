@@ -21,7 +21,7 @@
 
 <app-modal-form
     [title]="isEditMode ? 'Edit Slider' : 'Create Slider'"
-    /* [schema]="sliderSchema" */
+    [schema]="sliderSchema"
     [initialValue]="formInitialData"
     size="xl"
     (submitForm)="onSubmit($event)"

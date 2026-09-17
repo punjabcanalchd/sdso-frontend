@@ -109,19 +109,25 @@
         </div>
 
         <!-- SELECT -->
-        <select *ngSwitchCase="'select'" appClearGlobalErrorOnFocus class="form-select" [formControlName]="field.name">
 
-          <option value="" disabled selected hidden>
+        <select
+          *ngSwitchCase="'select'"
+          appClearGlobalErrorOnFocus
+          class="form-select"
+          [formControlName]="field.name"
+        >
+          <option [ngValue]="null" disabled>
             {{ field.placeholder || 'Select...' }}
           </option>
 
-          <option *ngFor="let opt of field.options" [value]="opt.value">
-
+          <option
+            *ngFor="let opt of field.options"
+            [ngValue]="opt.value"
+          >
             {{ opt.label }}
-
           </option>
-
         </select>
+       
 
         <!-- TEXTAREA -->
         <textarea *ngSwitchCase="'textarea'" class="form-control" rows="3" [formControlName]="field.name">

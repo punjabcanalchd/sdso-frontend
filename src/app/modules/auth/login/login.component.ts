@@ -222,8 +222,8 @@ onSubmit(value: any): void {
         // if (this.setcaptchaFromAdmin) {
         //   this.dynamicForm.form.patchValue({ captcha_input: '' });
         // }
-      console.log('Login successful', this.auth);
-      console.log('Login successful', this.auth.getDashboardRoute());
+      // console.log('Login successful', this.auth);
+      // console.log('Login successful', this.auth.getDashboardRoute());
       this.router.navigateByUrl(this.auth.getDashboardRoute());
     },
   error: (error: any) => {

@@ -74,8 +74,7 @@ onServerAction(params: {
   this.loadPages();
 }
 
-  ngOnInit(): void {
-   
+  ngOnInit(): void {   
     this.loadPages();
   }
 

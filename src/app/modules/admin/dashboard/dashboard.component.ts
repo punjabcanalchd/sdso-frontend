@@ -8,7 +8,7 @@ import { SummaryCardComponent, SummaryCardItem } from '../../../common/stats/sum
 
 @Component({
   selector: 'app-dashboard',
-  imports: [KpiCards, GroupedBarChartComponent, DonutChartComponent, HorizontalBarChartComponent, AreaChartComponent, SummaryCardComponent],
+  imports: [KpiCards, GroupedBarChartComponent, DonutChartComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

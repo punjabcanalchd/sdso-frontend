@@ -9,7 +9,7 @@ import { ModalHelperService } from '../../../../shared/services/modal-helper';
 
 @Component({
   selector: 'app-activity-logs',
-  imports: [DocumentListComponent, ModalFormComponent, CommonModule],
+  imports: [DocumentListComponent, CommonModule],
   templateUrl: './activity-logs.component.html',
   styleUrl: './activity-logs.component.scss',
 })
