@@ -39,6 +39,7 @@ export const districtSchema: FormSchema = {
         label: 'State Code',
         type: 'select',
         required: true,
+         placeholder: 'State Code',
         options: [
           { label: 'Please select state', value: '' },
           
