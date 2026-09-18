@@ -1,0 +1,33 @@
+<div class="container-fluid p-3">
+
+  <!-- Category Tabs (General / Homepage / Errors) matching Create Page -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item" *ngFor="let tab of tabs">
+      <button 
+        type="button" 
+        class="nav-link"
+        [class.active]="selectedGroup === tab.value"
+        (click)="selectTab(tab.value)">
+        {{ tab.label }}
+      </button>
+    </li>
+  </ul>
+
+  <!-- Reusable Document List (Pure Read-Only Listing) -->
+  <app-document-list
+    title="Translations"
+    [isAdmin]="true"
+    [data]="data"
+    [columns]="tableColumns"
+    [showCreateButton]="false"
+    [currentPage]="pagination.current_page || 1"
+    [lastPage]="pagination.last_page || 1"
+    [pageSize]="pagination.per_page || 25"
+    [totalItems]="pagination.total || 0"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (pageChange)="loadTranslations($event)"
+    (searchChange)="onSearchChange($event)"
+    (sortChange)="onSortChange($event)">
+  </app-document-list>
+
+</div>
