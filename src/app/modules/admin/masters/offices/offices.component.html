@@ -24,5 +24,6 @@
     [initialValue]="formInitialData"
     size="xl"
     (submitForm)="onSubmit($event)"
+    (closed)="onModalClosed()"
     (formReady)="setupCascadingDropdowns($event)">
 </app-modal-form>

@@ -9,7 +9,7 @@ import { State } from '../../../../core/models/state.model';
 // import { CustomValidators } from '../../../../common/validation/custom-validators';
 import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
 // import { EncryptionService } from '../../../../core/services/encrypt.service';
-// import { ToastService } from '../../../../shared/services/toast.service';
+import { ToastService } from '../../../../shared/services/toast.service';
 import { OfficeSchema } from './offices-form.schema';
 import { ModalHelperService } from '../../../../shared/services/modal-helper';
 import {  FilterField } from '../../../../shared/components/dynamic-filter/dynamic-filter.component';
@@ -29,7 +29,7 @@ export class OfficesComponent implements OnInit {
 
   @ViewChild(ModalFormComponent) officeModal!: ModalFormComponent;
 
-  // private toast = inject(ToastService);
+  private toast = inject(ToastService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private modalHelper = inject(ModalHelperService);
@@ -160,18 +160,30 @@ export class OfficesComponent implements OnInit {
 
         this.data = response.data.map((office: any, index: number) => ({
           orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
-          id: office.office_id,
+          id: office.public_id,
           name_en: office.name_en,
           name_pb: office.name_pb,
+          description_en: office.description_en || '',
+          description_pb: office.description_pb || '',
           division: office.division ?? 'N/A',
+          division_id: office.division_id,
           officelevel: office.officelevel ?? 'N/A',
+          officelevelcode: office.officelevelcode,
           state: office.state ?? 'N/A',
+          lgdstatecode: office.lgdstatecode,
+          district: office.district ?? 'N/A',
+          lgddistcode: office.lgddistcode,
           circle: office.circle ?? 'N/A',
+          circle_id: office.circle_id,
           subdivision: office.subdivision ?? 'N/A',
+          subdivision_id: office.subdivision_id,
           email: office.email,
-          mobile: office.mobile,
+          phonelandline: office.phonelandline,
+          mobilenumber: office.mobilenumber || office.mobile,
+          mobile: office.mobile || office.mobilenumber,
+          pincode: office.pincode,
           status_value: office.status,
-          status: office.status ? 'Active' : 'In-active',
+          status: office.status == 1 ? 'Active' : 'In-active',
           created_at: this.formatDate(office.created_at),
         }));
 
@@ -428,9 +440,9 @@ getOfficeLevels(): void {
         items: (_row: any) => {
           const actions = [
             { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
+            { label: 'Delete', actionName: 'delete', class: 'text-danger' },
           ];
           return actions;
-          
         }
       }
     }
@@ -462,10 +474,13 @@ getOfficeLevels(): void {
   openCreateModal() {
     this.isEditMode = false;
     this.officeId = null;
+    this.OfficeSchema.submitLabel = 'Create Office';
 
     this.formInitialData = {
-      en_title: '',
-      pa_title: '',
+      name_en: '',
+      name_pb: '',
+      description_en: '',
+      description_pb: '',
       email: '',
       phonelandline: '',
       mobilenumber: '',
@@ -495,6 +510,8 @@ getOfficeLevels(): void {
 
 
   onModalClosed() {
+    this.isEditMode = false;
+    this.officeId = null;
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { id: null },
@@ -502,8 +519,137 @@ getOfficeLevels(): void {
     });
   }
 
-  onSubmit(_formData: any){
+  openEditModal(office: any) {
+    this.isEditMode = true;
+    this.officeId = office.id;
+    this.OfficeSchema.submitLabel = 'Update Office';
 
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.officeId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+      this.officeModal.open();
+
+      setTimeout(() => {
+        const form = this.officeModal?.dynamicForm?.form;
+        if (!form) return;
+
+        this.setupCascadingDropdowns(form);
+
+        if (office.circle_id) {
+          const divField = this.OfficeSchema.fields?.find(f => f.name === 'division_id');
+          this.userService.getDivisionsByCircle(office.circle_id).subscribe((res: any) => {
+            if (divField) {
+              divField.options = (res.data || []).map((d: any) => ({ label: d.name_en, value: d.public_id }));
+            }
+            if (office.division_id) {
+              const subField = this.OfficeSchema.fields?.find(f => f.name === 'subdivision_id');
+              this.userService.getSubdivisionsByDivision(office.division_id).subscribe((subRes: any) => {
+                if (subField) {
+                  subField.options = (subRes.data || []).map((s: any) => ({ label: s.name_en, value: s.public_id }));
+                }
+                this.cdr.detectChanges();
+              });
+            }
+            this.cdr.detectChanges();
+          });
+        }
+
+        if (office.lgdstatecode) {
+          const distField = this.OfficeSchema.fields?.find(f => f.name === 'lgddistcode');
+          this.userService.getDistrictsByState(office.lgdstatecode, { state_id: office.lgdstatecode }).subscribe({
+            next: (res: any) => {
+              const districts = res.data || [];
+              if (distField) {
+                distField.options = [
+                  { label: 'Please select district', value: '' },
+                  ...districts.map((d: any) => ({
+                    label: d.name_en,
+                    value: String(d.lgddistcode_enc || d.public_id || d.lgddistcode)
+                  }))
+                ];
+              }
+              this.cdr.detectChanges();
+            }
+          });
+        }
+
+        form.patchValue({
+          name_en: office.name_en || '',
+          name_pb: office.name_pb || '',
+          description_en: office.description_en || '',
+          description_pb: office.description_pb || '',
+          email: office.email || '',
+          phonelandline: office.phonelandline || '',
+          mobilenumber: office.mobilenumber || office.mobile || '',
+          pincode: office.pincode || '',
+          officelevelcode: office.officelevel || office.officelevelcode || '',
+          circle_id: office.circle_id || '',
+          division_id: office.division_id || '',
+          subdivision_id: office.subdivision_id || '',
+          lgdstatecode: office.lgdstatecode || '',
+          lgddistcode: office.lgddistcode || '',
+          status: (office.status_value == 1 || office.status_value === true) ? 'ACTIVE' : 'INACTIVE'
+        });
+
+      }, 150);
+    });
+  }
+
+  onSubmit(formData: any) {
+    let levelPublicId = formData.officelevelcode;
+    if (this.officeLevelNameToPublicId && this.officeLevelNameToPublicId[formData.officelevelcode]) {
+      levelPublicId = this.officeLevelNameToPublicId[formData.officelevelcode];
+    }
+
+    const payload = {
+      name: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      email: formData.email,
+      phonelandline: formData.phonelandline || '',
+      mobilenumber: formData.mobilenumber,
+      pincode: formData.pincode,
+      officelevelcode: levelPublicId,
+      circle_id: formData.circle_id || null,
+      division_id: formData.division_id || null,
+      subdivision_id: formData.subdivision_id || null,
+      lgdstatecode: formData.lgdstatecode,
+      lgddistcode: formData.lgddistcode || null,
+      status: (formData.status === 'ACTIVE' || formData.status === true || formData.status === 1 || formData.status === '1') ? 1 : 0
+    };
+
+    if (this.isEditMode && this.officeId) {
+      this.userService.updateOffice(this.officeId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Office updated successfully!', 4000);
+          this.officeModal.close();
+          this.loadOffices();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update Office');
+          console.error('Failed to update Office:', error);
+        }
+      });
+    } else {
+      this.userService.createOffice(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'Office created successfully!', 4000);
+          this.officeModal.close();
+          this.loadOffices();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create Office');
+          console.error('Failed to create Office:', error);
+        }
+      });
+    }
   }
 
   onPageSizeChange(size: number): void {
@@ -524,8 +670,21 @@ getOfficeLevels(): void {
   }
 
   handleAction(event: any): void {
-    console.log('event', event);
-    if (event.action === 'EDIT' || event.actionName === 'EDIT') {
+    if (event.action === 'EDIT' || event.actionName === 'EDIT' || event.action === 'edit' || event.actionName === 'edit') {
+      this.openEditModal(event.row);
+    } else if (event.action === 'DELETE' || event.actionName === 'DELETE' || event.action === 'delete' || event.actionName === 'delete') {
+      if (confirm('Are you sure you want to delete this office?')) {
+        this.userService.deleteOffice(event.row.id).subscribe({
+          next: (res: any) => {
+            this.toast.show('success', res?.message || 'Office deleted successfully.', 4000);
+            this.loadOffices();
+          },
+          error: (err: any) => {
+            this.toast.show('error', err.error?.message || 'Failed to delete office.');
+            console.error('Failed to delete office:', err);
+          }
+        });
+      }
     }
   }
 

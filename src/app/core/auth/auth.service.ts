@@ -364,6 +364,18 @@ export class AuthService {
     return this.api.get<any>('/admin/offices', data);
   }
 
+  createOffice(payload: any): Observable<any> {
+    return this.api.post('/admin/offices', payload);
+  }
+
+  updateOffice(officeId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/offices/${officeId}/update`, payload);
+  }
+
+  deleteOffice(officeId: string): Observable<any> {
+    return this.api.post<any>(`/admin/offices/${officeId}/delete`, {});
+  }
+
   getDivisionsByCircle(circleId: string): Observable<any> {
     return this.api.get<any>(`/admin/divisions/${circleId}/getdivisions`);
   }
