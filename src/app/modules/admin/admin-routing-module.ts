@@ -24,6 +24,8 @@ import { ExceptionLogDetailComponent } from './log-management/exception-logs/exc
 import { MenuFormComponent } from './common/menu/menu-form/menu-form.component';
 import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.component';
 import { EmailTemplatesListComponent } from './Others/email-templates-list/email-templates-list.component';
+import { SmsTemplatesListComponent } from './Others/sms-templates-list/sms-templates-list.component';
+import { SandesTemplatesListComponent } from './Others/sandes-templates-list/sandes-templates-list.component';
 import { TranslationsListComponent } from './Others/translations/translations-list.component';
 
 
@@ -55,21 +57,26 @@ const routes: Routes = [
       // Slider Images
       // =========================
 
-     {
-      path: 'slider-image/:slider_id',
-      component: SliderImageComponent,
-      title: 'Slider Images'
-    },
-    {
-      path: 'slider-image/:slider_id/create',
-      component: SliderImageComponent,
-      title: 'Add Slider Image'
-    },
-    {
-      path: 'slider-image/:slider_id/edit/:image_id',
-      component: SliderImageComponent,
-      title: 'Edit Slider Image'
-    },
+      // Add slider image
+      {
+        path: 'slider-images/:slider_id/create',
+        component: SliderImageComponent,
+        title: 'Add Slider Image'
+      },
+
+      // Edit slider image
+      {
+        path: 'slider-images/edit/:id',
+        component: SliderImageComponent,
+        title: 'Edit Slider Image'
+      },
+
+      // Slider image listing
+      {
+        path: 'slider-images/:slider_id',
+        component: SliderImageComponent,
+        title: 'Slider Images'
+      },
 
 
 
@@ -99,6 +106,12 @@ const routes: Routes = [
       { path: 'additionalroles', component: AdditionalRolesListComponent, title: 'Additional Roles – Admin' },
       { path: 'noticeboard', component: NoticeboardListComponent, title: 'Notice Board – Admin' },
       { path: 'email-template', component: EmailTemplatesListComponent, title: 'Email Templates – Admin' },
+      { path: 'sms-template', component: SmsTemplatesListComponent, title: 'SMS Templates – Admin' },
+      { path: 'sms-templates', redirectTo: 'sms-template', pathMatch: 'full' },
+      { path: 'sandes-template', component: SandesTemplatesListComponent, title: 'Sandes Templates – Admin' },
+      { path: 'sandes-templates', redirectTo: 'sandes-template', pathMatch: 'full' },
+      { path: 'sandas-template', redirectTo: 'sandes-template', pathMatch: 'full' },
+      { path: 'sandas-templates', redirectTo: 'sandes-template', pathMatch: 'full' },
       { path: 'translation', component: TranslationsListComponent, title: 'Translations – Admin' },
 
     ],
