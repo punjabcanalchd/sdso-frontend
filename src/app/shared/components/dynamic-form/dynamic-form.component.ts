@@ -27,13 +27,14 @@ import { TimePickerComponent } from
   '../form-elements/time-picker/time-picker.component';
 import { englishFields } from '../../../common/tabs/english-tab';
 import { punjabiFields } from '../../../common/tabs/punjabi-tab';
+import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule, ClearGlobalErrorOnFocusDirective, CaptchaComponent,
     DatepickerComponent, SliderComponent, ToggleComponent, RangeComponent, FileUploadComponent, WizardStepperComponent,
-    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent,TabsComponent,TimePickerComponent],
+    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent, TabsComponent, TimePickerComponent],
 
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']
@@ -94,7 +95,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     public themeService: ThemeService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private toast: ToastService
   ) { }
 
   clearGlobalError(): void {
@@ -103,31 +105,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-  this.initForm();
-
-
-      // 1. Build the form
-  // this.form = buildFormGroup(this.fb, this.schema);
-
-  // 2. Patch initial data
-  if (this.initialValue) {
-
-    const data = this.prepareInitialValue(this.initialValue);
-    this.form.patchValue(data);
-  }
-
-  // 3. Also handle initialData if provided
-  if (this.initialData) {
-
-    const data = this.prepareInitialValue(this.initialData);    
-    this.form.patchValue(data);
-  }
-   
-  }
-
-ngOnChanges(changes: SimpleChanges): void {
-
-  if (changes['schema'] && this.schema) {
     this.initForm();
 
 
@@ -149,45 +126,70 @@ ngOnChanges(changes: SimpleChanges): void {
     }
 
   }
-}
-//   ngOnChanges(changes: SimpleChanges): void {
 
-//     if (changes['schema'] && this.schema) {
-//       this.initForm();
-//       return;
-//     }
+  ngOnChanges(changes: SimpleChanges): void {
 
-//     if (changes['initialValue'] && !changes['initialValue'].firstChange) {
-
-//       if (this.form) {
-
-//         const data = this.prepareInitialValue(
-//           changes['initialValue'].currentValue
-//         );
+    if (changes['schema'] && this.schema) {
+      this.initForm();
 
 
+      // 1. Build the form
+      // this.form = buildFormGroup(this.fb, this.schema);
 
-//         this.form.patchValue(data, {
-//           emitEvent: false
-//         });
+      // 2. Patch initial data
+      if (this.initialValue) {
 
-//       }
+        const data = this.prepareInitialValue(this.initialValue);
+        this.form.patchValue(data);
+      }
 
-//     }
+      // 3. Also handle initialData if provided
+      if (this.initialData) {
 
-//     if (changes['initialData'] && this.form) {
+        const data = this.prepareInitialValue(this.initialData);
+        this.form.patchValue(data);
+      }
 
-//       const data = this.prepareInitialValue(
-//         changes['initialData'].currentValue
-//       );
+    }
+  }
+  //   ngOnChanges(changes: SimpleChanges): void {
 
-    
+  //     if (changes['schema'] && this.schema) {
+  //       this.initForm();
+  //       return;
+  //     }
 
-//       this.form.patchValue(data);
+  //     if (changes['initialValue'] && !changes['initialValue'].firstChange) {
 
-//     }
+  //       if (this.form) {
 
-//   }
+  //         const data = this.prepareInitialValue(
+  //           changes['initialValue'].currentValue
+  //         );
+
+
+
+  //         this.form.patchValue(data, {
+  //           emitEvent: false
+  //         });
+
+  //       }
+
+  //     }
+
+  //     if (changes['initialData'] && this.form) {
+
+  //       const data = this.prepareInitialValue(
+  //         changes['initialData'].currentValue
+  //       );
+
+
+
+  //       this.form.patchValue(data);
+
+  //     }
+
+  //   }
   /**
    * Logic to build the form group and patch values if they exist.
    */
@@ -197,26 +199,27 @@ ngOnChanges(changes: SimpleChanges): void {
 
     this.form = buildFormGroup(this.fb, this.schema);
 
-  if (this.initialValue) {
-    const data = this.prepareInitialValue(this.initialValue);
-    this.form.patchValue(data);
-    
-  }
+    if (this.initialValue) {
+      const data = this.prepareInitialValue(this.initialValue);
+      this.form.patchValue(data);
 
-  if (this.initialData) {
+    }
 
-    const data = this.prepareInitialValue(this.initialData);
-    this.form.patchValue(data);  }
+    if (this.initialData) {
 
-  if (this._formData) {
+      const data = this.prepareInitialValue(this.initialData);
+      this.form.patchValue(data);
+    }
 
-    const data = this.prepareInitialValue(this._formData);
-    this.form.patchValue(data);
-  }
+    if (this._formData) {
+
+      const data = this.prepareInitialValue(this._formData);
+      this.form.patchValue(data);
+    }
     setTimeout(() => {
       this.formReady.emit(this.form);
     });
-}
+  }
 
 
   /* ---------------- API STATE ---------------- */
@@ -242,6 +245,7 @@ ngOnChanges(changes: SimpleChanges): void {
     // Validate form
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.showMissingFieldsWarning();
       return;
     }
 
@@ -259,6 +263,84 @@ ngOnChanges(changes: SimpleChanges): void {
 
   onReloadCaptcha() {
     this.reloadCaptcha.emit();
+  }
+
+  private showMissingFieldsWarning(): void {
+    if (!this.schema?.fields?.length) {
+      this.toast.show('warning', 'Please fill all required fields.', 4000);
+      return;
+    }
+
+    const invalidTabs = new Map<string, string>();
+
+    const getTabLabel = (tabId: string): string => {
+      const lower = tabId.toLowerCase();
+      if (lower.includes('punjabi') || lower.endsWith('-pb')) {
+        return 'Punjabi';
+      }
+      if (lower.includes('english') || lower.endsWith('-en')) {
+        return 'English';
+      }
+
+      if (this.schema.tabs) {
+        for (const t of this.schema.tabs) {
+          if (t.id === tabId) return t.label || tabId;
+          if (t.tabs) {
+            for (const child of t.tabs) {
+              if (child.id === tabId) return child.label || tabId;
+            }
+          }
+        }
+      }
+      return tabId;
+    };
+
+    for (const field of this.schema.fields) {
+      if (!this.isFieldVisible(field)) {
+        continue;
+      }
+
+      const control = this.form.get(field.name);
+      if (control && control.invalid) {
+        if (field.tab) {
+          invalidTabs.set(field.tab, getTabLabel(field.tab));
+        }
+      }
+    }
+
+    if (invalidTabs.size > 0) {
+      const labels = Array.from(invalidTabs.values());
+      let message = '';
+
+      if (labels.includes('English') && labels.includes('Punjabi')) {
+        message = 'Fill required fields in English and Punjabi sections.';
+      } else if (labels.includes('Punjabi')) {
+        message = 'Fill required fields in Punjabi section.';
+      } else if (labels.includes('English')) {
+        message = 'Fill required fields in English section.';
+      } else {
+        const sectionText = labels.length === 1 ? `${labels[0]} section` : `${labels.join(' and ')} sections`;
+        message = `Fill required fields in ${sectionText}.`;
+      }
+
+      this.toast.show('warning', message, 4000);
+
+      // Auto-switch to the first invalid tab so the user sees the missing fields
+      const firstInvalidTabId = Array.from(invalidTabs.keys())[0];
+      if (firstInvalidTabId && this.activeChildTab !== firstInvalidTabId) {
+        if (this.schema.tabs) {
+          for (const parent of this.schema.tabs) {
+            if (parent.tabs?.some(c => c.id === firstInvalidTabId)) {
+              this.activeTab = parent.id;
+              break;
+            }
+          }
+        }
+        this.activeChildTab = firstInvalidTabId;
+      }
+    } else {
+      this.toast.show('warning', 'Please fill all required fields.', 4000);
+    }
   }
 
   /* ---------------- TEMPLATE HELPERS ---------------- */
@@ -486,6 +568,7 @@ ngOnChanges(changes: SimpleChanges): void {
     this.form.markAllAsTouched();
 
     if (this.form.invalid) {
+      this.showMissingFieldsWarning();
       return false;
     }
 

@@ -26,6 +26,8 @@ import { NoticeboardListComponent } from './common/noticeboard/noticeboard-list.
 import { EmailTemplatesListComponent } from './Others/email-templates-list/email-templates-list.component';
 import { SmsTemplatesListComponent } from './Others/sms-templates-list/sms-templates-list.component';
 import { SandesTemplatesListComponent } from './Others/sandes-templates-list/sandes-templates-list.component';
+import { MediaCategoriesListComponent } from './Others/media-categories-list/media-categories-list.component';
+import { NoticeboardCategoriesListComponent } from './Others/noticeboard-categories-list/noticeboard-categories-list.component';
 import { TranslationsListComponent } from './Others/translations/translations-list.component';
 
 
@@ -112,6 +114,18 @@ const routes: Routes = [
       { path: 'sandes-templates', redirectTo: 'sandes-template', pathMatch: 'full' },
       { path: 'sandas-template', redirectTo: 'sandes-template', pathMatch: 'full' },
       { path: 'sandas-templates', redirectTo: 'sandes-template', pathMatch: 'full' },
+      { path: 'media-category', component: MediaCategoriesListComponent, title: 'Media Categories – Admin' },
+      { path: 'media-categories', redirectTo: 'media-category', pathMatch: 'full' },
+      { path: 'media-catagory', redirectTo: 'media-category', pathMatch: 'full' },
+      { path: 'media-catagories', redirectTo: 'media-category', pathMatch: 'full' },
+      { path: 'category', component: NoticeboardCategoriesListComponent, title: 'Notice Board Categories – Admin' },
+      { path: 'categories', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'noticeboard-category', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'noticeboard-categories', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'notice-board-category', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'notice-board-categories', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'noticeboard-catagory', redirectTo: 'category', pathMatch: 'full' },
+      { path: 'noticeboard-catagories', redirectTo: 'category', pathMatch: 'full' },
       { path: 'translation', component: TranslationsListComponent, title: 'Translations – Admin' },
 
     ],
