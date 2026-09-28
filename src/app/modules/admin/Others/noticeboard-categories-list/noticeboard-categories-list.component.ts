@@ -1,17 +1,21 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
+import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
 import { ApiService } from '../../../../core/services/api.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { noticeboardCategorySchema } from './noticeboard-category-form.schema';
 
 @Component({
   standalone: true,
   selector: 'app-noticeboard-categories-list',
-  imports: [CommonModule, DocumentListComponent],
+  imports: [CommonModule, DocumentListComponent, ModalFormComponent],
   templateUrl: './noticeboard-categories-list.component.html',
   styleUrl: './noticeboard-categories-list.component.scss'
 })
 export class NoticeboardCategoriesListComponent implements OnInit {
+  @ViewChild(ModalFormComponent) categoryModal!: ModalFormComponent;
+
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
@@ -26,11 +30,16 @@ export class NoticeboardCategoriesListComponent implements OnInit {
   sortColumn = 'template_id';
   sortDirection = 'desc';
 
+  isEditMode = false;
+  editingCategoryId: string | null = null;
+  categorySchema = noticeboardCategorySchema;
+
   tableColumns: TableColumn[] = [
     { key: 'nameHtml', label: 'Category Name', widthClass: 'col-4', sortable: false, type: 'html' },
-    { key: 'display_on_home_page', label: 'Display on Home Page', widthClass: 'col-3', type: 'toggle', toggleConfig: { trueLabel: 'Yes', falseLabel: 'No' } },
+    { key: 'display_on_home_page', label: 'Display on Home Page', widthClass: 'col-2', type: 'toggle', toggleConfig: { trueLabel: 'Yes', falseLabel: 'No' } },
     { key: 'status', label: 'Status', widthClass: 'col-2', type: 'toggle', toggleConfig: { trueLabel: 'Active', falseLabel: 'Inactive' } },
-    { key: 'created_at', label: 'Created At', widthClass: 'col-3', sortable: true },
+    { key: 'created_at', label: 'Created At', widthClass: 'col-2', sortable: true },
+    { key: 'action', label: 'Action', widthClass: 'col-2', type: 'edit' },
   ];
 
   ngOnInit(): void {
@@ -83,6 +92,7 @@ export class NoticeboardCategoriesListComponent implements OnInit {
             display_on_home_page: item.display_on_home_page,
             status: item.status,
             created_at: this.formatDate(item.created_at),
+            canEdit: true,
             raw: item
           };
         });
@@ -102,11 +112,121 @@ export class NoticeboardCategoriesListComponent implements OnInit {
   }
 
   handleAction(event: { action: string; row: any }): void {
-    if (event.action === 'toggle_status') {
+    if (event.action === 'edit') {
+      this.openEditModal(event.row.id);
+    } else if (event.action === 'toggle_status') {
       this.updateStatus(event.row.id, event.row.status);
     } else if (event.action === 'toggle_display_on_home_page') {
       this.updateDisplayOnHome(event.row.id, event.row.display_on_home_page);
     }
+  }
+
+  openCreateModal(): void {
+    this.isEditMode = false;
+    this.editingCategoryId = null;
+    this.categorySchema.submitLabel = 'Create Category';
+
+    const defaultValues = {
+      name_en: '',
+      name_pb: '',
+      same_as_english_pb: false,
+      display_on_home_page: false,
+      status: true
+    };
+
+    this.categoryModal.open();
+
+    setTimeout(() => {
+      const form = this.categoryModal?.dynamicForm?.form;
+      if (form) {
+        form.reset(defaultValues);
+      }
+      this.bindCheckboxLogic();
+      this.cdr.detectChanges();
+    }, 100);
+  }
+
+  openEditModal(id: string | number): void {
+    this.isEditMode = true;
+    this.editingCategoryId = String(id);
+    this.categorySchema.submitLabel = 'Update Category';
+
+    this.api.get<any>(`/admin/noticeboard-categories/${id}`).subscribe({
+      next: (res) => {
+        const item = res.data;
+        if (!item) {
+          this.toast.show('error', 'Category details not found.');
+          return;
+        }
+
+        const patchValue = {
+          name_en: item.name_en || item.name || '',
+          name_pb: item.name_pb || '',
+          same_as_english_pb: false,
+          display_on_home_page: !!item.display_on_home_page,
+          status: !!item.status
+        };
+
+        this.categoryModal.open();
+
+        setTimeout(() => {
+          const form = this.categoryModal?.dynamicForm?.form;
+          if (form) {
+            form.patchValue(patchValue);
+          }
+          this.bindCheckboxLogic();
+          this.cdr.detectChanges();
+        }, 100);
+      },
+      error: (err) => {
+        this.toast.show('error', err.error?.message || 'Failed to fetch category details');
+      }
+    });
+  }
+
+  private bindCheckboxLogic(): void {
+    setTimeout(() => {
+      const form = this.categoryModal?.dynamicForm?.form;
+      if (!form) return;
+
+      form.get('same_as_english_pb')?.valueChanges.subscribe((isChecked) => {
+        if (isChecked) {
+          form.get('name_pb')?.setValue(form.get('name_en')?.value);
+        }
+      });
+    }, 200);
+  }
+
+  onSubmit(formData: any): void {
+    const payload = {
+      name_en: formData.name_en || '',
+      name_pb: formData.name_pb || '',
+      display_on_home_page: formData.display_on_home_page ? 1 : 0,
+      status: formData.status ? 1 : 0
+    };
+
+    const request$ = this.isEditMode && this.editingCategoryId
+      ? this.api.post(`/admin/noticeboard-categories/${this.editingCategoryId}/update`, payload)
+      : this.api.post('/admin/noticeboard-categories', payload);
+
+    request$.subscribe({
+      next: (res: any) => {
+        this.toast.show(
+          'success',
+          res.message || (this.isEditMode ? 'Category updated successfully!' : 'Category created successfully!')
+        );
+        this.categoryModal.close();
+        this.loadCategories();
+      },
+      error: (err: any) => {
+        this.toast.show('error', err.error?.message || 'Failed to save category.');
+      }
+    });
+  }
+
+  onModalClosed(): void {
+    this.isEditMode = false;
+    this.editingCategoryId = null;
   }
 
   updateStatus(id: string | number, status: boolean | number): void {
