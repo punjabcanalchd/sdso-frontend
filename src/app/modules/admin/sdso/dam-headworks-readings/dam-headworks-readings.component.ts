@@ -198,20 +198,9 @@ export class DamHeadworksReadingsComponent  implements OnInit {
     { key: 'role', label: 'Role', widthClass: 'col-2', sortable: false },
     { key: 'readingdate', label: 'Reading Date', widthClass: 'col-2', sortable: false },
     {
-      key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (row: any) => {
-          const actions = [
-            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
-          ];
-          return actions;
-          
-        }
-      }
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
     }
   ];
 

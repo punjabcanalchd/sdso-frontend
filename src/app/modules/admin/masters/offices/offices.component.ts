@@ -431,20 +431,9 @@ getOfficeLevels(): void {
     { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
-      key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (_row: any) => {
-          const actions = [
-            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
-            { label: 'Delete', actionName: 'delete', class: 'text-danger' },
-          ];
-          return actions;
-        }
-      }
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
     }
   ];
 

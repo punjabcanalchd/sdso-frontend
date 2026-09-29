@@ -374,20 +374,9 @@ private loadEditDropdowns(damHeadWorks: any): void {
     { key: 'status_value', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
-      key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (row: any) => {
-          const actions = [
-            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
-          ];
-          return actions;
-          
-        }
-      }
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
     }
   ];
 

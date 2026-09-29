@@ -268,6 +268,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/states/${stateId}/update`, payload);
   }
 
+  deleteState(stateId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/states/${stateId}/delete`,payload);
+  }
+
   getDistricts(data?: any): Observable<any> {
     return this.api.get<any>('/admin/districts', data);
   }
@@ -282,6 +287,11 @@ export class AuthService {
 
   getDistrictsByState(stateId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/districts/${stateId}/get-districts`, payload);
+  }
+
+  deleteDistrict(districtId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/districts/${districtId}/delete`,payload);
   }
 
   getOfficeHierarchy(data?: any): Observable<any> {
@@ -300,6 +310,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/office_hierarchy/${OfficeHierarchyId}/update`, payload);
   }
 
+  deleteOfficeHierarchy(OfficeHierarchyId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/office_hierarchy/${OfficeHierarchyId}/delete`,payload);
+  }
+
   getDesignations(data?: any): Observable<any> {
     return this.api.get<any>('/admin/designation', data);
   }
@@ -310,6 +325,11 @@ export class AuthService {
 
   updateDesignation(designationId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/designation/${designationId}/update`, payload);
+  }
+
+  deleteDesignation(designationId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/designation/${designationId}/delete`,payload);
   }
 
   getCircles(data?: any): Observable<any> {
@@ -326,6 +346,11 @@ export class AuthService {
 
   updateCircle(circleId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/circles/${circleId}/update`, payload);
+  }
+
+  deleteCircle(circleId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/circles/${circleId}/delete`,payload);
   }
  
   getDivisions(data?: any): Observable<any> {
@@ -344,6 +369,11 @@ export class AuthService {
     return this.api.post<any>(`/admin/divisions/${divisionId}/update`, payload);
   }
 
+  deleteDivision(divisionId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/divisions/${divisionId}/delete`,payload);
+  }
+
   getSubDivisions(data?: any): Observable<any> {
     return this.api.get<any>('/admin/subdivisions', data);
   }
@@ -358,6 +388,11 @@ export class AuthService {
 
   updateSubDivision(subDivisionId: string, payload: any): Observable<any> {
     return this.api.post<any>(`/admin/subdivisions/${subDivisionId}/update`, payload);
+  }
+
+  deleteSubDivision(subDivisionId: string): Observable<any> {
+    const payload = null;
+    return this.api.post<any>(`/admin/subdivisions/${subDivisionId}/delete`,payload);
   }
 
   getOffices(data?: any): Observable<any> {
@@ -379,31 +414,35 @@ export class AuthService {
   getDivisionsByCircle(circleId: string): Observable<any> {
     return this.api.get<any>(`/admin/divisions/${circleId}/getdivisions`);
   }
+
   getSubdivisionsByDivision(divisionId: string): Observable<any> {
     return this.api.get<any>(`/admin/subdivisions/${divisionId}/getsubdivisions`);
   }
+
   getOfficesByHierarchy(publicId: string): Observable<any> {
-  return this.api.get(`/admin/offices/${publicId}/getoffices`);
+    return this.api.get(`/admin/offices/${publicId}/getoffices`);
   }
+  
   editUser(publicId: string, payload: any): Observable<any> {
-  return this.api.post<any>(`/admin/users/${publicId}/update`, payload);
+    return this.api.post<any>(`/admin/users/${publicId}/update`, payload);
   }
+
   // Additional Roles CRUD
-getAdditionalRoles(params: any): Observable<any> {
-  return this.api.get<any>('/admin/additional-roles', params);
-}
+  getAdditionalRoles(params: any): Observable<any> {
+    return this.api.get<any>('/admin/additional-roles', params);
+  }
 
-getAdditionalRoleById(publicId: string): Observable<any> {
-  return this.api.get<any>(`/admin/additional-roles/${publicId}`);
-}
+  getAdditionalRoleById(publicId: string): Observable<any> {
+    return this.api.get<any>(`/admin/additional-roles/${publicId}`);
+  }
 
-createAdditionalRole(payload: any): Observable<any> {
-  return this.api.post<any>('/admin/additional-roles', payload);
-}
+  createAdditionalRole(payload: any): Observable<any> {
+    return this.api.post<any>('/admin/additional-roles', payload);
+  }
 
-updateAdditionalRole(publicId: string, payload: any): Observable<any> {
-  return this.api.post<any>(`/admin/additional-roles/${publicId}/update`, payload);
-}
+  updateAdditionalRole(publicId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/additional-roles/${publicId}/update`, payload);
+  }
 
 
 

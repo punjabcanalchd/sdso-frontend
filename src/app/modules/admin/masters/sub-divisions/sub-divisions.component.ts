@@ -146,20 +146,9 @@ export class SubDivisionsComponent implements OnInit {
     { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
-      key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (row: any) => {
-          const actions = [
-            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
-          ];
-          return actions;
-          
-        }
-      }
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
     }
   ];
 
@@ -311,6 +300,29 @@ export class SubDivisionsComponent implements OnInit {
   handleAction(event: any): void {
     if (event.action === 'edit' || event.actionName === 'edit') {
       this.openEditModal(event.row);
+    } else if (event.action === 'delete') {
+      if (confirm(`Are you sure you want to delete "${event.row.name_en} Sub Division"?`)) {
+        this.userService.deleteSubDivision(event.row.id).subscribe({
+          next: (res: any) => {
+            this.toast.show(
+              'success',
+              res.message || 'Sub Division deleted successfully!',
+              4000
+            );
+
+            this.loadSubDivisions();
+          },
+          error: (error: any) => {
+
+            this.toast.show(
+              'error',
+              error.error?.message || 'Failed to delete Sub Division'
+            );
+
+            console.error('Failed to create Sub Division:', error);
+          }
+        });
+      }
     }
   }
 }

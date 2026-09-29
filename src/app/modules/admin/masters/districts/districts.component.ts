@@ -114,20 +114,9 @@ export class Districts implements OnInit {
     { key: 'status', label: 'Status', widthClass: 'col-2', sortable: true },
     { key: 'created_at', label: 'Created At', widthClass: 'col-1', sortable: true },
     {
-      key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (row: any) => {
-          const actions = [
-            { label: 'Edit', actionName: 'edit', class: 'text-secondary' },
-          ];
-          return actions;
-          
-        }
-      }
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
     }
   ];
 
@@ -231,9 +220,7 @@ export class Districts implements OnInit {
         if (!form) {
           return;
         }
-        // console.log('District state:', district.state);
-        // console.log('State options:', this.districtSchema);
-        // console.log('district', district);
+
         form.patchValue({
           name_en: district.name_en || '',
           name_pb: district.name_pb || '',
@@ -315,6 +302,29 @@ export class Districts implements OnInit {
   handleAction(event: any): void {
     if (event.action === 'edit' || event.actionName === 'edit') {
       this.openEditModal(event.row);
+    } else if (event.action === 'delete') {
+      if (confirm(`Are you sure you want to delete "${event.row.name_en} District"?`)) {
+        this.userService.deleteDistrict(event.row.id).subscribe({
+          next: (res: any) => {
+            this.toast.show(
+              'success',
+              res.message || 'District deleted successfully!',
+              4000
+            );
+
+            this.loadDistricts();
+          },
+          error: (error: any) => {
+
+            this.toast.show(
+              'error',
+              error.error?.message || 'Failed to delete District'
+            );
+
+            console.error('Failed to create District:', error);
+          }
+        });
+      }
     }
   }
     
