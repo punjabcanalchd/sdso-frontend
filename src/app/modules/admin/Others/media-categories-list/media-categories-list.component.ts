@@ -72,6 +72,8 @@ export class MediaCategoriesListComponent implements OnInit {
           return {
             id: item.id,
             orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
+            originalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
+            sr_no: (this.currentPage - 1) * this.pageSize + index + 1,
             name: item.name,
             nameHtml: `
               <div class="text-dark pb-1 lh-1">

@@ -13,28 +13,50 @@ export const noticeboardCategorySchema: FormSchema = {
       tabs: [
         {
           id: 'general-english',
-          label: 'English'
+          label: 'EN'
         },
         {
           id: 'general-punjabi',
-          label: 'Punjabi'
+          label: 'PB'
+        }
+      ]
+    },
+    {
+      id: 'meta',
+      label: 'Meta Information',
+      tabs: [
+        {
+          id: 'meta-english',
+          label: 'EN'
+        },
+        {
+          id: 'meta-punjabi',
+          label: 'PB'
         }
       ]
     }
   ],
   fields: [
+    // ==========================================
+    // 1. GENERAL TAB - ENGLISH
+    // ==========================================
     {
       name: 'name_en',
-      label: 'Category Name',
+      label: 'Name',
       type: 'text',
       tab: 'general-english',
       languageCode: 'en',
       languageId: 1,
-      placeholder: 'Enter Category Name in English',
+      placeholder: '',
       required: true,
+      className: 'col-12',
       validators: [CustomValidators.shortAlpha()],
       copyKey: 'name'
     },
+
+    // ==========================================
+    // 2. GENERAL TAB - PUNJABI
+    // ==========================================
     {
       name: 'same_as_english_pb',
       label: '',
@@ -42,37 +64,155 @@ export const noticeboardCategorySchema: FormSchema = {
       languageCode: 'pb',
       languageId: 2,
       tab: 'general-punjabi',
-      text: 'Same as English'
+      text: 'Same as English',
+      className: 'col-12'
     },
     {
       name: 'name_pb',
-      label: 'Category Name',
+      label: 'Name',
       type: 'text',
       languageCode: 'pb',
       languageId: 2,
       tab: 'general-punjabi',
-      placeholder: 'Enter Category Name in Punjabi',
+      placeholder: '',
       required: true,
+      className: 'col-12',
       copyKey: 'name'
     },
+
+    // ==========================================
+    // 3. META INFORMATION TAB - ENGLISH
+    // ==========================================
     {
-      name: 'display_on_home_page',
-      label: 'Display on Home Page',
-      type: 'toggle',
-      className: 'col-md-6',
-      options: [
-        { label: 'Yes', value: true },
-        { label: 'No', value: false }
-      ]
+      name: 'meta_title_en',
+      label: 'Meta Title',
+      type: 'text',
+      tab: 'meta-english',
+      languageCode: 'en',
+      languageId: 1,
+      className: 'col-12'
     },
+    {
+      name: 'meta_description_en',
+      label: 'Meta Description',
+      type: 'text',
+      tab: 'meta-english',
+      languageCode: 'en',
+      languageId: 1,
+      className: 'col-12'
+    },
+    {
+      name: 'meta_keyword_en',
+      label: 'Meta keywords',
+      type: 'text',
+      tab: 'meta-english',
+      languageCode: 'en',
+      languageId: 1,
+      className: 'col-12'
+    },
+
+    // ==========================================
+    // 4. META INFORMATION TAB - PUNJABI
+    // ==========================================
+    {
+      name: 'meta_title_pb',
+      label: 'Meta Title',
+      type: 'text',
+      tab: 'meta-punjabi',
+      languageCode: 'pb',
+      languageId: 2,
+      className: 'col-12'
+    },
+    {
+      name: 'meta_description_pb',
+      label: 'Meta Description',
+      type: 'text',
+      tab: 'meta-punjabi',
+      languageCode: 'pb',
+      languageId: 2,
+      className: 'col-12'
+    },
+    {
+      name: 'meta_keyword_pb',
+      label: 'Meta keywords',
+      type: 'text',
+      tab: 'meta-punjabi',
+      languageCode: 'pb',
+      languageId: 2,
+      className: 'col-12'
+    },
+
+    // ==========================================
+    // 5. COMMON CATEGORY ATTRIBUTES (From Screenshot 2)
+    // ==========================================
+    // Row 1: Parent Category & External Url
+    {
+      name: 'parent_id',
+      label: 'Parent Category',
+      type: 'select',
+      tab: 'general-english',
+      placeholder: 'Please select',
+      className: 'col-md-6',
+      options: []
+    },
+    {
+      name: 'external_url',
+      label: 'External Url',
+      type: 'text',
+      tab: 'general-english',
+      className: 'col-md-6'
+    },
+
+    // Row 2: Status & Display On Notice Board
     {
       name: 'status',
       label: 'Status',
-      type: 'toggle',
+      type: 'select',
+      tab: 'general-english',
+      placeholder: 'Please select',
       className: 'col-md-6',
+      required: true,
+      defaultValue: 1,
       options: [
-        { label: 'Active', value: true },
-        { label: 'Inactive', value: false }
+        { label: 'Active', value: 1 },
+        { label: 'Inactive', value: 0 }
+      ]
+    },
+    {
+      name: 'display_on_home_page',
+      label: 'Display On Notice Board',
+      type: 'select',
+      tab: 'general-english',
+      placeholder: 'Please select',
+      className: 'col-md-6',
+      required: true,
+      defaultValue: 1,
+      options: [
+        { label: 'Yes', value: 1 },
+        { label: 'No', value: 0 }
+      ]
+    },
+
+    // Row 3: Sort Order & Access Type
+    {
+      name: 'sort_order',
+      label: 'Sort Order',
+      type: 'number',
+      tab: 'general-english',
+      className: 'col-md-6',
+      defaultValue: 1
+    },
+    {
+      name: 'access_type',
+      label: 'Who can access this Category?',
+      type: 'radio',
+      tab: 'general-english',
+      className: 'col-md-6',
+      required: true,
+      defaultValue: 'public',
+      options: [
+        { label: 'Public', value: 'public' },
+        { label: 'Officials', value: 'officials' }
       ]
     }
   ]

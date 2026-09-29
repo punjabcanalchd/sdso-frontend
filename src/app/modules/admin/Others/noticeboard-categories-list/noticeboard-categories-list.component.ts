@@ -33,17 +33,55 @@ export class NoticeboardCategoriesListComponent implements OnInit {
   isEditMode = false;
   editingCategoryId: string | null = null;
   categorySchema = noticeboardCategorySchema;
+  parentCategories: any[] = [];
 
   tableColumns: TableColumn[] = [
     { key: 'nameHtml', label: 'Category Name', widthClass: 'col-4', sortable: false, type: 'html' },
-    { key: 'display_on_home_page', label: 'Display on Home Page', widthClass: 'col-2', type: 'toggle', toggleConfig: { trueLabel: 'Yes', falseLabel: 'No' } },
+    { key: 'display_on_home_page', label: 'Display On Home Page', widthClass: 'col-2', type: 'toggle', toggleConfig: { trueLabel: 'Yes', falseLabel: 'No' } },
     { key: 'status', label: 'Status', widthClass: 'col-2', type: 'toggle', toggleConfig: { trueLabel: 'Active', falseLabel: 'Inactive' } },
-    { key: 'created_at', label: 'Created At', widthClass: 'col-2', sortable: true },
-    { key: 'action', label: 'Action', widthClass: 'col-2', type: 'edit' },
+    { key: 'copy_link', label: 'Copy Link', widthClass: 'col-1', type: 'copy_link' },
+    { key: 'action', label: 'Action', widthClass: 'col-1', type: 'edit' },
   ];
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadParentCategories();
+  }
+
+  loadParentCategories(): void {
+    this.api.get<any>('/admin/noticeboard-categories/dropdown').subscribe({
+      next: (res) => {
+        this.parentCategories = res.data || [];
+        this.updateParentCategoryOptions();
+      },
+      error: () => {
+        // Fallback to noticeboard/categories if dropdown route fails
+        this.api.get<any>('/admin/noticeboard/categories').subscribe({
+          next: (res) => {
+            this.parentCategories = res.data || [];
+            this.updateParentCategoryOptions();
+          }
+        });
+      }
+    });
+  }
+
+  private updateParentCategoryOptions(excludeId: string | number | null = null): void {
+    const parentField = this.categorySchema.fields?.find(f => f.name === 'parent_id');
+    if (!parentField) return;
+
+    const filtered = excludeId
+      ? this.parentCategories.filter(c => String(c.value) !== String(excludeId))
+      : this.parentCategories;
+
+    parentField.options = [
+      { label: 'Please select', value: null },
+      ...filtered.map(c => ({
+        label: c.label,
+        value: Number(c.value)
+      }))
+    ];
+    this.cdr.detectChanges();
   }
 
   formatDate(dateInput: any): string {
@@ -81,6 +119,8 @@ export class NoticeboardCategoriesListComponent implements OnInit {
           return {
             id: item.id,
             orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
+            originalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
+            sr_no: (this.currentPage - 1) * this.pageSize + index + 1,
             name: item.name,
             nameHtml: `
               <div class="text-dark pb-1 lh-1">
@@ -91,6 +131,7 @@ export class NoticeboardCategoriesListComponent implements OnInit {
             `,
             display_on_home_page: item.display_on_home_page,
             status: item.status,
+            external_url: item.external_url || '',
             created_at: this.formatDate(item.created_at),
             canEdit: true,
             raw: item
@@ -118,29 +159,79 @@ export class NoticeboardCategoriesListComponent implements OnInit {
       this.updateStatus(event.row.id, event.row.status);
     } else if (event.action === 'toggle_display_on_home_page') {
       this.updateDisplayOnHome(event.row.id, event.row.display_on_home_page);
+    } else if (event.action === 'copy_link') {
+      this.copyCategoryLink(event.row);
     }
+  }
+
+  copyCategoryLink(row: any): void {
+    const rawUrl = row.external_url || row.raw?.external_url;
+    const link = rawUrl && String(rawUrl).trim()
+      ? String(rawUrl).trim()
+      : `${window.location.origin}/notice?category=${row.id || row.raw?.template_id}`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(() => {
+        this.toast.show('success', 'Link copied to clipboard!', 3000);
+      }).catch(() => {
+        this.fallbackCopy(link);
+      });
+    } else {
+      this.fallbackCopy(link);
+    }
+  }
+
+  private fallbackCopy(text: string): void {
+    const input = document.createElement('textarea');
+    input.value = text;
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.focus();
+    input.select();
+    try {
+      document.execCommand('copy');
+      this.toast.show('success', 'Link copied to clipboard!', 3000);
+    } catch {
+      this.toast.show('error', 'Failed to copy link', 3000);
+    }
+    document.body.removeChild(input);
   }
 
   openCreateModal(): void {
     this.isEditMode = false;
     this.editingCategoryId = null;
-    this.categorySchema.submitLabel = 'Create Category';
+    this.categorySchema.submitLabel = 'Save';
+    this.updateParentCategoryOptions();
 
     const defaultValues = {
       name_en: '',
       name_pb: '',
       same_as_english_pb: false,
-      display_on_home_page: false,
-      status: true
+      meta_title_en: '',
+      meta_description_en: '',
+      meta_keyword_en: '',
+      meta_title_pb: '',
+      meta_description_pb: '',
+      meta_keyword_pb: '',
+      parent_id: null,
+      external_url: '',
+      status: 1,
+      display_on_home_page: 1,
+      sort_order: 1,
+      access_type: 'public'
     };
 
     this.categoryModal.open();
 
     setTimeout(() => {
-      const form = this.categoryModal?.dynamicForm?.form;
-      if (form) {
-        form.reset(defaultValues);
+      const dynamicForm = this.categoryModal?.dynamicForm;
+      if (dynamicForm) {
+        dynamicForm.activeTab = 'general';
+        dynamicForm.activeChildTab = 'general-english';
+        dynamicForm.form.reset(defaultValues);
       }
+      this.setupTabVisibilityHook();
       this.bindCheckboxLogic();
       this.cdr.detectChanges();
     }, 100);
@@ -149,7 +240,8 @@ export class NoticeboardCategoriesListComponent implements OnInit {
   openEditModal(id: string | number): void {
     this.isEditMode = true;
     this.editingCategoryId = String(id);
-    this.categorySchema.submitLabel = 'Update Category';
+    this.categorySchema.submitLabel = 'Update';
+    this.updateParentCategoryOptions(id);
 
     this.api.get<any>(`/admin/noticeboard-categories/${id}`).subscribe({
       next: (res) => {
@@ -163,17 +255,30 @@ export class NoticeboardCategoriesListComponent implements OnInit {
           name_en: item.name_en || item.name || '',
           name_pb: item.name_pb || '',
           same_as_english_pb: false,
-          display_on_home_page: !!item.display_on_home_page,
-          status: !!item.status
+          meta_title_en: item.meta_title_en || '',
+          meta_description_en: item.meta_description_en || '',
+          meta_keyword_en: item.meta_keyword_en || '',
+          meta_title_pb: item.meta_title_pb || '',
+          meta_description_pb: item.meta_description_pb || '',
+          meta_keyword_pb: item.meta_keyword_pb || '',
+          parent_id: item.parent_id !== null && item.parent_id !== undefined ? Number(item.parent_id) : null,
+          external_url: item.external_url || '',
+          status: item.status == 1 || item.status === true ? 1 : 0,
+          display_on_home_page: item.display_on_home_page == 1 || item.display_on_home_page === true ? 1 : 0,
+          sort_order: item.sort_order ?? 1,
+          access_type: item.access_type || 'public'
         };
 
         this.categoryModal.open();
 
         setTimeout(() => {
-          const form = this.categoryModal?.dynamicForm?.form;
-          if (form) {
-            form.patchValue(patchValue);
+          const dynamicForm = this.categoryModal?.dynamicForm;
+          if (dynamicForm) {
+            dynamicForm.activeTab = 'general';
+            dynamicForm.activeChildTab = 'general-english';
+            dynamicForm.form.patchValue(patchValue);
           }
+          this.setupTabVisibilityHook();
           this.bindCheckboxLogic();
           this.cdr.detectChanges();
         }, 100);
@@ -182,6 +287,45 @@ export class NoticeboardCategoriesListComponent implements OnInit {
         this.toast.show('error', err.error?.message || 'Failed to fetch category details');
       }
     });
+  }
+
+  private setupTabVisibilityHook(): void {
+    const dynamicForm = this.categoryModal?.dynamicForm;
+    if (!dynamicForm) return;
+
+    const originalOnTabChange = dynamicForm.onTabChange.bind(dynamicForm);
+    const originalOnChildTabChange = dynamicForm.onChildTabChange.bind(dynamicForm);
+
+    const updateVisibility = () => {
+      const isGeneral = dynamicForm.activeTab === 'general';
+      const generalFieldNames = [
+        'parent_id',
+        'external_url',
+        'status',
+        'display_on_home_page',
+        'sort_order',
+        'access_type'
+      ];
+
+      this.categorySchema.fields?.forEach((field) => {
+        if (generalFieldNames.includes(field.name)) {
+          field.tab = isGeneral ? dynamicForm.activeChildTab : '__hidden_on_meta__';
+        }
+      });
+      this.cdr.detectChanges();
+    };
+
+    dynamicForm.onTabChange = (tab: string) => {
+      originalOnTabChange(tab);
+      updateVisibility();
+    };
+
+    dynamicForm.onChildTabChange = (childTab: string) => {
+      originalOnChildTabChange(childTab);
+      updateVisibility();
+    };
+
+    updateVisibility();
   }
 
   private bindCheckboxLogic(): void {
@@ -201,8 +345,18 @@ export class NoticeboardCategoriesListComponent implements OnInit {
     const payload = {
       name_en: formData.name_en || '',
       name_pb: formData.name_pb || '',
-      display_on_home_page: formData.display_on_home_page ? 1 : 0,
-      status: formData.status ? 1 : 0
+      meta_title_en: formData.meta_title_en || '',
+      meta_description_en: formData.meta_description_en || '',
+      meta_keyword_en: formData.meta_keyword_en || '',
+      meta_title_pb: formData.meta_title_pb || '',
+      meta_description_pb: formData.meta_description_pb || '',
+      meta_keyword_pb: formData.meta_keyword_pb || '',
+      parent_id: formData.parent_id || null,
+      external_url: formData.external_url || '',
+      sort_order: formData.sort_order ?? 1,
+      access_type: formData.access_type || 'public',
+      display_on_home_page: (formData.display_on_home_page == 1 || formData.display_on_home_page === true) ? 1 : 0,
+      status: (formData.status == 1 || formData.status === true) ? 1 : 0
     };
 
     const request$ = this.isEditMode && this.editingCategoryId
@@ -217,6 +371,7 @@ export class NoticeboardCategoriesListComponent implements OnInit {
         );
         this.categoryModal.close();
         this.loadCategories();
+        this.loadParentCategories();
       },
       error: (err: any) => {
         this.toast.show('error', err.error?.message || 'Failed to save category.');
