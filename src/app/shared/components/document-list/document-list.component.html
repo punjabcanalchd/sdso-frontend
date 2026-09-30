@@ -84,25 +84,19 @@
                 <span>{{ col.label }}</span>
 
                 @if (col.sortable) {
-                  <div class="sort-arrows">
-                      <i
-                          class="bi bi-caret-up-fill"
-                          role="button"
-                          tabindex="0"
-                          [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'asc'"
-                          [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'asc')"
-                          (click)="sortData(col, 'asc')">
-                      </i>
+                <div class="sort-arrows">
+                  <i class="bi bi-caret-up-fill" role="button" tabindex="0"
+                    [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'asc'"
+                    [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'asc')"
+                    (click)="sortData(col, 'asc')">
+                  </i>
 
-                      <i
-                          class="bi bi-caret-down-fill"
-                          role="button"
-                          tabindex="0"
-                          [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'desc'"
-                          [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'desc')"
-                          (click)="sortData(col, 'desc')">
-                      </i>
-                  </div>
+                  <i class="bi bi-caret-down-fill" role="button" tabindex="0"
+                    [class.text-primary]="activeSortColumn === col.key && activeSortDirection === 'desc'"
+                    [class.text-secondary]="!(activeSortColumn === col.key && activeSortDirection === 'desc')"
+                    (click)="sortData(col, 'desc')">
+                  </i>
+                </div>
                 }
               </div>
 
@@ -122,8 +116,8 @@
 
           @for (row of pagedData; track row.id || $index; let i = $index) {
           <tr>
-             <td class="text-center text-secondary text-dark py-3 fw-normal">
-              {{ row.originalSeq }}
+            <td class="text-center text-secondary text-dark py-3 fw-normal">
+              {{ row.orignalSeq ?? row.originalSeq ?? row.sr_no ?? row.srNo ?? getSerialNo(i) }}
             </td>
 
 
@@ -140,18 +134,14 @@
             }
 
             @if (col.type === 'image') {
-              <td class="text-center py-3">
-                @if (row[col.key]) {
-                  <img
-                    [src]="row[col.key]"
-                    alt="Slider Image"
-                    class="img-thumbnail"
-                    style="width: 120px; height: 60px; object-fit: cover;"
-                  />
-                } @else {
-                  <span class="text-muted">No Image</span>
-                }
-              </td>
+            <td class="text-center py-3">
+              @if (row[col.key]) {
+              <img [src]="row[col.key]" alt="Slider Image" class="img-thumbnail"
+                style="width: 120px; height: 60px; object-fit: cover;" />
+              } @else {
+              <span class="text-muted">No Image</span>
+              }
+            </td>
             }
 
             @if (col.type === 'download') {
@@ -186,33 +176,29 @@
             <td class="text-center">
               <button type="button"
                 class="border bg-success rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
-                (click)="onCustomAction('copy_link', row)"
-                title="Copy Link"
-                aria-label="Copy Link">
+                (click)="onCustomAction('copy_link', row)" title="Copy Link" aria-label="Copy Link">
                 <i class="bi bi-link-45deg fs-6" aria-hidden="true"></i>
               </button>
             </td>
             }
 
-           @if(col.type === 'unlock'){ 
+            @if(col.type === 'unlock'){
             <td class="text-center">
               @if(row.status === false) {
-                <button type="button"
-                 class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
-                  (click)="onCustomAction('unlock', row)" [attr.aria-label]="'Unlock User'"
-                  title="Unlock User">
-                  <i class="bi bi-lock-fill fs-6" aria-hidden="true"></i>
-                </button>
+              <button type="button"
+                class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                (click)="onCustomAction('unlock', row)" [attr.aria-label]="'Unlock User'" title="Unlock User">
+                <i class="bi bi-lock-fill fs-6" aria-hidden="true"></i>
+              </button>
               } @else {
-                <button type="button"
-                 class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
-                  (click)="onCustomAction('lock', row)" [attr.aria-label]="'Lock User'"
-                  title="Lock User">
-                  <i class="bi bi-unlock-fill fs-6" aria-hidden="true"></i>
-                </button>
+              <button type="button"
+                class="border bg-primary rounded-circle d-flex btn_circle align-items-center d-inline-flex justify-content-center text-white p-2 mb-1 lh-1 hover-zoom"
+                (click)="onCustomAction('lock', row)" [attr.aria-label]="'Lock User'" title="Lock User">
+                <i class="bi bi-unlock-fill fs-6" aria-hidden="true"></i>
+              </button>
               }
             </td>
-          }
+            }
 
             <!-- delete -->
             @if (col.type === 'delete') {
@@ -263,7 +249,7 @@
                 <input type="checkbox" role="switch"
                   class="form-check-input ms-0 mt-0 shadow-none cursor-pointer custom-switch-color fs-5"
                   [checked]="row[col.key] == 1 || row[col.key] === true || row[col.key] === '1'"
-                 (change)="onToggleChange(col.key, row, $event)" />
+                  (change)="onToggleChange(col.key, row, $event)" />
               </div>
             </td>
             }
@@ -300,13 +286,13 @@
 
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-3 pt-2">
       <span class="text-secondary small">
-          Showing
-          {{ totalItems === 0 ? 0 : ((currentPage - 1) * pageSize + 1) }}
-          to
-          {{ getMathMin(currentPage * pageSize, totalItems) }}
-          of
-          {{ totalItems }}
-          entries
+        Showing
+        {{ totalItems === 0 ? 0 : ((currentPage - 1) * pageSize + 1) }}
+        to
+        {{ getMathMin(currentPage * pageSize, totalItems) }}
+        of
+        {{ totalItems }}
+        entries
       </span>
 
       <nav aria-label="Pagination Navigation">
@@ -328,12 +314,9 @@
           }
 
           <li class="page-item" [class.disabled]="currentPage === lastPage">
-            <button
-                type="button"
-                class="page-link text-dark"
-                (click)="goToPage(currentPage + 1)"
-                [disabled]="currentPage === lastPage">
-                Next
+            <button type="button" class="page-link text-dark" (click)="goToPage(currentPage + 1)"
+              [disabled]="currentPage === lastPage">
+              Next
             </button>
           </li>
         </ul>
