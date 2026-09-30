@@ -49,6 +49,7 @@ export class FileUploadComponent
   @Input() existingFile: string | null = null;
 
   filePreviewUrl: string | null = null;
+  
     
   constructor(private cdr: ChangeDetectorRef) {} 
 
@@ -512,73 +513,23 @@ private loadInitialPreview(): void {
   // EXISTING IMAGE PREVIEW
   // =========================================================
 
-  private setExistingImagePreview(
-    filename: string
-  ): void {
-
-    if (!filename) {
-
-      this.clearPreview();
-
-      return;
-
-    }
-
-
-    /*
-     * If API ever returns a complete path,
-     * extract only the filename.
-     */
-    filename =
-      filename.split('/').pop() || filename;
-
-
-    /*
-     * Remove /api from:
-     *
-     * http://localhost:8000/api
-     *
-     * Result:
-     *
-     * http://localhost:8000
-     */
-    const baseUrl =
-      environment.apiUrl.replace(
-        /\/api\/?$/,
-        ''
-      );
-
-
-    /*
-     * Backend stores the image using:
-     *
-     * ImageResizer::store(
-     *     $data['page_banner'],
-     *     'uploads',
-     *     $fileName
-     * );
-     *
-     * Therefore we currently use:
-     *
-     * /uploads/{filename}
-     */
-    this.filePreviewUrl =
-      `${baseUrl}/uploads/${filename}`;
-
-
-    console.log(
-      'Existing image filename:',
-      filename
-    );
-
-
-    console.log(
-      'Existing image URL:',
-      this.filePreviewUrl
-    );
-
+private setExistingImagePreview(filename: string): void {
+  if (!filename) {
+    this.clearPreview();
+    return;
   }
 
+  const baseUrl = environment.baseUrl;
+
+  const imagePath = filename.startsWith('http')
+    ? filename
+    : `${baseUrl}/${filename.replace(/^\/+/, '')}`;
+
+  this.filePreviewUrl = imagePath;
+
+  console.log('Existing image:', filename);
+  console.log('Preview URL:', this.filePreviewUrl);
+}
 
   // =========================================================
   // CLEAR PREVIEW

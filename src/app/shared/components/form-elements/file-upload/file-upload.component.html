@@ -8,6 +8,16 @@
   (click)="onFileClick()"
   
 />
+<!-- EXISTING / SELECTED IMAGE PREVIEW -->
+<div *ngIf="filePreviewUrl" class="mb-3">
+  <img
+    [src]="filePreviewUrl"
+    alt="Slider Image"
+    class="img-thumbnail"
+    style="max-width: 300px; max-height: 150px; object-fit: cover;"
+  />
+</div>
+
 
 
 <!-- EXISTING / SELECTED FILE -->

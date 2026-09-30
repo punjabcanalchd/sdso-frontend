@@ -42,6 +42,8 @@ export const sliderImageSchema: FormSchema = {
             label: 'Status',
             type: 'select',
             required: true,
+            placeholder: "Select Status",
+
             className: 'col-md-4',
             options: [
             { label: 'Active', value: 1 },

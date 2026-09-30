@@ -46,6 +46,7 @@ sortDirection='asc';
 sliderName = '';
 isEditMode = false;
 formInitialData: any = {};
+existingImageUrl: string = '';
 
 
 ngOnInit():void{  
@@ -429,6 +430,15 @@ openEdit(id: string | number): void {
 
   const imageId = String(id);
 
+  this.router.navigate([], {
+  relativeTo: this.route,
+  queryParams: { image_id: imageId },
+  queryParamsHandling: 'merge'
+});
+
+
+
+
   this.sliderImageSchema.submitLabel = 'Update Slider Image';
 
   this.authService
@@ -442,9 +452,25 @@ openEdit(id: string | number): void {
           return;
         }
 
-        const imageData = res.data;
 
-        const patchValue = {
+
+        const imageData = res.data;
+        this.existingImageUrl = imageData.image_name
+        ? `${environment.baseUrl}/${imageData.image_name}`
+        : '';
+
+
+      console.log('Image name:', imageData.image_name);
+      console.log('Base URL:', environment.baseUrl);
+      console.log(
+        'Final Image URL:',
+        imageData.image_name
+          ? `${environment.baseUrl}/${imageData.image_name}`
+          : ''
+      );
+
+          const patchValue = {
+          image: imageData.image_name ?? '',
           title: imageData.title ?? '',
           title_pb: imageData.title_pb ?? '',
           link: imageData.link ?? '',
