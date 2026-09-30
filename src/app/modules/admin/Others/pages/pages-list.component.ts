@@ -57,6 +57,7 @@ export class PagesComponent implements OnInit {
   sortColumn = '';
   sortDirection = 'desc';
   // @Input() pageId!: string;
+  
 
 onServerAction(params: {
   page: number;

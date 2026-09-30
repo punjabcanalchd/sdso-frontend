@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject,Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
@@ -38,7 +38,7 @@ export class SlidersListComponent implements OnInit {
   sliderId: string | null = null;
   isLoading = false;
   totalRecords = 0;
-
+@Input() isAdmin: boolean = true;
   sliderSchema = sliderSchema;
   currentPage = 1;
   pageSize = 25;
@@ -96,7 +96,12 @@ export class SlidersListComponent implements OnInit {
               label: 'Edit',
               actionName: 'edit',
               class: 'text-secondary'
-            }
+            },
+          {
+            label: 'Image',
+            actionName: 'image',
+            class: 'text-secondary'
+          },
           ];
         }
       }
@@ -143,8 +148,7 @@ export class SlidersListComponent implements OnInit {
             id: slider.slider_id,
             public_id: slider.public_id,
             slider_id: slider.slider_id,
-            orignalSeq:
-              (params.page - 1) * params.per_page + index + 1,
+            originalSeq:(params.page-1)*params.per_page+index+1,
             titleHtml: `
               <div class="text-dark pb-2 lh-1">
                 <span class="text-muted fw-bold small">
@@ -493,6 +497,18 @@ export class SlidersListComponent implements OnInit {
           event.row.status
         );
         break;
+
+     case 'image':
+      if (!event?.row?.public_id) {
+        console.error('IMAGE: public_id is missing');
+        return;
+      }
+
+      this.router.navigate([
+        '/admin/slider-image',
+        event.row.public_id
+      ]);
+      break;
 
       case 'delete':
         if (!event?.row?.public_id) {

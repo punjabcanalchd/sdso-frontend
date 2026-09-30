@@ -26,7 +26,7 @@ import { ApiService } from '../../../../core/services/api.service';
     DynamicFormComponent,
     HeaderComponent,
     FooterComponent,
-    NavbarComponent,
+    // NavbarComponent,
     AccessibilityBarComponent,
     TickerComponent
   ],

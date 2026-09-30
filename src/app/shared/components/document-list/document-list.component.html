@@ -73,14 +73,14 @@
 
             @for (col of columns; track col.key) {
             <th class="text-dark fw-semibold py-3 {{ col.widthClass || '' }}" [ngClass]="{
-                    'text-center': ['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || ''), 
-                    'text-start': !['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || '')
+                    'text-center': ['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || ''), 
+                    'text-start': !['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || '')
                   }"
               [attr.aria-sort]="activeSortColumn === col.key ? (activeSortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
               scope="col">
 
               <div class="d-flex align-items-center"
-                [class.justify-content-center]="['download', 'edit', 'unlock', 'action', 'dropdown', 'button', 'toggle'].includes(col.type || '')">
+                [class.justify-content-center]="['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || '')">
                 <span>{{ col.label }}</span>
 
                 @if (col.sortable) {
@@ -122,7 +122,9 @@
 
           @for (row of pagedData; track row.id || $index; let i = $index) {
           <tr>
-            <td class="text-center text-secondary text-dark py-3 fw-normal">{{ row.orignalSeq ?? row.originalSeq ?? row.sr_no ?? row.srNo ?? getSerialNo(i) }}</td>
+             <td class="text-center text-secondary text-dark py-3 fw-normal">
+              {{ row.originalSeq }}
+            </td>
 
 
             @for (col of columns; track col.key) {
@@ -135,6 +137,21 @@
             @if (col.type === 'html') {
             <td class="text-start text-dark py-3 fw-normal text-break" [innerHTML]="row[col.key]">
             </td>
+            }
+
+            @if (col.type === 'image') {
+              <td class="text-center py-3">
+                @if (row[col.key]) {
+                  <img
+                    [src]="row[col.key]"
+                    alt="Slider Image"
+                    class="img-thumbnail"
+                    style="width: 120px; height: 60px; object-fit: cover;"
+                  />
+                } @else {
+                  <span class="text-muted">No Image</span>
+                }
+              </td>
             }
 
             @if (col.type === 'download') {
@@ -202,7 +219,7 @@
             <td class="text-center py-3">
               <button type="button"
                 class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
-                (click)="onCustomAction('delete', row)" title="Delete">
+                (click)="onCustomAction('delete', row)" title="Delete4444444444">
                 <i class="bi bi-trash fs-6"></i>
               </button>
             </td>

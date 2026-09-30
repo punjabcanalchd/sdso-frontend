@@ -58,29 +58,13 @@ const routes: Routes = [
       // =========================
       // Slider Images
       // =========================
-
-      // Add slider image
-      {
-        path: 'slider-images/:slider_id/create',
-        component: SliderImageComponent,
-        title: 'Add Slider Image'
-      },
-
-      // Edit slider image
-      {
-        path: 'slider-images/edit/:id',
-        component: SliderImageComponent,
-        title: 'Edit Slider Image'
-      },
-
-      // Slider image listing
-      {
-        path: 'slider-images/:slider_id',
-        component: SliderImageComponent,
-        title: 'Slider Images'
-      },
+      { path: 'slider-image/:slider_id/create', component: SliderImageComponent, title: 'Add Slider Image' },
+      // { path: 'slider-image/edit/:id', component: SliderImageComponent, title: 'Edit Slider Image' },
+      // {  path: 'slider-image/:sliderId/edit/:sliderImageId',  component: SliderImageComponent, title: 'Edit Slider Image'},
+      { path: 'slider-image/:slider_id', component: SliderImageComponent, title: 'Slider Images' },
 
 
+     
 
 
       { path: 'users', component: Users, title: 'Users – Admin' },
