@@ -72,7 +72,9 @@ export interface FormField {
     value: any;
   }
   maskOnBlur?: boolean;
-    copyKey?: string;
+  copyKey?: string;
+  requiredWidth?: number;
+  requiredHeight?: number;
   // syncKey?: string;  
   inputClass?: string;
   validationMessages?: {

@@ -1,10 +1,11 @@
-<div class="container-fluid p-3">
+<!-- 1. Media Categories Table -->
+<div class="container-fluid p-3" *ngIf="!showForm && !showGalleryView">
   <app-document-list
     title="Media Categories"
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
-    [showCreateButton]="false"
+    [showCreateButton]="true"
     [currentPage]="pagination.current_page || 1"
     [lastPage]="pagination.last_page || 1"
     [pageSize]="pagination.per_page || 25"
@@ -13,6 +14,54 @@
     (pageChange)="loadCategories($event)"
     (searchChange)="searchCategories($event)"
     (sortChange)="sortCategories($event)"
+    (createClick)="openCreateForm()"
     (actionClick)="handleAction($event)">
   </app-document-list>
 </div>
+
+<!-- 2. Create / Edit Category Form (reusing AdminFormLayoutComponent) -->
+<div *ngIf="showForm && !showGalleryView">
+  <app-admin-form-layout
+    #adminFormLayout
+    [title]="isEditMode ? 'UPDATE MEDIA CATEGORY' : 'CREATE MEDIA CATEGORY'"
+    [schema]="categorySchema"
+    [initialValue]="initialFormData"
+    [isLoading]="isFormLoading"
+    (goBackClick)="closeForm()"
+    (onSubmit)="handleFormSubmit($event)">
+  </app-admin-form-layout>
+</div>
+
+<!-- 3. Media Gallery Images View (reusing DocumentListComponent) -->
+<div class="container-fluid p-3" *ngIf="showGalleryView">
+  <app-document-list
+    [title]="'GALLERY (' + galleryCategoryTitle + ')'"
+    [isAdmin]="true"
+    [data]="galleryData"
+    [columns]="galleryColumns"
+    [showCreateButton]="true"
+    [showBackButton]="true"
+    createButtonText="Add Image"
+    [currentPage]="galleryPagination.current_page || 1"
+    [lastPage]="galleryPagination.last_page || 1"
+    [pageSize]="galleryPagination.per_page || 25"
+    [totalItems]="galleryPagination.total || 0"
+    (pageSizeChange)="onGalleryPageSizeChange($event)"
+    (pageChange)="loadGalleryImages($event)"
+    (searchChange)="searchGalleryImages($event)"
+    (createClick)="openAddGalleryModal()"
+    (backClick)="closeGalleryView()"
+    (actionClick)="handleGalleryAction($event)">
+  </app-document-list>
+</div>
+
+<!-- 4. Add / Edit Gallery Image Modal (reusing ModalFormComponent) -->
+<app-modal-form
+  #galleryModal
+  [title]="isGalleryEditMode ? 'EDIT GALLERY IMAGE' : 'ADD GALLERY IMAGE (' + galleryCategoryTitle + ')'"
+  [schema]="gallerySchema"
+  [initialValue]="galleryFormInitialData"
+  size="lg"
+  (submitForm)="handleGalleryModalSubmit($event)"
+  (modalClosed)="onGalleryModalClosed()">
+</app-modal-form>

@@ -611,8 +611,8 @@ export class DynamicFormComponent implements OnInit, OnChanges {
       return true;
     }
 
-    // Only tab-specific fields are filtered
-    return field.tab === this.activeChildTab;
+    // Only tab-specific fields are filtered (supports nested tabs and single-level tabs)
+    return field.tab === this.activeChildTab || (!this.activeChildTab && field.tab === this.activeTab);
   }
 
   isFieldVisible(field: any): boolean {
@@ -668,11 +668,11 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     const allFields: FormField[] = this.schema.fields ?? [];
 
     const englishFields = allFields.filter(
-      field => field.tab === 'general-english'
+      field => field.tab === 'general-english' || field.tab === 'en'
     );
 
     const punjabiFields = allFields.filter(
-      field => field.tab === 'general-punjabi'
+      field => field.tab === 'general-punjabi' || field.tab === 'pb'
     );
 
     const values: Record<string, any> = {};

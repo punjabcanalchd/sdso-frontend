@@ -16,9 +16,14 @@ export class AdminFormLayoutComponent {
   @Input() schema: any = {};
   @Input() initialValue: any = {};
   @Output() onSubmit = new EventEmitter<any>();
+  @Output() goBackClick = new EventEmitter<void>();
 
   goBack() {
-    this.location.back();
+    if (this.goBackClick.observed) {
+      this.goBackClick.emit();
+    } else {
+      this.location.back();
+    }
   }
 
   handleFormEvent(event: any) {

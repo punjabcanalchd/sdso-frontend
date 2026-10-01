@@ -8,12 +8,21 @@
       {{ title }}
     </h1>
 
-    @if (showCreateButton) {
-    <button type="button" class="btn btn-primary-govt btn-sm d-inline-flex align-items-center gap-1 px-3"
-      (click)="onCreate()">
-      <i class="bi bi-plus-lg "></i> Create
-    </button>
-    }
+    <div class="d-flex align-items-center gap-2">
+      @if (showBackButton) {
+      <button type="button" class="btn btn-secondary btn-sm d-inline-flex align-items-center gap-1 px-3"
+        (click)="onBack()">
+        <i class="bi bi-chevron-left"></i> Back
+      </button>
+      }
+
+      @if (showCreateButton) {
+      <button type="button" class="btn btn-primary-govt btn-sm d-inline-flex align-items-center gap-1 px-3"
+        (click)="onCreate()">
+        <i class="bi bi-plus-lg"></i> {{ createButtonText }}
+      </button>
+      }
+    </div>
 
   </div>
   } @else {
@@ -135,11 +144,15 @@
 
             @if (col.type === 'image') {
             <td class="text-center py-3">
-              @if (row[col.key]) {
-              <img [src]="row[col.key]" alt="Slider Image" class="img-thumbnail"
-                style="width: 120px; height: 60px; object-fit: cover;" />
+              @if (row[col.key] && !row.imgFailed) {
+              <img [src]="row[col.key]" alt="Thumbnail" class="img-thumbnail"
+                style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;"
+                (error)="row.imgFailed = true" />
               } @else {
-              <span class="text-muted">No Image</span>
+              <div class="d-inline-flex align-items-center justify-content-center bg-light rounded text-muted"
+                style="width: 80px; height: 60px; border: 1px solid #dee2e6;" title="No Image">
+                <i class="bi bi-image fs-5 text-secondary opacity-50"></i>
+              </div>
               }
             </td>
             }
@@ -205,7 +218,7 @@
             <td class="text-center py-3">
               <button type="button"
                 class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
-                (click)="onCustomAction('delete', row)" title="Delete4444444444">
+                (click)="onCustomAction('delete', row)" title="Delete">
                 <i class="bi bi-trash fs-6"></i>
               </button>
             </td>
@@ -238,6 +251,28 @@
                   <i class="bi bi-trash fs-6"></i>
                 </button>
 
+              </div>
+            </td>
+            }
+
+            <!-- MEDIA CATEGORY ACTION (Edit + Media Count Pill) -->
+            @if (col.type === 'media_category_action') {
+            <td class="text-center py-3">
+              <div class="d-flex align-items-center justify-content-center gap-2">
+                <button type="button"
+                  class="border-0 rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                  style="width: 32px; height: 32px; background-color: #0dcaf0;"
+                  (click)="onCustomAction('edit', row)" title="Edit">
+                  <i class="bi bi-pencil-square fs-6"></i>
+                </button>
+
+                <button type="button"
+                  class="btn btn-secondary btn-sm rounded-pill d-inline-flex align-items-center px-2 py-1 gap-1 border-0"
+                  style="background-color: #6c757d; font-size: 13px;"
+                  (click)="onCustomAction('media_count', row)" title="Media Items">
+                  <span class="fw-semibold">{{ row.media_count ?? row.mediaCount ?? 0 }}</span>
+                  <i class="bi bi-images"></i>
+                </button>
               </div>
             </td>
             }

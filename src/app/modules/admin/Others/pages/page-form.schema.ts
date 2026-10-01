@@ -144,11 +144,13 @@ export const pageSchema: FormSchema = {
       type: 'file',
       name: 'page_banner',
       label: 'Default Page Banner (1366p x 350p)',
-        validators: [
+      requiredWidth: 1366,
+      requiredHeight: 350,
+      validators: [
         CustomValidators.fileMaxSizeMB(5),
         CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
         CustomValidators.suspiciousFileUpload(),
-          ],
+      ],
     },
 
     

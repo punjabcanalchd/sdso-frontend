@@ -47,18 +47,13 @@ export class FileUploadComponent
   @Input() isEditMode = false;
 
   @Input() existingFile: string | null = null;
+  @Input() requiredWidth?: number | null = null;
+  @Input() requiredHeight?: number | null = null;
 
   filePreviewUrl: string | null = null;
   
     
   constructor(private cdr: ChangeDetectorRef) {} 
-
-
-
-  private readonly REQUIRED_WIDTH = 1366;
-
-  private readonly REQUIRED_HEIGHT = 350;
-
 
   private dialogOpened = false;
 
@@ -575,30 +570,31 @@ private setExistingImagePreview(filename: string): void {
 
     URL.revokeObjectURL(objectUrl);
 
-    const validDimensions =
-      image.width === this.REQUIRED_WIDTH &&
-      image.height === this.REQUIRED_HEIGHT;
+    if (this.requiredWidth && this.requiredHeight) {
+      const validDimensions =
+        image.width === this.requiredWidth &&
+        image.height === this.requiredHeight;
 
-    if (!validDimensions) {
+      if (!validDimensions) {
+        this.control.setErrors({
+          ...(this.control.errors || {}),
+          imageDimensions: {
+            requiredWidth: this.requiredWidth,
+            requiredHeight: this.requiredHeight,
+            actualWidth: image.width,
+            actualHeight: image.height
+          }
+        });
 
-      this.control.setErrors({
-        ...(this.control.errors || {}),
-        imageDimensions: {
-          requiredWidth: this.REQUIRED_WIDTH,
-          requiredHeight: this.REQUIRED_HEIGHT,
-          actualWidth: image.width,
-          actualHeight: image.height
-        }
-      });
+        this.control.markAsTouched();
+        this.control.markAsDirty();
 
-      this.control.markAsTouched();
-      this.control.markAsDirty();
+        console.log(
+          `Invalid dimensions: ${image.width} x ${image.height}`
+        );
 
-      console.log(
-        `Invalid dimensions: ${image.width} x ${image.height}`
-      );
-
-      return;
+        return;
+      }
     }
 
     // ==========================================
@@ -626,8 +622,8 @@ private setExistingImagePreview(filename: string): void {
     this.control.setErrors({
       ...(this.control.errors || {}),
       imageDimensions: {
-        requiredWidth: this.REQUIRED_WIDTH,
-        requiredHeight: this.REQUIRED_HEIGHT
+        requiredWidth: this.requiredWidth ?? 1366,
+        requiredHeight: this.requiredHeight ?? 350
       }
     });
 

@@ -11,7 +11,7 @@ export interface DropdownItem {
 export interface TableColumn {
   key: string;           // The object property ( 'description', 'email', 'name')
   label: string;         // The Table Header text ('Description', 'Email Address')
-  type?: 'text' | 'select' | 'html' | 'download' | 'image' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete' | 'copy_link'; // How to render the cell
+  type?: 'text' | 'select' | 'html' | 'download' | 'image' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete' | 'copy_link' | 'media_category_action'; // How to render the cell
   widthClass?: string;   // Bootstrap column classes ( 'col-7', 'col-2')
   sortable?: boolean;
 
@@ -50,10 +50,17 @@ export class DocumentListComponent implements OnChanges {
   @Input() columns: TableColumn[] = [];
 
   @Input() showCreateButton: boolean = false;
+  @Input() showBackButton: boolean = false;
+  @Input() createButtonText: string = 'Create';
 
   @Output() actionClick = new EventEmitter<{ action: string, row: any }>();
 
   @Output() createClick = new EventEmitter<void>();
+  @Output() backClick = new EventEmitter<void>();
+
+  onBack(): void {
+    this.backClick.emit();
+  }
 
   @Input() currentPage = 1;
   @Input() totalItems = 0;
