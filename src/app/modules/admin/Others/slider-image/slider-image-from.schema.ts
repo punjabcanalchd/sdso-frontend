@@ -7,7 +7,8 @@ export const sliderImageSchema: FormSchema = {
   submitLabel: 'Create Slider Image',
   submitIcon: 'bi bi-floppy',
   submitClass: 'btn-primary',
-    fields: [    
+    fields:
+        [               
             {
             name: 'image',
             label: 'Image',
@@ -15,40 +16,39 @@ export const sliderImageSchema: FormSchema = {
             className: 'col-md-4',
             required: true,
             // accept: '.jpg,.jpeg,.png,.webp'
-        },
-        {           
-            name: 'title',
-            label: 'Title English',
-            type: 'text',
-            className: 'col-md-4',
-            // required: true
-        },
-        {
-            name: 'title_pb',
-            label: 'Title Punjabi',
-            type: 'text',
-            className: 'col-md-4',
-            // required: true
-        },
-        {
-            name: 'link',
-            label: 'Link',
-            type: 'text',
-            className: 'col-md-4',
-            // required: false
-        },
-        {
-            name: 'status',
-            label: 'Status',
-            type: 'select',
-            required: true,
-            placeholder: "Select Status",
-
-            className: 'col-md-4',
-            options: [
-            { label: 'Active', value: 1 },
-            { label: 'Inactive', value: 0 }
-            ]
-        }
-    ]
+            },
+            {           
+                name: 'title',
+                label: 'Title English',
+                type: 'text',
+                className: 'col-md-4',
+                // required: true
+            },
+            {
+                name: 'title_pb',
+                label: 'Title Punjabi',
+                type: 'text',
+                className: 'col-md-4',
+                // required: true
+            },
+            {
+                name: 'link',
+                label: 'Link',
+                type: 'text',
+                className: 'col-md-4',
+                // required: false
+            },
+            {
+                name: 'status',
+                label: 'Status',
+                type: 'select',
+                required: true,
+                placeholder: "Select Status",
+                className: 'col-md-4',
+                options: [
+                { label: 'Active', value: 1 },
+                { label: 'Inactive', value: 0 }
+                ]
+            }
+        ]
 }

@@ -1,12 +1,13 @@
 <div class="container-fluid p-3">
-
- 
+   <!-- <button  type="button"  class="btn"   (click)="goBack()"  >   ← Back
+  </button> -->
   <app-document-list
     title="{{sliderName}}"
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
     [showCreateButton]="true"
+     [showBackButton]="true"
     [currentPage]="pagination.current_page"
     [lastPage]="pagination.last_page"
     [pageSize]="pagination.per_page"
@@ -21,8 +22,8 @@
 </div>
 
 <app-modal-form  #sliderImageModal
-  [title]="isEditMode ? 'Edit Slider Image' : 'Add Slider Image'" 
- [schema]="sliderImageSchema"
+[title]="isEditMode ? 'Edit Slider Image - ' + sliderName : 'Add Slider Image - ' + sliderName"
+  [schema]="sliderImageSchema"
   [initialValue]="formInitialData"
   size="xl*"
   (submitForm)="onSubmit($event)"

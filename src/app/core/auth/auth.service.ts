@@ -544,6 +544,8 @@ updateSliderImageStatus(sliderId:string,imageId:string,status:number):Observable
   return this.api.post<any>(`/admin/slider-image/${sliderId}/${imageId}/status`,{status});
 }
 
+
+
 // END Slider Image APIs
 
 

@@ -47,6 +47,7 @@ sliderName = '';
 isEditMode = false;
 formInitialData: any = {};
 existingImageUrl: string = '';
+sliderImageCount = 0;
 
 
 ngOnInit():void{  
@@ -128,19 +129,33 @@ loadSliderImages(page:number=this.currentPage):void{
 
   const images = res.data?.data || [];
 
-  this.data=images.map((image:any,index:number)=>({
-  id:image.public_id||image.id,
-  public_id:image.public_id||image.public_id,
-  originalSeq:(params.page-1)*params.per_page+index+1,
-  image:image.image_name
+this.data = images.map((image: any, index: number) => ({
+  id: image.public_id || image.id,
+  public_id: image.public_id || image.id,
+
+  slider_id_encrypted:
+    image.slider_id_encrypted ||
+    image.slider_id ||
+    this.sliderId,
+
+  originalSeq:
+    (params.page - 1) * params.per_page + index + 1,
+
+  image: image.image_name
     ? `${environment.baseUrl}/${image.image_name}`
     : '',
-  status:image.status,
-  sortOrder:image.sort_order??0,
-  createdAt:this.formatDate(image.created_at),
-  canEdit:true,
-  originalData:image
+
+  status: Number(image.status),
+
+  sortOrder: image.sort_order ?? 0,
+
+  createdAt: this.formatDate(image.created_at),
+
+  canEdit: true,
+
+  originalData: image
 }));
+
 
 
   this.pagination = res.data;
@@ -216,22 +231,25 @@ handleAction(event: any): void {
       );
       break;
 
-    case 'toggle_status':
-      if (!sliderId) {
-        console.error(
-          'Encrypted slider ID is missing',
-          row
-        );
-        return;
-      }
+  case 'toggle_status':
+  if (!sliderId) {
+    console.error('Encrypted slider ID is missing', row);
+    return;
+  }
 
-      this.updateSliderImageStatus(
-        sliderId,
-        imageId,
-        row.status
+ const newStatus = Number(
+        event?.status ?? row?.status
       );
-      break;
 
+  console.log('New status:', newStatus);
+
+  this.updateSliderImageStatus(
+    sliderId,
+    imageId,
+    newStatus
+  );
+
+  break;
     default:
       console.warn(
         'Unknown slider image action:',
@@ -263,30 +281,6 @@ editSliderImage(imageId: string): void {
       }
     });
 }
-
-// editSliderImage(imageId: string): void {
-//   this.authService
-//     .getSliderImageById(imageId)
-//     .subscribe({
-//       next: (res: any) => {
-//         console.log('Slider image details:', res);
-
-//         this.sliderImageModal?.open();
-//       },
-//       error: (error: any) => {
-//         console.error(
-//           'Failed to load slider image:',
-//           error
-//         );
-
-//         this.toast.show(
-//           'error',
-//           error.error?.message ||
-//           'Failed to load slider image'
-//         );
-//       }
-//     });
-// }
 
 
 deleteSliderImage(
@@ -396,9 +390,9 @@ this.currentPage=1;
 this.loadSliderImages(1);
 }
 
-// backToSliders():void{
-// this.router.navigate(['/admin/slider']);
-// }
+backToSliders():void{
+this.router.navigate(['/admin/slider']);
+}
 openCreate(): void {
   this.isEditMode = false;
 
@@ -521,6 +515,9 @@ openEdit(id: string | number): void {
     });
 }
 
+goBack(): void {
+  this.router.navigate(['/admin/slider']);
+}
 
 onSubmit(formValue:any):void{
   const formData=new FormData();
@@ -591,19 +588,5 @@ onModalClosed(): void {
   // this.editingImageId = '';
   this.formInitialData = {};
 }
-
-// onModalClosed(): void {
-//   this.isEditMode = false;
-//   this.formInitialData = {};
-
-//   this.router.navigate([], {
-//     relativeTo: this.route,
-//     queryParams: {
-//       image_id: null
-//     },
-//     queryParamsHandling: 'merge'
-//   });
-// }
-
 
 }
