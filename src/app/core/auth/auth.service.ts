@@ -504,7 +504,14 @@ deleteSlider(publicId: string): Observable<any> {
     `${this.sliderUrl}/${publicId}/delete`,
     {}
   );
-} 
+}
+
+toggleAnimatedBanner(status: boolean): Observable<any> {
+  return this.api.post<any>(
+    '/admin/sliders/toggle-animated-banner',
+    { status }
+  );
+}
 // END Slider API
 
   // ================================

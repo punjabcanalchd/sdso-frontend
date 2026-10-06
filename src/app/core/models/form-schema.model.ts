@@ -58,6 +58,7 @@ export interface FormField {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  accept?: string;
   multiple?: boolean;
   options?: { label: string; value: any }[];
   updateOn?: 'change' | 'blur' | 'submit';

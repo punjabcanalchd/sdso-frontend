@@ -53,8 +53,8 @@ const routes: Routes = [
       { path: 'users', component: Users, title: 'Users - Admin' },
 
       { path: 'sliders', component: SlidersListComponent, title: 'Slider' },
-      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },   
-   
+      { path: 'slider', redirectTo: 'sliders', pathMatch: 'full' },
+
       // =========================
       // Slider Images
       // =========================
@@ -64,7 +64,7 @@ const routes: Routes = [
       { path: 'slider-image/:slider_id', component: SliderImageComponent, title: 'Slider Images' },
 
 
-     
+
 
 
       { path: 'users', component: Users, title: 'Users – Admin' },

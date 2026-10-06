@@ -68,15 +68,16 @@ export class SlidersListComponent implements OnInit {
 
   tableColumns: TableColumn[] = [
     {
-      key: 'titleHtml',
-      label: 'Title',
-      widthClass: 'col-2',
+      key: 'name',
+      label: 'Name',
+      widthClass: 'col-4',
       sortable: true,
-      type: 'html'
+      type: 'text'
     },
     {
       key: 'status',
       label: 'Status',
+      widthClass: 'col-2',
       type: 'toggle',
       toggleConfig: {
         trueLabel: 'Active',
@@ -85,26 +86,9 @@ export class SlidersListComponent implements OnInit {
     },
     {
       key: 'action',
-      type: 'dropdown',
-      label: 'Choose Action',
-      widthClass: 'col-2',
-      dropdownConfig: {
-        label: 'Choose Action',
-        items: (row: any) => {
-          return [
-            {
-              label: 'Edit',
-              actionName: 'edit',
-              class: 'text-secondary'
-            },
-          {
-            label: 'Image',
-            actionName: 'image',
-            class: 'text-secondary'
-          },
-          ];
-        }
-      }
+      label: 'Action',
+      widthClass: 'col-5',
+      type: 'media_category_action'
     }
   ];
 
@@ -143,12 +127,28 @@ export class SlidersListComponent implements OnInit {
       next: (res: any) => {
         this.data = res.data.map((slider: any, index: number) => {
           const englishTitle = slider.name || 'N/A';
+          const imageCount = slider.images_count ?? (Array.isArray(slider.images) ? slider.images.length : 0);
+          const gifCount = slider.gif_count ?? 0;
+          const isHomeSlider = (Number(slider.slider_id) === 2 || String(slider.name).toLowerCase().includes('home') || !!slider.is_home_slider);
+          const hasGifOption = slider.has_gif_option !== undefined ? !!slider.has_gif_option : (isHomeSlider || gifCount > 0);
+          const hasAnimatedBanner = slider.has_animated_banner !== undefined ? !!slider.has_animated_banner : isHomeSlider;
+          const enableAnimatedBanner = !!slider.enable_animated_banner;
 
           return {
             id: slider.slider_id,
             public_id: slider.public_id,
             slider_id: slider.slider_id,
-            originalSeq:(params.page-1)*params.per_page+index+1,
+            name: englishTitle,
+            imageCount: imageCount,
+            images_count: imageCount,
+            gifCount: gifCount,
+            gif_count: gifCount,
+            has_gif_option: hasGifOption,
+            has_animated_banner: hasAnimatedBanner,
+            enable_animated_banner: enableAnimatedBanner,
+            media_count: imageCount,
+            mediaCount: imageCount,
+            originalSeq: (params.page - 1) * params.per_page + index + 1,
             titleHtml: `
               <div class="text-dark pb-2 lh-1">
                 <span class="text-muted fw-bold small">
@@ -498,17 +498,41 @@ export class SlidersListComponent implements OnInit {
         );
         break;
 
-     case 'image':
-      if (!event?.row?.public_id) {
-        console.error('IMAGE: public_id is missing');
-        return;
+      case 'media_count':
+      case 'image': {
+        const sliderIdentifier = event?.row?.public_id || event?.row?.id || event?.row?.slider_id;
+        if (!sliderIdentifier) {
+          console.error('IMAGE: slider identifier is missing');
+          return;
+        }
+
+        this.router.navigate([
+          '/admin/slider-image',
+          sliderIdentifier
+        ], { queryParams: { type: 'image' } });
+        break;
       }
 
-      this.router.navigate([
-        '/admin/slider-image',
-        event.row.public_id
-      ]);
-      break;
+      case 'gif': {
+        const sliderIdentifier = event?.row?.public_id || event?.row?.id || event?.row?.slider_id;
+        if (!sliderIdentifier) {
+          console.error('GIF: slider identifier is missing');
+          return;
+        }
+
+        this.router.navigate(
+          ['/admin/slider-image', sliderIdentifier],
+          { queryParams: { type: 'gif' } }
+        );
+        break;
+      }
+
+      case 'toggle_animated_banner': {
+        const row = event?.row;
+        const newStatus = !!row?.animated_banner;
+        this.toggleAnimatedBanner(newStatus, row);
+        break;
+      }
 
       case 'delete':
         if (!event?.row?.public_id) {
@@ -525,6 +549,28 @@ export class SlidersListComponent implements OnInit {
           action
         );
     }
+  }
+
+  toggleAnimatedBanner(status: boolean, row: any): void {
+    this.sliderService.toggleAnimatedBanner(status).subscribe({
+      next: (res: any) => {
+        row.enable_animated_banner = status;
+        this.toast.show(
+          'success',
+          res.message || 'Animated banner status updated successfully',
+          3000
+        );
+      },
+      error: (err: any) => {
+        row.enable_animated_banner = !status;
+        console.error('Failed to update animated banner status:', err);
+        this.toast.show(
+          'error',
+          err.error?.message || err.message || 'Failed to update animated banner status',
+          3000
+        );
+      }
+    });
   }
 
   changePage(page: number): void {

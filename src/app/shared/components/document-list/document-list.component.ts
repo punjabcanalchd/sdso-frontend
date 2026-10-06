@@ -241,4 +241,19 @@ onToggleChange(
 
     return pages;
   }
+
+  isCentered(type?: string): boolean {
+    return [
+      'download',
+      'edit',
+      'unlock',
+      'action',
+      'dropdown',
+      'image',
+      'button',
+      'toggle',
+      'delete',
+      'copy_link'
+    ].includes(type || '');
+  }
 }

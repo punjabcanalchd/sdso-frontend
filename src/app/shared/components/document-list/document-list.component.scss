@@ -11,3 +11,28 @@
     // color: var(--color-primary) !important;
   }
 }
+
+.table-thumbnail-img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.table-thumbnail-placeholder {
+  width: 80px;
+  height: 60px;
+  border: 1px solid #dee2e6;
+}
+
+.btn-action-edit-circle {
+  width: 32px;
+  height: 32px;
+  background-color: #0dcaf0;
+}
+
+.btn-action-count-pill {
+  background-color: #6c757d;
+  font-size: 13px;
+}
+

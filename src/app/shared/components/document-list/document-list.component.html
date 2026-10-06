@@ -82,14 +82,13 @@
 
             @for (col of columns; track col.key) {
             <th class="text-dark fw-semibold py-3 {{ col.widthClass || '' }}" [ngClass]="{
-                    'text-center': ['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || ''), 
-                    'text-start': !['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || '')
+                    'text-center': isCentered(col.type), 
+                    'text-start': !isCentered(col.type)
                   }"
               [attr.aria-sort]="activeSortColumn === col.key ? (activeSortDirection === 'asc' ? 'ascending' : 'descending') : 'none'"
               scope="col">
 
-              <div class="d-flex align-items-center"
-                [class.justify-content-center]="['download', 'edit', 'unlock', 'action', 'dropdown', 'image', 'button', 'toggle'].includes(col.type || '')">
+              <div class="d-flex align-items-center" [class.justify-content-center]="isCentered(col.type)">
                 <span>{{ col.label }}</span>
 
                 @if (col.sortable) {
@@ -145,12 +144,12 @@
             @if (col.type === 'image') {
             <td class="text-center py-3">
               @if (row[col.key] && !row.imgFailed) {
-              <img [src]="row[col.key]" alt="Thumbnail" class="img-thumbnail"
-                style="width: 80px; height: 60px; object-fit: cover; border-radius: 4px;"
+              <img [src]="row[col.key]" alt="Thumbnail" class="img-thumbnail table-thumbnail-img"
                 (error)="row.imgFailed = true" />
               } @else {
-              <div class="d-inline-flex align-items-center justify-content-center bg-light rounded text-muted"
-                style="width: 80px; height: 60px; border: 1px solid #dee2e6;" title="No Image">
+              <div
+                class="d-inline-flex align-items-center justify-content-center bg-light rounded text-muted table-thumbnail-placeholder"
+                title="No Image">
                 <i class="bi bi-image fs-5 text-secondary opacity-50"></i>
               </div>
               }
@@ -217,7 +216,7 @@
             @if (col.type === 'delete') {
             <td class="text-center py-3">
               <button type="button"
-                class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                class="border-0 bg-primary rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
                 (click)="onCustomAction('delete', row)" title="Delete">
                 <i class="bi bi-trash fs-6"></i>
               </button>
@@ -246,7 +245,7 @@
 
 
                 <button type="button"
-                  class="border-0 bg-danger rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
+                  class="border-0 bg-primary rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
                   (click)="onCustomAction('delete', row)" title="Delete">
                   <i class="bi bi-trash fs-6"></i>
                 </button>
@@ -255,24 +254,50 @@
             </td>
             }
 
-            <!-- MEDIA CATEGORY ACTION (Edit + Media Count Pill) -->
+            <!-- MEDIA CATEGORY ACTION (Edit + Media Count Pill + GIF Pill + Toggle Animated Banner) -->
             @if (col.type === 'media_category_action') {
-            <td class="text-center py-3">
-              <div class="d-flex align-items-center justify-content-center gap-2">
-                <button type="button"
-                  class="border-0 rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom"
-                  style="width: 32px; height: 32px; background-color: #0dcaf0;"
-                  (click)="onCustomAction('edit', row)" title="Edit">
-                  <i class="bi bi-pencil-square fs-6"></i>
-                </button>
+            <td class="text-start py-3 text-nowrap">
+              <div class="d-flex align-items-center flex-nowrap text-nowrap gap-3">
+                <div class="d-flex align-items-center flex-nowrap gap-2">
+                  <button type="button"
+                    class="border-0 rounded-circle d-inline-flex align-items-center justify-content-center text-white p-2 lh-1 hover-zoom btn-action-edit-circle"
+                    (click)="onCustomAction('edit', row)" title="Edit">
+                    <i class="bi bi-pencil-square fs-6"></i>
+                  </button>
 
-                <button type="button"
-                  class="btn btn-secondary btn-sm rounded-pill d-inline-flex align-items-center px-2 py-1 gap-1 border-0"
-                  style="background-color: #6c757d; font-size: 13px;"
-                  (click)="onCustomAction('media_count', row)" title="Media Items">
-                  <span class="fw-semibold">{{ row.media_count ?? row.mediaCount ?? 0 }}</span>
-                  <i class="bi bi-images"></i>
-                </button>
+                  @if (row.imageCount !== undefined || row.images_count !== undefined || row.media_count !== undefined || row.mediaCount !== undefined) {
+                  <button type="button"
+                    class="btn btn-secondary btn-sm rounded-pill d-inline-flex align-items-center px-2 py-1 gap-1 border-0 btn-action-count-pill"
+                    (click)="onCustomAction('media_count', row)" title="Images">
+                    <span class="fw-semibold">{{ row.imageCount ?? row.images_count ?? row.media_count ?? row.mediaCount }}</span>
+                    <i class="bi bi-images"></i>
+                  </button>
+                  }
+
+                  @if (row.has_gif_option || (row.gif_count !== undefined && row.gif_count > 0)) {
+                  <button type="button"
+                    class="btn btn-secondary btn-sm rounded-pill d-inline-flex align-items-center px-2 py-1 gap-1 border-0 btn-action-count-pill"
+                    (click)="onCustomAction('gif', row)" title="GIF Images">
+                    <span class="fw-semibold">{{ row.gif_count ?? row.gifCount ?? 0 }}</span>
+                    <i class="bi bi-file-earmark-image"></i>
+                  </button>
+                  }
+                </div>
+
+                @if (row.has_animated_banner) {
+                <div class="form-check form-switch d-inline-flex align-items-center mb-0 gap-2 ms-4">
+                  <input type="checkbox" role="switch"
+                    class="form-check-input ms-0 mt-0 shadow-none cursor-pointer custom-switch-color fs-5"
+                    [id]="'animBanner_' + (row.id || row.slider_id || $index)"
+                    [checked]="row.enable_animated_banner == 1 || row.enable_animated_banner === true || row.enable_animated_banner === '1'"
+                    (change)="onToggleChange('animated_banner', row, $event)" />
+                  <label
+                    class="form-check-label text-dark fw-medium small user-select-none cursor-pointer mb-0 text-nowrap"
+                    [for]="'animBanner_' + (row.id || row.slider_id || $index)">
+                    Enable Animated Banner?
+                  </label>
+                </div>
+                }
               </div>
             </td>
             }
