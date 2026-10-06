@@ -543,6 +543,9 @@ export class SliderImageComponent implements OnInit {
     formData.append('title_pb', formValue.title_pb ?? '');
     formData.append('link', formValue.link ?? '');
     formData.append('status', String(formValue.status ?? 0));
+    if (this.imageType) {
+      formData.append('file_type', this.imageType === 'gif' ? 'gif' : 'image');
+    }
 
     if (this.isEditMode) {
       const imageId = this.route.snapshot.queryParamMap.get('image_id');
