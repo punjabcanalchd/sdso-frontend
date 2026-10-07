@@ -444,6 +444,18 @@ export class AuthService {
     return this.api.post<any>(`/admin/additional-roles/${publicId}/update`, payload);
   }
 
+  createEmailTemplate(payload: any): Observable<any> {
+    return this.api.post('/admin/email-templates', payload);
+  }
+
+  updateEmailTemplate(emailTemplateId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/email-templates/${emailTemplateId}/update`, payload);
+  }
+
+  deleteEmailTemplate(emailTemplateId: string): Observable<any> {
+    return this.api.post<any>(`/admin/email-templates/${emailTemplateId}/delete`, {});
+  }
+
 
 
 //START Slider API

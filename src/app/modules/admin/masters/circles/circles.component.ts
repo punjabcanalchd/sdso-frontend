@@ -298,7 +298,6 @@ export class CirclesComponent implements OnInit {
   }
 
   handleAction(event: any): void {
-    console.log('event',event);
     if (event.action === 'edit' || event.actionName === 'edit') {
       this.openEditModal(event.row);
     } else if (event.action === 'delete') {

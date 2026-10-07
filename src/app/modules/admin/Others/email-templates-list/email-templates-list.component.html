@@ -4,7 +4,7 @@
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
-    [showCreateButton]="false"
+    [showCreateButton]="true"
     [currentPage]="pagination.current_page || 1"
     [lastPage]="pagination.last_page || 1"
     [pageSize]="pagination.per_page || 25"
@@ -13,6 +13,15 @@
     (pageChange)="loadTemplates($event)"
     (searchChange)="searchTemplates($event)"
     (sortChange)="sortTemplates($event)"
+    (createClick)="openCreateModal()"
     (actionClick)="handleAction($event)">
   </app-document-list>
 </div>
+<app-modal-form 
+    #createEmailTemplateModal
+    [title]="isEditMode ? 'Edit Email Template' : 'Create Email Template'"
+    [schema]="EmailTemplateSchema"  
+    [initialValue]="formInitialData"
+    size="xl"
+    (submitForm)="onSubmit($event)">
+</app-modal-form>

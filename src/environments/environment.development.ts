@@ -5,6 +5,7 @@ export const environment = {
     baseUrl: 'http://localhost:8000',
     apiUrl: 'http://localhost:8000/api',
     uploadUrl: 'http://localhost:8000/uploads',
+    baseUrl: 'http://localhost:8000', 
     appVersion: '1.0.0',
     requestTimeout: 30000,
     enableLogs: true,
