@@ -25,8 +25,6 @@ import { FormField } from '../../../core/models/form-schema.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { TimePickerComponent } from
   '../form-elements/time-picker/time-picker.component';
-import { englishFields } from '../../../common/tabs/english-tab';
-import { punjabiFields } from '../../../common/tabs/punjabi-tab';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -53,6 +51,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Input() captchaId: string | null = null; @Input() lockoutTimer = 0;
   @Input() isLocked = false;
   @Input() hideChrome: boolean = false;   //  new input
+
+
+  @Input() fields: FormField[] = [];
 
   @Input() showTitle: boolean = true;
   activeTab = 'general';
@@ -131,8 +132,6 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     if (changes['schema'] && this.schema) {
       this.initForm();
-
-
       // 1. Build the form
       // this.form = buildFormGroup(this.fb, this.schema);
 

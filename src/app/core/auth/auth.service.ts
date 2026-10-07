@@ -611,4 +611,21 @@ updateSliderImageStatus(sliderId:string,imageId:string,status:number):Observable
   getActivityLog(activityId: string, data?: any): Observable<any> {
     return this.api.get<any>(`/admin/activity-logs/${activityId}`, data);
   }
+
+
+
+  // Settings
+  getGeneralSettings() {
+    return this.http.get('/api/admin/settings/general');
+  }
+
+  updateGeneralSettings(data: any) {
+    return this.http.post(
+      '/api/admin/settings/general/update',
+      data
+    );
+  }
+
+
+
 }

@@ -29,15 +29,11 @@ import { SandesTemplatesListComponent } from './Others/sandes-templates-list/san
 import { MediaCategoriesListComponent } from './Others/media-categories-list/media-categories-list.component';
 import { NoticeboardCategoriesListComponent } from './Others/noticeboard-categories-list/noticeboard-categories-list.component';
 import { TranslationsListComponent } from './Others/translations/translations-list.component';
-
-
-
 import { AdditionalRolesListComponent } from './common/additional-roles/additional-roles-list.component';
 import { PagesComponent } from './Others/pages/pages-list.component';
 import { SlidersListComponent } from './Others/slider/slider.component';
 import { SliderImageComponent } from './Others/slider-image/slider-image.component';
-
-
+import { SettingsComponent } from './settings/settings.component';
 
 
 const routes: Routes = [
@@ -111,6 +107,11 @@ const routes: Routes = [
       { path: 'noticeboard-catagory', redirectTo: 'category', pathMatch: 'full' },
       { path: 'noticeboard-catagories', redirectTo: 'category', pathMatch: 'full' },
       { path: 'translation', component: TranslationsListComponent, title: 'Translations – Admin' },
+
+      { path: 'setting', component: SettingsComponent, title: 'Settings – Admin' },
+
+
+
 
     ],
     canActivate: [AuthGuard],

@@ -67,12 +67,6 @@ export class FileUploadComponent
   // =========================================================
 
   ngOnInit(): void {
-  console.log('FileUploadComponent INIT');
-  console.log('Edit Mode:', this.isEditMode);
-  console.log('Existing File:', this.existingFile);
-  console.log('Initial Control Value:', this.control?.value);
-
- 
   this.subscribeToControl();
   this.loadInitialPreview();
 
@@ -91,25 +85,14 @@ export class FileUploadComponent
 
 ngOnChanges(changes: SimpleChanges): void {
 
-  console.log('FileUpload ngOnChanges');
-
   if (changes['control']) {
-
-    console.log(
-      'NEW CONTROL VALUE:',
-      this.control?.value
-    );
-
-    this.subscribeToControl();
+     this.subscribeToControl();
     this.loadInitialPreview();
   }
 
   if (changes['existingFile']) {
 
-    console.log(
-      'NEW EXISTING FILE:',
-      this.existingFile
-    );
+   
 
     if (this.existingFile) {
       this.setExistingImagePreview(
@@ -120,12 +103,7 @@ ngOnChanges(changes: SimpleChanges): void {
     }
   }
 
-  if (changes['isEditMode']) {
-
-    console.log(
-      'EDIT MODE:',
-      this.isEditMode
-    );
+  if (changes['isEditMode']) {  
 
     this.loadInitialPreview();
   }
@@ -137,12 +115,6 @@ ngOnChanges(changes: SimpleChanges): void {
   // =========================================================
 
   ngOnDestroy(): void {
-
-    console.log(
-      'FileUploadComponent DESTROY'
-    );
-
-
     /*
      * Remove subscription.
      */
@@ -170,11 +142,6 @@ private loadInitialPreview(): void {
 
   const value = this.control.value;
 
-  console.log(
-    'Loading initial file preview:',
-    value
-  );
-
   // Existing image from API
   if (
     typeof value === 'string' &&
@@ -200,13 +167,6 @@ private loadInitialPreview(): void {
   // =========================================================
 
   private setPreview(value: any): void {
-
-    console.log(
-      'setPreview value:',
-      value
-    );
-
-
     /*
      * Empty value.
      */
@@ -429,9 +389,6 @@ private loadInitialPreview(): void {
     }
 
 
-    console.log('Selected file:', file);
-
-
     /*
      * Replace existing filename with
      * newly selected File.
@@ -488,13 +445,6 @@ private loadInitialPreview(): void {
 
       this.filePreviewUrl =
         URL.createObjectURL(file);
-
-
-      console.log(
-        'New file preview URL:',
-        this.filePreviewUrl
-      );
-
     } else {
 
       this.filePreviewUrl = null;
@@ -521,9 +471,6 @@ private setExistingImagePreview(filename: string): void {
     : `${baseUrl}/${filename.replace(/^\/+/, '')}`;
 
   this.filePreviewUrl = imagePath;
-
-  console.log('Existing image:', filename);
-  console.log('Preview URL:', this.filePreviewUrl);
 }
 
   // =========================================================
@@ -587,11 +534,7 @@ private setExistingImagePreview(filename: string): void {
         });
 
         this.control.markAsTouched();
-        this.control.markAsDirty();
-
-        console.log(
-          `Invalid dimensions: ${image.width} x ${image.height}`
-        );
+        this.control.markAsDirty();      
 
         return;
       }
@@ -607,12 +550,7 @@ private setExistingImagePreview(filename: string): void {
     this.control.setValue(file);
 
     this.control.markAsDirty();
-    this.control.markAsTouched();
-
-    console.log(
-      'Valid page banner selected:',
-      file.name
-    );
+    this.control.markAsTouched();   
   };
 
   image.onerror = () => {
@@ -690,12 +628,6 @@ private setExistingImagePreview(filename: string): void {
 
   this.controlSubscription =
     this.control.valueChanges.subscribe(value => {
-
-      console.log(
-        'FileUpload control value changed:',
-        value
-      );
-
       this.setPreview(value);
         this.cdr.detectChanges(); 
     });
