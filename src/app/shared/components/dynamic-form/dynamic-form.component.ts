@@ -400,7 +400,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   // ADD ALL METHODS HERE ↓
   isReadOnly(field: any): boolean {
-    return field.readOnly || false;
+    return field.readonly || field.readOnly || false;
   }
 
   /* ---------------- WIZARD ---------------- */

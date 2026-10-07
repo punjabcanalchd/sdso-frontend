@@ -1,6 +1,6 @@
 <div class="container-fluid p-3">
 
-  <!-- Category Tabs (General / Homepage / Errors) matching Create Page -->
+  <!-- Category Tabs (General / Homepage / Errors) -->
   <ul class="nav nav-tabs mb-3">
     <li class="nav-item" *ngFor="let tab of tabs">
       <button 
@@ -13,13 +13,13 @@
     </li>
   </ul>
 
-  <!-- Reusable Document List (Pure Read-Only Listing) -->
+  <!-- Reusable Document List -->
   <app-document-list
     title="Translations"
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
-    [showCreateButton]="false"
+    [showCreateButton]="true"
     [currentPage]="pagination.current_page || 1"
     [lastPage]="pagination.last_page || 1"
     [pageSize]="pagination.per_page || 25"
@@ -27,7 +27,17 @@
     (pageSizeChange)="onPageSizeChange($event)"
     (pageChange)="loadTranslations($event)"
     (searchChange)="onSearchChange($event)"
-    (sortChange)="onSortChange($event)">
+    (sortChange)="onSortChange($event)"
+    (createClick)="openCreateModal()">
   </app-document-list>
 
 </div>
+
+<app-modal-form
+  title="Create Translation"
+  [schema]="translationSchema"
+  [initialValue]="formInitialData"
+  size="lg"
+  (submitForm)="onSubmit($event)"
+  (modalClosed)="onModalClosed()">
+</app-modal-form>

@@ -55,6 +55,7 @@ export interface FormField {
   step?: number;
   fields?: FormField[];
   readonly?: boolean;
+  readOnly?: boolean;
   required?: boolean;
   disabled?: boolean;
   className?: string;
