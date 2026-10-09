@@ -4,13 +4,13 @@ import { Validators } from '@angular/forms';
 
 export const layoutFields: FormField[] = [
 
-  //   {
-  //   name: '',
-  //   label: '',
-  //   type: 'html',
-  //   tab: 'layout',
-  //   html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">Display Menus</div>',
-  //  },
+    {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'layout',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">DISPLAY MENUS</div>',
+   },
 
     // =====================================================
     // DISPLAY MENUS
@@ -25,30 +25,17 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       required: false,
       options: [
-        {
-          label: 'Design Consultancy',
-          value: 'design-consultancy'
-        },
-        {
-          label: 'Publication',
-          value: 'publication'
-        },
-        {
-          label: 'Rotational Program',
-          value: 'rotational-program'
-        },
-        {
-          label: 'Tourism',
-          value: 'tourism'
-        },
-        {
-          label: 'HOME',
-          value: 'home'
-        }
-      ]
+      { label: 'Please Select', value: '' }
+    ]
     },
 
-
+  {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'layout',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">SLIDER SETTINGS</div>',
+   },
     // =====================================================
     // SLIDER SETTINGS
     // =====================================================
@@ -62,10 +49,8 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       required: false,
       options: [
-        {
-          label: 'Home Slider',
-          value: 'home-slider'
-        }
+      { label: 'Please Select', value: '' }
+    
       ]
     },
 
@@ -89,13 +74,17 @@ export const layoutFields: FormField[] = [
       tab: 'layout',
       required: false,
       options: [
-        {
-          label: 'Footer Section',
-          value: 'footer-section'
-        }
-      ]
+      { label: 'Please Select', value: '' }
+    ]
     },
 
+    {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'layout',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">HOME PAGE LINKS</div>',
+   },
 
     // =====================================================
     // HOME PAGE LINKS
@@ -111,7 +100,7 @@ export const layoutFields: FormField[] = [
       required: false,
       options: [
         {
-          label: 'Please select',
+          label: 'Please Select',
           value: ''
         }
       ]
@@ -125,12 +114,9 @@ export const layoutFields: FormField[] = [
       infoTooltip:'Slider that will show Show next to the home page link slider. It also will hold links',
       className: 'col-md-4',
       required: false,
-      options: [
-        {
-          label: 'Please select',
-          value: ''
-        }
-      ]
+       options: [
+      { label: 'Please Select Other Link Slider', value: '' }
+     ]
     },
 
     {
@@ -141,15 +127,19 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       tab: 'layout',
       required: false,
-      options: [
-        {
-          label: 'Footer Top Slider',
-          value: 'footer-top-slider'
-        }
-      ]
+       options: [
+      { label: 'Please Select Footer Link Slider', value: '' }
+    ]
     },
 
 
+    {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'layout',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">LINK PAGES</div>',
+   },
     // =====================================================
     // LINK PAGES
     // =====================================================
@@ -162,12 +152,9 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       tab: 'layout',
       required: false,
-      options: [
-        {
-          label: 'About Us',
-          value: 'about-us'
-        }
-      ]
+       options: [
+      { label: 'Please Select ', value: '' }
+    ]
     },
 
     {
@@ -179,12 +166,17 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       required: false,
       options: [
-        {
-          label: 'Please select a Page',
-          value: ''
-        }
-      ]
+      { label: 'Please Select ', value: '' }
+    ]
     },
+
+     {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'layout',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">BANNERS</div>',
+   },
 
 
     // =====================================================

@@ -6,6 +6,8 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { settingSchema } from './setting.schema';
 import { DynamicFormComponent } from '../../../shared/components/dynamic-form/dynamic-form.component';
+import { ApiService } from '../../../core/services/api.service';
+import { FormField } from '../../../core/models/form-schema.model';
 
 @Component({
   standalone: true,
@@ -30,11 +32,20 @@ export class SettingsComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private api: ApiService,
   ) {}
+
+
+  private loadLayoutDropdowns(): void {
+  this.loadMenus();
+  this.loadSliders();
+  // this.loadPages();
+}
 
   ngOnInit(): void {
     this.loadGeneralSettings();
+    this.loadLayoutDropdowns();
   }
 
   onTabChange(tab: string): void {
@@ -121,5 +132,53 @@ export class SettingsComponent implements OnInit {
       }
     });
   }
+
+// Dropdown Values Apis call 
+
+private loadMenus(): void {
+  this.api.get<any>('/admin/menus').subscribe({
+    next: (res: any) => {
+      const menus = res?.data ?? [];
+
+      const options = menus.map((menu: any) => ({
+        label: menu.name_en,
+        value: String(menu.menu_id)
+      }));
+
+      this.updateFieldOptions('menus', [
+        { label: 'Please select a menu', value: '' },
+        ...options
+      ]);
+
+      this.cdr.detectChanges();
+
+      console.log('Mapped menu options:', options);
+    },
+    error: (error: any) => {
+      console.error('Failed to load menus:', error);
+    }
+  });
+}
+
+
+
+private loadSliders(): void {
+  
+}
+
+private updateFieldOptions(  fieldName: string, options: { label: string; value: string }[]
+): void {
+  const field = this.settingSchema.fields?.find(
+    (item: FormField) => item.name === fieldName
+  );
+
+  if (field) {
+    field.options = options;
+  }
+}
+
+
+
+
 }
  
