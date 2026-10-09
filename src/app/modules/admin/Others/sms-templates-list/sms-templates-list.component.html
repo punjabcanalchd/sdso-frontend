@@ -4,7 +4,7 @@
     [isAdmin]="true"
     [data]="data"
     [columns]="tableColumns"
-    [showCreateButton]="false"
+    [showCreateButton]="true"
     [currentPage]="pagination.current_page || 1"
     [lastPage]="pagination.last_page || 1"
     [pageSize]="pagination.per_page || 25"
@@ -13,6 +13,16 @@
     (pageChange)="loadTemplates($event)"
     (searchChange)="searchTemplates($event)"
     (sortChange)="sortTemplates($event)"
+    (createClick)="openCreateModal()"
     (actionClick)="handleAction($event)">
   </app-document-list>
 </div>
+
+<app-modal-form
+  [title]="isEditMode ? 'Edit SMS Template' : 'Create SMS Template'"
+  [schema]="smsTemplateSchema"
+  [initialValue]="formInitialData"
+  size="lg"
+  (submitForm)="onSubmit($event)"
+  (modalClosed)="onModalClosed()">
+</app-modal-form>

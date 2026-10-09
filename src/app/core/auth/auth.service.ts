@@ -628,12 +628,12 @@ updateSliderImageStatus(sliderId:string,imageId:string,status:number):Observable
 
   // Settings
   getGeneralSettings() {
-    return this.http.get('/api/admin/settings/general');
+    return this.api.get<any>('/admin/settings/general');
   }
 
   updateGeneralSettings(data: any) {
-    return this.http.post(
-      '/api/admin/settings/general/update',
+    return this.api.post<any>(
+      '/admin/settings/general/update',
       data
     );
   }

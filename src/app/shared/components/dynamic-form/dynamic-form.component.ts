@@ -61,6 +61,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   private _formData: any = null;
 
   @Input() isEditMode = false;
+  @Input() saveByTab = false;
 
   @Input()
   set formData(val: any) {
@@ -85,6 +86,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   @Output() permissionClick = new EventEmitter<void>();
   @Output() buttonClick = new EventEmitter<any>();
   @Output() formReady = new EventEmitter<FormGroup>();
+  @Output() tabChange = new EventEmitter<string>();
   @Input() initialData: any;
 
   /* ---------------- INTERNAL STATE ---------------- */
@@ -149,6 +151,16 @@ export class DynamicFormComponent implements OnInit, OnChanges {
         this.form.patchValue(data);
       }
 
+    }
+
+    if (changes['initialData'] && !changes['schema'] && this.form) {
+      const data = this.prepareInitialValue(changes['initialData'].currentValue);
+      this.form.patchValue(data);
+    }
+
+    if (changes['initialValue'] && !changes['schema'] && this.form) {
+      const data = this.prepareInitialValue(changes['initialValue'].currentValue);
+      this.form.patchValue(data);
     }
   }
   //   ngOnChanges(changes: SimpleChanges): void {
@@ -238,6 +250,42 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   onSubmit(): void {
     this.generalErrorMessage = null;
     clearServerErrors(this.form);
+
+    const isTabScoped = this.saveByTab || this.schema?.saveByTab;
+
+    if (isTabScoped && this.activeTab) {
+      // Validate ONLY controls in the active tab
+      const activeTabFields = (this.schema?.fields || []).filter(
+        field => field.tab === this.activeTab || (this.activeChildTab && field.tab === this.activeChildTab)
+      );
+
+      let hasError = false;
+      for (const field of activeTabFields) {
+        const control = this.form.get(field.name);
+        if (control && control.invalid) {
+          control.markAsTouched();
+          hasError = true;
+        }
+      }
+
+      if (hasError) {
+        this.toast.show('warning', 'Please fill all required fields in this section.', 4000);
+        return;
+      }
+
+      // Collect ONLY the active tab's values
+      const activeValues: any = {};
+      for (const field of activeTabFields) {
+        activeValues[field.name] = this.form.get(field.name)?.value;
+      }
+
+      this.submitForm.emit({
+        ...activeValues,
+        _activeTab: this.activeTab,
+        activeTab: this.activeTab
+      });
+      return;
+    }
 
     // Get the complete form data
     const formValue = this.form.getRawValue();
@@ -653,6 +701,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   onTabChange(tab: string): void {
     this.activeTab = tab;
+    this.tabChange.emit(tab);
   }
 
   onChildTabChange(childTab: string): void {

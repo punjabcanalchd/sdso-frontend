@@ -12,6 +12,7 @@ export const settingSchema: FormSchema = {
   submitLabel: 'Save',
   submitIcon: 'bi bi-floppy',
   submitClass: 'btn-primary',
+  saveByTab: true,
 
 
   tabs: [

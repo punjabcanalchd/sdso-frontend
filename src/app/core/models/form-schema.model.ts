@@ -140,6 +140,7 @@ export interface FormSchema {
   };
   
   tabs?: TabSchema[];
+  saveByTab?: boolean;
   [key: string]: any;
   icon?: string;
   submitIcon?: string;
