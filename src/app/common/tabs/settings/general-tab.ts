@@ -8,9 +8,11 @@ export const generalFields: FormField[] = [
       name: 'website_name',
       label: 'Website Name',      
       placeholder: 'Enter website name',
+      infoTooltip: 'Website Name',
       className: 'col-md-4',
       tab: 'general',
       required: true,
+     
         // validators: [
         //   Validators.minLength(6),
         //   Validators.maxLength(6)
@@ -22,6 +24,7 @@ export const generalFields: FormField[] = [
       label: 'Website Url',
       tab: 'general',
       placeholder: 'https://example.com',
+      infoTooltip: 'Website Url',
       required: true,
        className: 'col-md-4',
     }, 
@@ -30,6 +33,7 @@ export const generalFields: FormField[] = [
       name: 'website_status',
       label: 'Website Status',
       className: 'col-md-4',
+      infoTooltip: 'Website Status',
       tab: 'general',
       required: true,
       options: [
@@ -44,6 +48,8 @@ export const generalFields: FormField[] = [
       label: 'Contact Support Email',
       placeholder: 'Enter support email',
        className: 'col-md-4',
+      infoTooltip: 'User will ask Query on this email',
+
        tab: 'general',
       required: true
     },
@@ -53,6 +59,7 @@ export const generalFields: FormField[] = [
       label: 'Site icon',
       className: 'col-md-4',
       tab: 'general',
+      infoTooltip:'This is a Fevicon Icon',
     //   accept: '.ico,.png,.jpg,.jpeg,.webp'
     },
     {
@@ -60,6 +67,7 @@ export const generalFields: FormField[] = [
       name: 'default_language',
       label: 'Default language',
       tab: 'general',
+      infoTooltip:'Lanugage that will use while sending sms and emails',
       required: true,
       className: 'col-md-4',
       options: [
@@ -74,6 +82,7 @@ export const generalFields: FormField[] = [
       tab: 'general',
       placeholder: 'https://www.facebook.com/',
        className: 'col-md-4',
+       infoTooltip:'Facebook Account Url',
     },
     {
       type: 'text',
@@ -82,6 +91,7 @@ export const generalFields: FormField[] = [
       tab: 'general',
       placeholder: 'https://twitter.com/',
        className: 'col-md-4',
+       infoTooltip: 'Twitter Account Url',
     },
     {
       type: 'text',
@@ -89,7 +99,8 @@ export const generalFields: FormField[] = [
       label: 'YouTube',
       tab: 'general',
       className: 'col-md-4',
-      placeholder: 'https://www.youtube.com/'
+      placeholder: 'https://www.youtube.com/',
+      infoTooltip: 'YouTube Url',
     },
     {
       type: 'text',
@@ -97,7 +108,8 @@ export const generalFields: FormField[] = [
       label: 'Instagram',
        className: 'col-md-4',
        tab: 'general',
-      placeholder: 'https://www.instagram.com/'
+      placeholder: 'https://www.instagram.com/',
+      infoTooltip:'Instagram Account Url',
     },
     {
       type: 'text',
@@ -105,13 +117,16 @@ export const generalFields: FormField[] = [
       label: 'LinkedIn',
        className: 'col-md-4',
        tab: 'general',
-      placeholder: 'https://www.linkedin.com/'
+      placeholder: 'https://www.linkedin.com/',
+      infoTooltip:'LinkedIn Url',
     },
     {
       type: 'textarea',
       name: 'twitter_section_widget',
       label: 'Twitter Section Widget',
        className: 'col-md-4',
+      infoTooltip:'For displaying twitter feed in widget section',
+
        tab: 'general',
       placeholder: 'Enter Twitter/X widget code or URL',
     //   rows: 3
@@ -124,6 +139,7 @@ export const generalFields: FormField[] = [
       tab: 'general',
       required: true,
        className: 'col-md-4',
+       infoTooltip:'For pagination of data in all overall website',
       min: 1
     },
     {
@@ -133,6 +149,7 @@ export const generalFields: FormField[] = [
       required: true,
       tab: 'general',
       className: 'col-md-4',
+      infoTooltip:'Enabling captcha',
       options: [
         { value: 'enabled', label: 'Enabled' },
         { value: 'disabled', label: 'Disabled' }
@@ -145,6 +162,7 @@ export const generalFields: FormField[] = [
       label: 'Adjust File Size (in KB)',
       placeholder: 'Enter file size in KB',
       className: 'col-md-4',
+      infoTooltip:'Adjust file size for uploading document while filling application form.',
       min: 1
     }
 

@@ -62,6 +62,18 @@
       <label class="form-label fw-semibold f_font_size">
         {{ field.label }}
         <span *ngIf="field.required  && field.type !== 'checkbox'" class="text-danger">*</span>
+
+
+          <span
+          *ngIf="field.infoTooltip"
+          class="info-icon"
+          [title]="field.infoTooltip"
+          tabindex="0"
+          role="img"
+          [attr.aria-label]="field.infoTooltip"
+        >
+          i
+        </span>
       </label>
 
       <div *ngIf="field.type === 'html'" [innerHTML]="field.html"></div>
@@ -72,6 +84,7 @@
           [formControlName]="field.name" [attr.minlength]="field.min || null" [attr.maxlength]="field.max || null"
           [readOnly]="isReadOnly(field)" [placeholder]="field.placeholder || ''" (focus)="onFocus($event, field)"
           (blur)="onBlur($event, field)" (input)="forceNumericText($event, field)" />
+         
 
         <!-- NUMBER -->
         <input *ngSwitchCase="'number'" appClearGlobalErrorOnFocus type="number" class="form-control"
@@ -151,6 +164,8 @@
             {{ field.text }}
 
           </label>
+
+      
 
         </div>
         

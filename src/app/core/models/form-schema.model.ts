@@ -50,6 +50,7 @@ export interface FormField {
   type: FormFieldType;
   placeholder?: string;
   text?: string;
+  infoTooltip?: string;
   min?: number;
   max?: number;
   step?: number;
