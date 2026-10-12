@@ -7,13 +7,13 @@ export const footerFields: FormField[] = [
 // =========================
   // CATEGORY 1
   // =========================
-  // {
-  //   name: '',
-  //   label: '',
-  //   type: 'html',
-  //   tab: 'footer',
-  //   html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">Footer Section</div>',
-  // },
+  {
+    name: '',
+    label: '',
+    type: 'html',
+    tab: 'footer',
+    html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">Footer Section</div>',
+  },
 
   {
     type: 'text',

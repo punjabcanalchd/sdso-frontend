@@ -115,7 +115,7 @@ export const layoutFields: FormField[] = [
       className: 'col-md-4',
       required: false,
        options: [
-      { label: 'Please Select Other Link Slider', value: '' }
+      { label: 'Please Select', value: '' }
      ]
     },
 
@@ -128,7 +128,7 @@ export const layoutFields: FormField[] = [
       tab: 'layout',
       required: false,
        options: [
-      { label: 'Please Select Footer Link Slider', value: '' }
+      { label: 'Please Select', value: '' }
     ]
     },
 
@@ -140,6 +140,7 @@ export const layoutFields: FormField[] = [
     tab: 'layout',
     html: '<div class="fs-5 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">LINK PAGES</div>',
    },
+   
     // =====================================================
     // LINK PAGES
     // =====================================================

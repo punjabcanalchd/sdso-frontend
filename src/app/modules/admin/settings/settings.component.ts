@@ -38,10 +38,10 @@ export class SettingsComponent implements OnInit {
 
 
   private loadLayoutDropdowns(): void {
-  this.loadMenus();
-  this.loadSliders();
-  // this.loadPages();
-}
+    this.loadMenus();
+    this.loadSliders();
+    this.loadPages();
+  }
 
   ngOnInit(): void {
     this.loadGeneralSettings();
@@ -146,7 +146,7 @@ private loadMenus(): void {
       }));
 
       this.updateFieldOptions('menus', [
-        { label: 'Please select a menu', value: '' },
+        { label: 'Please Select', value: '' },
         ...options
       ]);
 
@@ -163,7 +163,71 @@ private loadMenus(): void {
 
 
 private loadSliders(): void {
-  
+  this.api.get<any>('/admin/sliders').subscribe({
+    next: (res: any) => {
+      const sliders = res?.data ?? [];
+
+      const options = sliders.map((slider: any) => ({
+        label: slider.title ?? slider.name,
+        value: String(
+          slider.slug ?? slider.public_id ?? slider.slider_id ?? slider.id
+        )
+      }));
+
+      const sliderFields = [
+        'home_page_slider',
+        'footer_slider',
+        'home_page_link_slider',
+        'home_page_other_links_slider',
+        'home_page_top_footer_links_slider'
+      ];
+
+      for (const fieldName of sliderFields) {
+        this.updateFieldOptions(fieldName, [
+          { label: 'Please Select', value: '' },
+          ...options
+        ]);
+      }
+
+      this.cdr.detectChanges();
+    },
+    error: (error: any) => {
+      console.error('Failed to load sliders:', error);
+    }
+  });
+}
+
+
+
+
+private loadPages(): void {
+  this.api.get<any>('/admin/pages').subscribe({
+    next: (res: any) => {
+      const pages = res?.data ?? [];
+
+      const options = pages.map((page: any) => ({
+        label: page.name_en || page.name_pb || 'Unnamed page',
+        value: String(page.public_id)
+      }));
+
+      this.updateFieldOptions('index_text_page', [
+        { label: 'Please Select', value: '' },
+        ...options
+      ]);
+
+      this.updateFieldOptions('screen_reader_page', [
+        { label: 'Please Select', value: '' },
+        ...options
+      ]);
+
+      this.cdr.detectChanges();
+
+      // console.log('Mapped page options:', options);
+    },
+    error: (error: any) => {
+      console.error('Failed to load pages:', error);
+    }
+  });
 }
 
 private updateFieldOptions(  fieldName: string, options: { label: string; value: string }[]
