@@ -210,15 +210,23 @@ private loadPages(): void {
         value: String(page.public_id)
       }));
 
-      this.updateFieldOptions('index_text_page', [
+      
+
+      this.updateFieldOptions( [
+        'index_text_page',
+        'screen_reader_page',
+        'footer_category_1_menus',
+        'footer_category_2_menus',
+        'footer_category_3_menus'
+      ], [
         { label: 'Please Select', value: '' },
         ...options
       ]);
 
-      this.updateFieldOptions('screen_reader_page', [
-        { label: 'Please Select', value: '' },
-        ...options
-      ]);
+      // this.updateFieldOptions('screen_reader_page', [
+      //   { label: 'Please Select', value: '' },
+      //   ...options
+      // ]);
 
       this.cdr.detectChanges();
 
@@ -230,15 +238,25 @@ private loadPages(): void {
   });
 }
 
-private updateFieldOptions(  fieldName: string, options: { label: string; value: string }[]
+private updateFieldOptions(
+  fieldNames: string | string[],
+  options: { label: string; value: string }[]
 ): void {
-  const field = this.settingSchema.fields?.find(
-    (item: FormField) => item.name === fieldName
-  );
+  const names = Array.isArray(fieldNames)
+    ? fieldNames
+    : [fieldNames];
 
-  if (field) {
-    field.options = options;
-  }
+  names.forEach((fieldName) => {
+    const field = this.settingSchema.fields?.find(
+      (item: FormField) => item.name === fieldName
+    );
+
+    if (field) {
+      field.options = [...options];
+    } else {
+      console.warn(`Field not found in settingSchema: ${fieldName}`);
+    }
+  });
 }
 
 

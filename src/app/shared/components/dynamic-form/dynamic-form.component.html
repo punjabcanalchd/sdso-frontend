@@ -59,7 +59,9 @@
           class="col-12"
           [ngClass]="getFieldClass(field)">
       <!-- LABEL -->
-      <label class="form-label fw-semibold f_font_size">
+      <label
+           *ngIf="field.type !== 'html'"
+         class="form-label fw-semibold f_font_size">
         {{ field.label }}
         <span *ngIf="field.required  && field.type !== 'checkbox'" class="text-danger">*</span>
 
@@ -76,7 +78,25 @@
         </span>
       </label>
 
-      <div *ngIf="field.type === 'html'" [innerHTML]="field.html"></div>
+      <div  *ngIf="field.type === 'html'" 
+            class="d-flex align-items-center gap-2"
+            /* [innerHTML]="field.html"  */
+          >
+          <div [innerHTML]="field.html"></div>
+
+
+          <span
+            *ngIf="field.infoTooltip"
+            class="info-icon"
+            [title]="field.infoTooltip"
+            tabindex="0"
+            role="img"
+            [attr.aria-label]="field.infoTooltip"
+          >
+            i
+          </span>
+    </div>
+      
 
       <ng-container [ngSwitch]="field.type">
         <!-- TEXT -->
