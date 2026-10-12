@@ -39,7 +39,7 @@ export const contactUsFields: FormField[] = [
       label: 'Address English',
       required: false,
       placeholder: 'Enter address in English',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
     {
@@ -48,7 +48,7 @@ export const contactUsFields: FormField[] = [
       label: 'Address Punjabi',
       required: false,
       placeholder: 'Enter address in Punjabi',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
 
@@ -59,7 +59,7 @@ export const contactUsFields: FormField[] = [
       label: 'Token Key (map)',
       required: false,
       placeholder: 'Enter map token key',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
     {
@@ -68,7 +68,7 @@ export const contactUsFields: FormField[] = [
       label: 'Map URL',
       required: false,
       placeholder: 'https://example.com',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
     {
@@ -77,7 +77,7 @@ export const contactUsFields: FormField[] = [
       label: 'Map API key',
       required: false,
       placeholder: 'Enter map API key',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
 
@@ -88,7 +88,7 @@ export const contactUsFields: FormField[] = [
       label: 'Block Service URL',
       required: false,
       placeholder: 'https://example.com',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
     {
@@ -97,7 +97,7 @@ export const contactUsFields: FormField[] = [
       label: 'Block Service Token',
       required: false,
       placeholder: 'Enter block service token',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
 
@@ -108,7 +108,7 @@ export const contactUsFields: FormField[] = [
       label: 'Latitude',
       required: false,
       placeholder: 'Enter latitude',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
     {
@@ -117,7 +117,7 @@ export const contactUsFields: FormField[] = [
       label: 'Longitude',
       required: false,
       placeholder: 'Enter longitude',
-       className: 'col-md-4',
+       className: 'col-md-6',
       tab: 'contactUssection',
     },
 ];

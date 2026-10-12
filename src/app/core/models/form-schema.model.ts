@@ -22,7 +22,7 @@ export type FormFieldType =
   | 'multi-checkbox'
   | 'editor'  
   | 'time'
-  | 'custom-permission' | 'role-assignment' | 'html';
+  | 'custom-permission' | 'role-assignment' | 'html'| 'color';
 
 export interface FormOption {
   label: string;

@@ -223,14 +223,8 @@ private loadPages(): void {
         ...options
       ]);
 
-      // this.updateFieldOptions('screen_reader_page', [
-      //   { label: 'Please Select', value: '' },
-      //   ...options
-      // ]);
 
       this.cdr.detectChanges();
-
-      // console.log('Mapped page options:', options);
     },
     error: (error: any) => {
       console.error('Failed to load pages:', error);

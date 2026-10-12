@@ -4,24 +4,22 @@ import { Validators } from '@angular/forms';
 
 export const additionalSettingsFields: FormField[] = [
   // Latest News Colors
-  {
-    type: 'text',
-    // type: 'color',
+  {    
+    type: 'color',
     name: 'latest_news_bg_color',
     label: 'Latest News Background Color',
     required: true,
-    placeholder: 'Select background color',
-    className: 'col-md-4',
+    // placeholder: 'Select background color',
+    className: 'col-md-6',
     tab: 'additionalSettingssection',
   },
   {
-    // type: 'color',
-    type: 'text',
+    type: 'color',  
     name: 'latest_news_text_color',
     label: 'Latest News Text Color',
     required: true,
-    placeholder: 'Select text color',
-    className: 'col-md-4',
+    // placeholder: 'Select text color',
+    className: 'col-md-6',
     tab: 'additionalSettingssection',
   },
 

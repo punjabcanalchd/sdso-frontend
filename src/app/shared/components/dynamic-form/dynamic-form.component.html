@@ -106,6 +106,13 @@
           (blur)="onBlur($event, field)" (input)="forceNumericText($event, field)" />
          
 
+         <input
+          *ngIf="field.type === 'color'"
+          type="color"
+          class="form-control form-control-color custom-color-picker"
+          [formControlName]="field.name"
+        />
+
         <!-- NUMBER -->
         <input *ngSwitchCase="'number'" appClearGlobalErrorOnFocus type="number" class="form-control"
           [formControlName]="field.name" [placeholder]="field.placeholder || ''"
