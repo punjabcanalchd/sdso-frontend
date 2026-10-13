@@ -9,7 +9,7 @@ export class ToastService {
   private counter = 0;
 
   show(type: ToastType, message: string, duration = 3000) {
-    console.log('TOAST SERVICE - Type:', type, 'Message:', message, 'Duration:', duration);
+    // console.log('TOAST SERVICE - Type:', type, 'Message:', message, 'Duration:', duration);
     this.toastSubject.next({
       id: ++this.counter,
       type,

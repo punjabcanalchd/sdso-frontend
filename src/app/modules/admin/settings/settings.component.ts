@@ -28,6 +28,7 @@ export class SettingsComponent implements OnInit {
   currentTab = 'general';
   isLoading = true;
   isSubmitting = false;
+  additionalSettings: any = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -51,7 +52,7 @@ export class SettingsComponent implements OnInit {
   }
 
   onTabChange(tab: string): void {
-    this.currentTab = tab;
+    this.currentTab = tab;      
   }
 
   loadAllSettings(): void {
@@ -88,6 +89,8 @@ export class SettingsComponent implements OnInit {
       }
     });
   }
+
+
 
   onSubmit(formData: any): void {
     const activeTab = formData.activeTab || formData._activeTab || this.currentTab;

@@ -3,6 +3,8 @@ import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap, ta
 import { Router } from "@angular/router";
 import { User } from "../models/user.model";
 import { ApiService } from "../services/api.service";
+import { environment } from '../../../environments/environment';
+
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 
 @Injectable({
@@ -13,7 +15,8 @@ export class AuthService {
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$ = this.userSubject.asObservable();
 
-  private baseUrl = 'http://localhost:8000';
+
+  private baseUrl  = environment.baseUrl;
   private apiUrl = `${this.baseUrl}/api`;
 
   constructor(
@@ -637,6 +640,21 @@ updateSliderImageStatus(sliderId:string,imageId:string,status:number):Observable
       data
     );
   }
+
+
+// Additional Settings
+getAdditionalSettings(): Observable<any> {
+  return this.api.get<any>(
+    '/admin/settings/additional'
+  );
+}
+
+updateAdditionalSettings(data: any): Observable<any> {
+  return this.api.post<any>(
+    '/admin/settings/additional/update',
+    data
+  );
+}
 
 
 
