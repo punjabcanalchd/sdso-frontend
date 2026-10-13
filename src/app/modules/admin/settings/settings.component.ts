@@ -74,14 +74,26 @@ export class SettingsComponent implements OnInit {
   onSubmit(formData: any): void {
     const activeTab = formData.activeTab || formData._activeTab || this.currentTab;
 
-    if (activeTab === 'general') {
-      this.saveGeneralSettings(formData);
+    const tabConfig: Record<string, { endpoint: string; label: string }> = {
+      general: { endpoint: '/admin/settings/general/update', label: 'General' },
+      layout: { endpoint: '/admin/settings/layout/update', label: 'Layout' },
+      footer: { endpoint: '/admin/settings/footer/update', label: 'Footer' },
+      managesection: { endpoint: '/admin/settings/manage-section/update', label: 'Manage Section' },
+      logosection: { endpoint: '/admin/settings/logo/update', label: 'Logo' },
+      contactUssection: { endpoint: '/admin/settings/contact-us/update', label: 'Contact Us' },
+      metaInformationsection: { endpoint: '/admin/settings/meta-information/update', label: 'Meta Information' },
+      additionalSettingssection: { endpoint: '/admin/settings/additional-settings/update', label: 'Additional Settings' },
+    };
+
+    const config = tabConfig[activeTab];
+    if (config) {
+      this.saveTabSettings(config.endpoint, config.label, formData);
     } else {
       this.toast.info(`Saving for "${activeTab}" tab is not configured yet.`);
     }
   }
 
-  private saveGeneralSettings(formData: any): void {
+  private saveTabSettings(endpoint: string, label: string, formData: any): void {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
@@ -102,6 +114,10 @@ export class SettingsComponent implements OnInit {
         const val = formData[key];
         if (val instanceof File) {
           fd.append(key, val);
+        } else if (Array.isArray(val)) {
+          val.forEach((item, idx) => {
+            fd.append(`${key}[${idx}]`, item);
+          });
         } else if (val !== null && val !== undefined) {
           fd.append(key, val.toString());
         }
@@ -113,20 +129,22 @@ export class SettingsComponent implements OnInit {
       delete payload._activeTab;
     }
 
-    this.authService.updateGeneralSettings(payload).subscribe({
+    this.api.post<any>(endpoint, payload).subscribe({
       next: (response: any) => {
         this.isSubmitting = false;
         if (response && response.success) {
-          this.toast.success(response.message || 'General settings saved successfully.');
-          this.generalSettings = response.data;
+          this.toast.success(response.message || `${label} settings saved successfully.`);
+          if (response.data) {
+            this.generalSettings = { ...this.generalSettings, ...response.data };
+          }
         } else {
-          this.toast.error(response?.message || 'Failed to update general settings.');
+          this.toast.error(response?.message || `Failed to update ${label.toLowerCase()} settings.`);
         }
         this.cdr.detectChanges();
       },
       error: (error) => {
         this.isSubmitting = false;
-        const msg = error?.error?.message || 'Error updating general settings.';
+        const msg = error?.error?.message || `Error updating ${label.toLowerCase()} settings.`;
         this.toast.error(msg);
         this.cdr.detectChanges();
       }
@@ -145,14 +163,15 @@ private loadMenus(): void {
         value: String(menu.menu_id)
       }));
 
-      this.updateFieldOptions('menus', [
-        { label: 'Please Select', value: '' },
-        ...options
-      ]);
+      const menuFields = ['menus', 'footer_category_1_menus', 'footer_category_2_menus', 'footer_category_3_menus'];
+      for (const f of menuFields) {
+        this.updateFieldOptions(f, [
+          { label: 'Please Select', value: '' },
+          ...options
+        ]);
+      }
 
       this.cdr.detectChanges();
-
-      console.log('Mapped menu options:', options);
     },
     error: (error: any) => {
       console.error('Failed to load menus:', error);
@@ -160,17 +179,15 @@ private loadMenus(): void {
   });
 }
 
-
-
 private loadSliders(): void {
   this.api.get<any>('/admin/sliders').subscribe({
     next: (res: any) => {
       const sliders = res?.data ?? [];
 
       const options = sliders.map((slider: any) => ({
-        label: slider.title ?? slider.name,
+        label: slider.name ?? slider.title,
         value: String(
-          slider.slug ?? slider.public_id ?? slider.slider_id ?? slider.id
+          slider.slider_id ?? slider.id ?? slider.public_id ?? slider.slug
         )
       }));
 
@@ -197,9 +214,6 @@ private loadSliders(): void {
   });
 }
 
-
-
-
 private loadPages(): void {
   this.api.get<any>('/admin/pages').subscribe({
     next: (res: any) => {
@@ -207,17 +221,14 @@ private loadPages(): void {
 
       const options = pages.map((page: any) => ({
         label: page.name_en || page.name_pb || 'Unnamed page',
-        value: String(page.public_id)
+        value: String(page.page_id ?? page.id ?? page.public_id)
       }));
 
       
 
-      this.updateFieldOptions( [
+      this.updateFieldOptions([
         'index_text_page',
-        'screen_reader_page',
-        'footer_category_1_menus',
-        'footer_category_2_menus',
-        'footer_category_3_menus'
+        'screen_reader_page'
       ], [
         { label: 'Please Select', value: '' },
         ...options

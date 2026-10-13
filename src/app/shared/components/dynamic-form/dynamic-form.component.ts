@@ -23,8 +23,7 @@ import { RoleAssignmentComponent } from '../form-elements/role-assignment/role-a
 import { TabsComponent } from '../tabs/tabs.component';
 import { FormField } from '../../../core/models/form-schema.model';
 import { LanguageService } from '../../../core/services/language.service';
-import { TimePickerComponent } from
-  '../form-elements/time-picker/time-picker.component';
+import { TimePickerComponent } from '../form-elements/time-picker/time-picker.component';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -261,6 +260,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
       let hasError = false;
       for (const field of activeTabFields) {
+        if (!this.isFieldVisible(field)) continue;
         const control = this.form.get(field.name);
         if (control && control.invalid) {
           control.markAsTouched();
@@ -706,6 +706,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
   onChildTabChange(childTab: string): void {
     this.activeChildTab = childTab;
+    this.tabChange.emit(childTab);
   }
 
 
