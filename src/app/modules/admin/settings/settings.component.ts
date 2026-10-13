@@ -7,6 +7,8 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { settingSchema } from './setting.schema';
 import { DynamicFormComponent } from '../../../shared/components/dynamic-form/dynamic-form.component';
 import { ApiService } from '../../../core/services/api.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { FormField } from '../../../core/models/form-schema.model';
 
 @Component({
@@ -44,7 +46,7 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadGeneralSettings();
+    this.loadAllSettings();
     this.loadLayoutDropdowns();
   }
 
@@ -52,19 +54,35 @@ export class SettingsComponent implements OnInit {
     this.currentTab = tab;
   }
 
-  loadGeneralSettings(): void {
+  loadAllSettings(): void {
     this.isLoading = true;
-    this.authService.getGeneralSettings().subscribe({
-      next: (response: any) => {
-        if (response && response.success) {
-          this.generalSettings = response.data;
-        }
+    forkJoin({
+      general: this.api.get<any>('/admin/settings/general').pipe(catchError(() => of({ data: {} }))),
+      layout: this.api.get<any>('/admin/settings/layout').pipe(catchError(() => of({ data: {} }))),
+      footer: this.api.get<any>('/admin/settings/footer').pipe(catchError(() => of({ data: {} }))),
+      manageSection: this.api.get<any>('/admin/settings/manage-section').pipe(catchError(() => of({ data: {} }))),
+      logo: this.api.get<any>('/admin/settings/logo').pipe(catchError(() => of({ data: {} }))),
+      contactUs: this.api.get<any>('/admin/settings/contact-us').pipe(catchError(() => of({ data: {} }))),
+      metaInformation: this.api.get<any>('/admin/settings/meta-information').pipe(catchError(() => of({ data: {} }))),
+      additionalSettings: this.api.get<any>('/admin/settings/additional-settings').pipe(catchError(() => of({ data: {} }))),
+    }).subscribe({
+      next: (results) => {
+        this.generalSettings = {
+          ...(results.general?.data ?? {}),
+          ...(results.layout?.data ?? {}),
+          ...(results.footer?.data ?? {}),
+          ...(results.manageSection?.data ?? {}),
+          ...(results.logo?.data ?? {}),
+          ...(results.contactUs?.data ?? {}),
+          ...(results.metaInformation?.data ?? {}),
+          ...(results.additionalSettings?.data ?? {}),
+        };
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Failed to load General Settings:', error);
-        this.toast.error('Failed to load general settings.');
+        console.error('Failed to load settings:', error);
+        this.toast.error('Failed to load settings.');
         this.isLoading = false;
         this.cdr.detectChanges();
       }

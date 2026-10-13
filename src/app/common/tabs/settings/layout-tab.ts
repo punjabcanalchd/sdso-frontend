@@ -20,10 +20,11 @@ export const layoutFields: FormField[] = [
       type: 'select',
       name: 'menus',
       label: 'Menus',
-      infoTooltip:'Menus that will show on the top of the website and Admin can select Max 8 Menus',
+      infoTooltip: 'Menus that will show on the top of the website and Admin can select Max 8 Menus',
       tab: 'layout',
       className: 'col-md-4',
       required: false,
+      multiple: true,
       options: [
       { label: 'Please Select', value: '' }
     ]

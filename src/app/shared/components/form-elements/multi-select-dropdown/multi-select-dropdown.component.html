@@ -1,0 +1,119 @@
+<div class="multi-select-container position-relative" [class.opacity-75]="disabled || (control && control.disabled)">
+  <!-- Trigger Box -->
+  <div
+    class="form-control d-flex align-items-center justify-content-between flex-wrap gap-1 cursor-pointer py-1"
+    [class.is-invalid]="control && control.invalid && control.touched"
+    (click)="toggleDropdown($event)"
+    tabindex="0"
+    role="combobox"
+    [attr.aria-expanded]="isOpen"
+  >
+    <div class="d-flex align-items-center flex-wrap gap-1 flex-grow-1">
+      <!-- Selected Badges -->
+      <ng-container *ngIf="selectedValues.length > 0; else placeholderTpl">
+        <span
+          *ngFor="let val of selectedValues"
+          class="badge bg-primary-subtle text-primary border border-primary-subtle d-inline-flex align-items-center gap-1 py-1 px-2 rounded-2"
+        >
+          <span class="text-truncate">{{ getOptionLabel(val) }}</span>
+          <button
+            type="button"
+            class="btn-close p-0"
+            (click)="removeOption(val, $event)"
+            aria-label="Remove"
+          ></button>
+        </span>
+      </ng-container>
+
+      <ng-template #placeholderTpl>
+        <span class="text-muted">{{ placeholder }}</span>
+      </ng-template>
+    </div>
+
+    <!-- Right Icons -->
+    <div class="d-flex align-items-center gap-1 text-muted ms-auto">
+      <span *ngIf="selectedValues.length > 0" class="badge rounded-pill bg-secondary small">
+        {{ selectedValues.length }}
+      </span>
+      <i class="bi" [ngClass]="isOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+    </div>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div
+    *ngIf="isOpen"
+    class="dropdown-menu show position-absolute top-100 start-0 w-100 p-2 shadow-sm border mt-1 z-3"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Search Box -->
+    <div class="input-group input-group-sm mb-2" (click)="$event.stopPropagation()">
+      <span class="input-group-text bg-white border-end-0">
+        <i class="bi bi-search text-muted"></i>
+      </span>
+      <input
+        type="text"
+        class="form-control border-start-0"
+        placeholder="Search options..."
+        [(ngModel)]="searchQuery"
+        (click)="$event.stopPropagation()"
+      />
+      <button
+        *ngIf="searchQuery"
+        class="btn btn-outline-secondary border-start-0"
+        type="button"
+        (click)="searchQuery = ''"
+      >
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div
+      class="d-flex justify-content-between align-items-center px-1 pb-2 border-bottom mb-2 small text-muted"
+      (click)="$event.stopPropagation()"
+    >
+      <button
+        type="button"
+        class="btn btn-link btn-sm p-0 text-decoration-none"
+        (click)="selectAll($event)"
+      >
+        Select All
+      </button>
+      <span *ngIf="maxSelect" class="text-warning small">
+        Max: {{ maxSelect }}
+      </span>
+      <button
+        type="button"
+        class="btn btn-link btn-sm p-0 text-decoration-none text-danger"
+        (click)="clearAll($event)"
+      >
+        Clear All
+      </button>
+    </div>
+
+    <!-- Options List -->
+    <div class="overflow-auto dropdown-safe-table" (click)="$event.stopPropagation()">
+      <div
+        *ngFor="let opt of filteredOptions"
+        class="form-check py-1 px-2 rounded d-flex align-items-center gap-2 m-0 cursor-pointer"
+        [class.bg-light]="isSelected(opt.value)"
+        (click)="toggleOption(opt.value, $event)"
+      >
+        <input
+          type="checkbox"
+          class="form-check-input mt-0 cursor-pointer"
+          [checked]="isSelected(opt.value)"
+          [disabled]="!isSelected(opt.value) && !!maxSelect && selectedValues.length >= maxSelect"
+          (click)="$event.stopPropagation(); toggleOption(opt.value)"
+        />
+        <label class="form-check-label flex-grow-1 cursor-pointer user-select-none mb-0">
+          {{ opt.label }}
+        </label>
+      </div>
+
+      <div *ngIf="filteredOptions.length === 0" class="text-center text-muted py-3 small">
+        No options found
+      </div>
+    </div>
+  </div>
+</div>

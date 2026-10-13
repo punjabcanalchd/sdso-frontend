@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -24,6 +24,7 @@ import { TabsComponent } from '../tabs/tabs.component';
 import { FormField } from '../../../core/models/form-schema.model';
 import { LanguageService } from '../../../core/services/language.service';
 import { TimePickerComponent } from '../form-elements/time-picker/time-picker.component';
+import { MultiSelectDropdownComponent } from '../form-elements/multi-select-dropdown/multi-select-dropdown.component';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
@@ -31,7 +32,8 @@ import { ToastService } from '../../../shared/services/toast.service';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, RouterModule, ClearGlobalErrorOnFocusDirective, CaptchaComponent,
     DatepickerComponent, SliderComponent, ToggleComponent, RangeComponent, FileUploadComponent, WizardStepperComponent,
-    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent, TabsComponent, TimePickerComponent],
+    CustomPermissionComponent, TinymceEditorComponent, RoleAssignmentComponent, TabsComponent, TimePickerComponent,
+    MultiSelectDropdownComponent],
 
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss']

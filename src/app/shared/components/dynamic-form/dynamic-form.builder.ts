@@ -66,7 +66,7 @@ export function buildFormGroup(
     }
 
     group[field.name] = fb.control(
-    { value: field.type === 'multi-checkbox' ? [] : '', disabled: field.disabled || false },
+    { value: field.type === 'multi-checkbox' || field.multiple ? [] : '', disabled: field.disabled || false },
     {
       validators,
     asyncValidators: field.asyncValidators?.length

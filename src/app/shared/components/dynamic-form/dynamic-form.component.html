@@ -149,18 +149,32 @@
         </div>
 
         <!-- SELECT -->
-      <select   *ngSwitchCase="'select'"   appClearGlobalErrorOnFocus   class="form-select"   [formControlName]="field.name" >
-        <option [ngValue]="null" disabled>
-          {{ field.placeholder || 'Select...' }}
-        </option>
+        <ng-container *ngSwitchCase="'select'">
+          <!-- Standard Single Select -->
+          <select *ngIf="!field.multiple" appClearGlobalErrorOnFocus class="form-select" [formControlName]="field.name">
+            <option [ngValue]="null" disabled>
+              {{ field.placeholder || 'Select...' }}
+            </option>
 
-        <option
-          *ngFor="let opt of field.options"
-          [ngValue]="opt.value"
-        >
-          {{ opt.label }}
-        </option>
-      </select>
+            <option
+              *ngFor="let opt of field.options"
+              [ngValue]="opt.value"
+            >
+              {{ opt.label }}
+            </option>
+          </select>
+
+          <!-- Multi-Select Dropdown from form-elements -->
+          <app-multi-select-dropdown
+            *ngIf="field.multiple"
+            [control]="getControl(field.name)!"
+            [options]="field.options || []"
+            [placeholder]="field.placeholder || 'Please Select'"
+            [maxSelect]="field.max"
+            [disabled]="isReadOnly(field)"
+          >
+          </app-multi-select-dropdown>
+        </ng-container>
        
 
         <!-- TEXTAREA -->
