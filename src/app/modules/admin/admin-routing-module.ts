@@ -34,6 +34,7 @@ import { PagesComponent } from './Others/pages/pages-list.component';
 import { SlidersListComponent } from './Others/slider/slider.component';
 import { SliderImageComponent } from './Others/slider-image/slider-image.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ClientQueriesListComponent } from './Others/client-queries-list/client-queries-list.component';
 
 
 const routes: Routes = [
@@ -107,6 +108,10 @@ const routes: Routes = [
       { path: 'noticeboard-catagory', redirectTo: 'category', pathMatch: 'full' },
       { path: 'noticeboard-catagories', redirectTo: 'category', pathMatch: 'full' },
       { path: 'translation', component: TranslationsListComponent, title: 'Translations – Admin' },
+      { path: 'client_query', component: ClientQueriesListComponent, title: 'Client Queries – Admin' },
+      { path: 'client-query', redirectTo: 'client_query', pathMatch: 'full' },
+      { path: 'client-queries', redirectTo: 'client_query', pathMatch: 'full' },
+      { path: 'client_queries', redirectTo: 'client_query', pathMatch: 'full' },
 
       { path: 'setting', component: SettingsComponent, title: 'Settings – Admin' },
 

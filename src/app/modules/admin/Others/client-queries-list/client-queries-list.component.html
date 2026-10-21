@@ -1,0 +1,140 @@
+<!-- 1. Client Queries Listing View -->
+<div class="container-fluid p-3" *ngIf="currentView === 'list'">
+  <app-document-list
+    title="Clients Query"
+    [isAdmin]="true"
+    [data]="data"
+    [columns]="tableColumns"
+    [showCreateButton]="false"
+    [currentPage]="pagination.current_page || 1"
+    [lastPage]="pagination.last_page || 1"
+    [pageSize]="pagination.per_page || 25"
+    [totalItems]="pagination.total || 0"
+    (pageSizeChange)="onPageSizeChange($event)"
+    (pageChange)="loadQueries($event)"
+    (searchChange)="searchQueries($event)"
+    (sortChange)="sortQueries($event)"
+    (actionClick)="handleAction($event)">
+  </app-document-list>
+</div>
+
+<!-- 2. Query Details View (Matching Image 1) -->
+<div class="container-fluid p-3" *ngIf="currentView === 'view'">
+  <div class="card shadow-sm border border-secondary-subtle">
+    
+    <!-- Card Header -->
+    <div class="card-header border-1 py-3 ps-3 bg-white d-flex justify-content-between align-items-center gap-4">
+      <h1 class="fs-4 fw-bold text-uppercase pb-1 ps-0 pe-0 mb-0 border-bottom border-warning border-3 d-inline-block text-dark">
+        QUERY VIEW
+      </h1>
+
+      <button type="button" class="btn btn-secondary btn-sm d-inline-flex align-items-center gap-1 px-3" (click)="backToList()">
+        <i class="bi bi-chevron-left"></i> Back
+      </button>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body p-4">
+      <div *ngIf="isLoadingDetails" class="text-center py-5 text-primary">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        <span class="small fw-medium">Loading details...</span>
+      </div>
+
+      <div *ngIf="!isLoadingDetails && selectedQuery">
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Name</div>
+          <div class="col-sm-9 col-md-10 text-dark">{{ selectedQuery.name || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Email</div>
+          <div class="col-sm-9 col-md-10 text-dark">
+            <a *ngIf="selectedQuery.email && selectedQuery.email !== 'N/A'" [href]="'mailto:' + selectedQuery.email" class="text-decoration-none text-dark">
+              {{ selectedQuery.email }}
+            </a>
+            <span *ngIf="!selectedQuery.email || selectedQuery.email === 'N/A'">N/A</span>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Contact</div>
+          <div class="col-sm-9 col-md-10 text-dark">
+            <a *ngIf="selectedQuery.contact && selectedQuery.contact !== 'N/A'" [href]="'tel:' + selectedQuery.contact" class="text-decoration-none text-dark">
+              {{ selectedQuery.contact }}
+            </a>
+            <span *ngIf="!selectedQuery.contact || selectedQuery.contact === 'N/A'">N/A</span>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Address</div>
+          <div class="col-sm-9 col-md-10 text-dark text-break">{{ selectedQuery.address || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Division</div>
+          <div class="col-sm-9 col-md-10 text-dark">{{ selectedQuery.division_name || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Entity Name</div>
+          <div class="col-sm-9 col-md-10 text-dark">{{ selectedQuery.entity_name || selectedQuery.water_entity_code || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Office</div>
+          <div class="col-sm-9 col-md-10 text-dark">{{ selectedQuery.office_name || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Subject</div>
+          <div class="col-sm-9 col-md-10 text-dark">{{ selectedQuery.subject || 'Others' }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Client Query</div>
+          <div class="col-sm-9 col-md-10 text-dark text-break lh-base">{{ selectedQuery.details || 'N/A' }}</div>
+        </div>
+
+        <div class="row mb-3" *ngIf="selectedQuery.upload_pdf">
+          <div class="col-sm-3 col-md-2 fw-bold text-dark">Attachment</div>
+          <div class="col-sm-9 col-md-10">
+            <a [href]="selectedQuery.pdf_url || '#'" target="_blank" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-file-earmark-pdf"></i> View / Download Uploaded PDF
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. Client Query Remarks Listing View (reusing DocumentListComponent - Matching Image 2) -->
+<div class="container-fluid p-3" *ngIf="currentView === 'remarks'">
+  <app-document-list
+    title="Clients Query Remarks"
+    [isAdmin]="true"
+    [data]="remarksData"
+    [columns]="remarksColumns"
+    [showCreateButton]="true"
+    createButtonText="Add Remark"
+    [showBackButton]="true"
+    [currentPage]="1"
+    [lastPage]="1"
+    [pageSize]="25"
+    [totalItems]="remarksData.length"
+    (createClick)="openAddRemarkModal()"
+    (backClick)="backToList()">
+  </app-document-list>
+</div>
+
+<!-- 4. Reusable Add Remark Modal (reusing ModalFormComponent) -->
+<app-modal-form
+  #addRemarkModal
+  title="Add Remark"
+  [schema]="remarkSchema"
+  [initialValue]="remarkInitialData"
+  [isLoading]="isSubmittingRemark"
+  size="md"
+  (submitForm)="onSaveRemark($event)">
+</app-modal-form>

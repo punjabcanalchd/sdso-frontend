@@ -11,7 +11,7 @@ export interface DropdownItem {
 export interface TableColumn {
   key: string;           // The object property ( 'description', 'email', 'name')
   label: string;         // The Table Header text ('Description', 'Email Address')
-  type?: 'text' | 'select' | 'html' | 'download' | 'image' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete' | 'copy_link' | 'media_category_action'; // How to render the cell
+  type?: 'text' | 'select' | 'html' | 'download' | 'image' | 'action' |'button'| 'dropdown' | 'edit' | 'unlock' | 'toggle' | 'delete' | 'copy_link' | 'media_category_action' | 'client_query_action'; // How to render the cell
   widthClass?: string;   // Bootstrap column classes ( 'col-7', 'col-2')
   sortable?: boolean;
 
@@ -253,7 +253,8 @@ onToggleChange(
       'button',
       'toggle',
       'delete',
-      'copy_link'
+      'copy_link',
+      'client_query_action'
     ].includes(type || '');
   }
 }
