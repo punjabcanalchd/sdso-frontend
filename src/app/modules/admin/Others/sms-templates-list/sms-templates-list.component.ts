@@ -1,27 +1,38 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
 import { DocumentListComponent, TableColumn } from '../../../../shared/components/document-list/document-list.component';
 import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
 import { ApiService } from '../../../../core/services/api.service';
 import { ToastService } from '../../../../shared/services/toast.service';
-import { smsTemplateSchema } from './sms-template-form.schema';
+import { SMSTemplateSchema } from './sms-templates-form.schema';
+import { ModalHelperService } from '../../../../shared/services/modal-helper';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   standalone: true,
   selector: 'app-sms-templates-list',
-  imports: [CommonModule, DocumentListComponent, ModalFormComponent],
+  imports: [DocumentListComponent, ModalFormComponent, CommonModule],
   templateUrl: './sms-templates-list.component.html',
   styleUrl: './sms-templates-list.component.scss'
 })
 export class SmsTemplatesListComponent implements OnInit {
+
+  constructor(private userService: AuthService) { }
+
   @ViewChild(ModalFormComponent) smsTemplateModal!: ModalFormComponent;
 
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
+  private modalHelper = inject(ModalHelperService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   data: any[] = [];
   isLoading = false;
+  isEditMode = false;
+  formInitialData: any = {};
 
   currentPage = 1;
   pageSize = 25;
@@ -29,11 +40,11 @@ export class SmsTemplatesListComponent implements OnInit {
   search = '';
   sortColumn = 'template_id';
   sortDirection = 'desc';
+  SMSTemplateSchema = SMSTemplateSchema;
+  smsTemplateId: string | null = null;
+  updatingSmsTemplateId: string | null = null;
 
-  isEditMode = false;
   editingId: string | number | null = null;
-  formInitialData: any = {};
-  smsTemplateSchema = smsTemplateSchema;
 
   tableColumns: TableColumn[] = [
     { key: 'name', label: 'Template Name', widthClass: 'col-2', sortable: true },
@@ -41,7 +52,11 @@ export class SmsTemplatesListComponent implements OnInit {
     { key: 'messageHtml', label: 'Message', widthClass: 'col-4', sortable: false, type: 'html' },
     { key: 'status', label: 'Status', widthClass: 'col-1', type: 'toggle', toggleConfig: { trueLabel: 'Active', falseLabel: 'Inactive' } },
     { key: 'created_at', label: 'Created At', widthClass: 'col-2', sortable: true },
-    { key: 'action', label: 'Action', widthClass: 'col-1', type: 'edit' },
+    {
+      key: 'actions',
+      label: 'Actions',
+      type: 'action'
+    }
   ];
 
   ngOnInit(): void {
@@ -72,18 +87,18 @@ export class SmsTemplatesListComponent implements OnInit {
     this.api.get<any>('/admin/sms-templates', params).subscribe({
       next: (res) => {
         this.data = (res.data || []).map((item: any, index: number) => {
-          const englishMessage = item.message_en || 'N/A';
-          const punjabiMessage = item.message_pb
+          const englishMessage = item.description_en || 'N/A';
+          const punjabiMessage = item.description_pb
             ? `<div class="text-dark lh-1 pt-2">
                 <span class="text-muted fw-bold small">PB:</span>
-                ${item.message_pb}
+                ${item.description_pb}
               </div>`
             : '';
 
           return {
-            id: item.id,
+            id: item.public_id,
             orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
-            name: item.name,
+            name: item.name_en || 'N/A',
             templateid: item.templateid || 'N/A',
             message_en: item.message_en,
             message_pb: item.message_pb,
@@ -95,7 +110,10 @@ export class SmsTemplatesListComponent implements OnInit {
               ${punjabiMessage}
             `,
             status: item.status,
-            canEdit: true,
+            name_en: item.name_en || 'N/A',
+            name_pb: item.name_pb || 'N/A',
+            description_pb: item.description_pb || 'N/A',
+            description_en: item.description_en || 'N/A',
             created_at: this.formatDate(item.created_at),
             raw: item
           };
@@ -111,89 +129,6 @@ export class SmsTemplatesListComponent implements OnInit {
         this.isLoading = false;
         this.toast.show('error', err.error?.message || 'Failed to load SMS templates');
         this.cdr.detectChanges();
-      }
-    });
-  }
-
-  openCreateModal(): void {
-    this.isEditMode = false;
-    this.editingId = null;
-    this.smsTemplateSchema.submitLabel = 'Create SMS Template';
-    this.formInitialData = {
-      name: '',
-      templateid: '',
-      status: 1,
-      message_en: '',
-      message_pb: '',
-      same_as_english_pb: false
-    };
-
-    this.smsTemplateModal.open();
-
-    setTimeout(() => {
-      const dynamicForm = this.smsTemplateModal?.dynamicForm;
-      if (dynamicForm) {
-        dynamicForm.activeTab = 'en';
-        dynamicForm.activeChildTab = '';
-        if (dynamicForm.form) {
-          dynamicForm.form.reset(this.formInitialData);
-        }
-      }
-      this.bindCheckboxLogic();
-      this.cdr.detectChanges();
-    }, 100);
-  }
-
-  openEditModal(row: any): void {
-    this.isEditMode = true;
-    this.editingId = row.id;
-    this.smsTemplateSchema.submitLabel = 'Update SMS Template';
-
-    const raw = row.raw || row;
-    const isSameAsEnglish = !!(raw.message_en && raw.message_pb && raw.message_en === raw.message_pb);
-    this.formInitialData = {
-      name: raw.name || '',
-      templateid: raw.templateid || '',
-      status: raw.status ? 1 : 0,
-      message_en: raw.message_en || '',
-      message_pb: raw.message_pb || '',
-      same_as_english_pb: isSameAsEnglish
-    };
-
-    this.smsTemplateModal.open();
-
-    setTimeout(() => {
-      const dynamicForm = this.smsTemplateModal?.dynamicForm;
-      if (dynamicForm) {
-        dynamicForm.activeTab = 'en';
-        dynamicForm.activeChildTab = '';
-        if (dynamicForm.form) {
-          dynamicForm.form.patchValue(this.formInitialData);
-        }
-      }
-      this.bindCheckboxLogic();
-      this.cdr.detectChanges();
-    }, 150);
-
-    // Fetch fresh details from API
-    this.api.get<any>(`/admin/sms-templates/${row.id}`).subscribe({
-      next: (res) => {
-        const item = res.data;
-        if (item) {
-          const same = !!(item.message_en && item.message_pb && item.message_en === item.message_pb);
-          this.formInitialData = {
-            name: item.name || '',
-            templateid: item.templateid || '',
-            status: item.status ? 1 : 0,
-            message_en: item.message_en || '',
-            message_pb: item.message_pb || '',
-            same_as_english_pb: same
-          };
-          if (this.smsTemplateModal?.dynamicForm?.form) {
-            this.smsTemplateModal.dynamicForm.form.patchValue(this.formInitialData);
-          }
-          this.cdr.detectChanges();
-        }
       }
     });
   }
@@ -215,53 +150,38 @@ export class SmsTemplatesListComponent implements OnInit {
     }
   }
 
-  handleAction(event: { action: string; row: any }): void {
-    if (event.action === 'toggle_status') {
-      this.updateStatus(event.row.id, event.row.status);
-    } else if (event.action === 'edit' && event.row) {
+ handleAction(event: any): void {
+    if (event.action === 'edit' || event.actionName === 'edit') {
       this.openEditModal(event.row);
+    } else if (event.action === 'delete') {
+      if (confirm(`Are you sure you want to delete "${event.row.name_en} SMS Template"?`)) {
+        this.userService.deleteSMSTemplate(event.row.id).subscribe({
+          next: (res: any) => {
+            this.toast.show(
+              'success',
+              res.message || 'SMS Template deleted successfully!',
+              4000
+            );
+
+            this.loadTemplates();
+          },
+          error: (error: any) => {
+
+            this.toast.show(
+              'error',
+              error.error?.message || 'Failed to delete SMS Template'
+            );
+
+            console.error('Failed to delete SMS Template:', error);
+          }
+        });
+      }
+    } else if (event.action === 'toggle_status') {
+      this.updateStatus(event.row.id, event.row.status);
     }
   }
 
-  onSubmit(formValue: any): void {
-    const payload = {
-      name: formValue.name,
-      templateid: formValue.templateid,
-      status: Number(formValue.status),
-      message_en: formValue.message_en,
-      message_pb: formValue.same_as_english_pb ? formValue.message_en : (formValue.message_pb || '')
-    };
 
-    if (this.isEditMode && this.editingId) {
-      this.api.post<any>(`/admin/sms-templates/${this.editingId}/update`, payload).subscribe({
-        next: (res) => {
-          this.toast.show('success', res.message || 'SMS template updated successfully.', 3000);
-          this.smsTemplateModal.close();
-          this.loadTemplates();
-        },
-        error: (err) => {
-          this.toast.show('error', err.error?.message || 'Failed to update SMS template');
-        }
-      });
-    } else {
-      this.api.post<any>('/admin/sms-templates', payload).subscribe({
-        next: (res) => {
-          this.toast.show('success', res.message || 'SMS template created successfully.', 3000);
-          this.smsTemplateModal.close();
-          this.loadTemplates();
-        },
-        error: (err) => {
-          this.toast.show('error', err.error?.message || 'Failed to create SMS template');
-        }
-      });
-    }
-  }
-
-  onModalClosed(): void {
-    this.isEditMode = false;
-    this.editingId = null;
-    this.formInitialData = {};
-  }
 
   updateStatus(id: string | number, status: boolean | number): void {
     const statusValue = status ? 1 : 0;
@@ -292,4 +212,111 @@ export class SmsTemplatesListComponent implements OnInit {
     this.pageSize = size;
     this.loadTemplates(1);
   }
+
+    openCreateModal() {
+    this.isEditMode = false;
+    this.smsTemplateId = null;
+
+    this.modalHelper.openModal({
+      modalRef: this.smsTemplateModal, 
+      schema: this.SMSTemplateSchema,
+      submitLabel: 'Create SMS Template',
+      patchData: { name: '', search: '', selectAll: false, permissions: { slugs: [] } },
+      useRouting: true,        
+      route: this.route,
+      queryParamId: null   
+    });
+  }
+
+  onModalClosed() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: null },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  openEditModal(SMSTemplate: any) {
+
+    this.isEditMode = true;
+    this.smsTemplateId = SMSTemplate.id;
+
+    this.SMSTemplateSchema.submitLabel = 'Update SMS Template';
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { id: this.smsTemplateId },
+      queryParamsHandling: 'merge'
+    }).then(() => {
+
+      this.smsTemplateModal.open();
+
+      setTimeout(() => {
+
+        const form = this.smsTemplateModal?.dynamicForm?.form;
+
+        if (!form) {
+          return;
+        }
+        console.log('SMSTemplate', SMSTemplate);
+        form.patchValue({
+          name_en: SMSTemplate.name_en || '',
+          name_pb: SMSTemplate.name_pb || '',
+          description_en: SMSTemplate.description_en || '',
+          description_pb: SMSTemplate.description_pb || '',
+          templateid: SMSTemplate.templateid,
+          status: SMSTemplate.status
+        });
+
+      }, 100);
+    });
+  }
+
+  onSubmit(formData: any): void {
+    
+    const payload = {
+      description: {
+        1: formData.description_en || '',
+        2: formData.description_pb || ''
+      },
+      subject: {
+        1: formData.name_en || '',
+        2: formData.name_pb || ''
+      },
+      name: formData.name_en,
+      same_as_english_pb: formData.same_as_english_pb ?? null,
+      status: formData.status,
+      templateid: formData.templateid,
+      emailTemplateId: this.smsTemplateId ?? null,
+    };
+
+    if (this.isEditMode && this.smsTemplateId) {
+
+      this.userService.updateSMSTemplate(this.smsTemplateId, payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'SMS Template updated successfully!', 4000);
+          this.smsTemplateModal.close();
+          this.loadTemplates();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to update SMS Template');
+          console.error('Failed to update SMS Template:', error);
+        }
+      });
+
+    } else {
+       this.userService.createSMSTemplate(payload).subscribe({
+        next: (res: any) => {
+          this.toast.show('success', res.message || 'SMS Template created successfully!', 4000);
+          this.smsTemplateModal.close();
+          this.loadTemplates();
+        },
+        error: (error: any) => {
+          this.toast.show('error', error.error?.message || 'Failed to create SMS Template');
+          console.error('Failed to create SMS Template:', error);
+        }
+      });
+    }
+  }
+
 }

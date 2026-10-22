@@ -459,6 +459,30 @@ export class AuthService {
     return this.api.post<any>(`/admin/email-templates/${emailTemplateId}/delete`, {});
   }
 
+  createSMSTemplate(payload: any): Observable<any> {
+    return this.api.post('/admin/sms-templates', payload);
+  }
+
+  updateSMSTemplate(smsTemplateId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/sms-templates/${smsTemplateId}/update`, payload);
+  }
+
+  deleteSMSTemplate(smsTemplateId: string): Observable<any> {
+    return this.api.post<any>(`/admin/sms-templates/${smsTemplateId}/delete`, {});
+  }
+
+  createSandesTemplate(payload: any): Observable<any> {
+    return this.api.post('/admin/sandes-templates', payload);
+  }
+
+  updateSandesTemplate(sandesTemplateId: string, payload: any): Observable<any> {
+    return this.api.post<any>(`/admin/sandes-templates/${sandesTemplateId}/update`, payload);
+  }
+
+  deleteSandesTemplate(sandesTemplateId: string): Observable<any> {
+    return this.api.post<any>(`/admin/sandes-templates/${sandesTemplateId}/delete`, {});
+  }
+
 
 
 //START Slider API
