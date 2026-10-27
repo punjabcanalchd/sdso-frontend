@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+  import { NgModule } from '@angular/core';
+  import { RouterModule, Routes } from '@angular/router';
 
 import { WebsiteLayout } from '../../layouts/website-layout/website-layout';
 import { HomeComponent } from './pages/home/home.compnent';
@@ -10,7 +10,7 @@ import { ScreenReaderComponent } from './pages/screen-reader/screen-reader';
 import { LoginComponent } from '../auth/login/login.component';
 import { RtiComponent } from './pages/rti/rti.component';
 import { AuthorityEventComponent } from './pages/authority-event/authority-event.component';
-import { CalculatorPageComponent } from './pages/calculator-page/calculator-page.component';
+
 import { WaterMeter } from './pages/water-meter-spec/water-meter-spec.component';
 import { DivisionWiseAllocComponent } from './pages/division-wise-alloc/division-wise-alloc.component';
 import { OrgStructureComponent } from './pages/org-chart/org-chart.component';
@@ -24,6 +24,9 @@ import { CircularsComponent } from './pages/circulars/circulars.component';
 import { FormsPerformaComponent } from './pages/forms-proforma/forms-proforma.component';
 import { UnderProgressComponent } from './pages/under-progress/under-progress.component';
 import { SearchComponent } from './pages/search/search-component';
+
+import { FrontendPagesComponent } from './pages/frontend-pages/frontend-pages.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -38,7 +41,7 @@ const routes: Routes = [
       { path: '',                component: HomeComponent,  title: 'Home – SDSO' },
       { path: 'rti',             component: RtiComponent,   title: 'Right To Information – SDSO' },
       { path: 'events',         component: AuthorityEventComponent,   title: 'Authority Event Gallery – SDSO' },
-      { path:'fee-calculator/:type', component: CalculatorPageComponent },
+
       { path: 'water-meter-spec' , component: WaterMeter, title: 'Water Meter Specification' },
       { path: 'div-wise-alloc', component: DivisionWiseAllocComponent, title: 'Division-Wise Allocation of Work'},
       { path: 'org-chart', component:OrgStructureComponent, title: 'Organization Chart'},
@@ -55,13 +58,17 @@ const routes: Routes = [
       { path: 'contactus', redirectTo: 'contact', pathMatch: 'full' },
       { path: 'announcements', redirectTo: 'noticeboard/circulars', pathMatch: 'full' },
       { path: 'ApplicationCalculator', redirectTo: 'fee-calculator/gw-extraction', pathMatch: 'full' },
-      { path: 'pages/:id', redirectTo: 'cons', pathMatch: 'full' }, 
+      { path: 'pages/:id', redirectTo: 'cons', pathMatch: 'full' },       
+      { path: 'pages/:pageId', component: FrontendPagesComponent },
+      { path: 'pages/:pageId/:languageId', component: FrontendPagesComponent },
     ],
   },
 ];
 
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule],
-})
-export class WebsiteRoutingModule {}
+      
+
+  @NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule],
+  })
+  export class WebsiteRoutingModule {}

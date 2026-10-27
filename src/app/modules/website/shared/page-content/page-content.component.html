@@ -1,0 +1,28 @@
+
+<section class="page-content">
+  <div class="container">
+
+    <!-- Page Title -->
+    <div class="page-heading" *ngIf="title">
+      <h1>{{ title }}</h1>
+      <div class="heading-underline">
+        <span></span>
+      </div>
+    </div>
+
+    <!-- Dynamic Page Description -->
+    <article
+      class="page-description"
+      *ngIf="description"
+      [innerHTML]="description">
+    </article>
+
+    <!-- Empty State -->
+    <div
+      class="no-content"
+      *ngIf="!title && !description">
+      No page content available.
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,15 @@
+<div class="container py-4">
+  <div *ngIf="loading" class="text-center py-5">
+    Loading page...
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <app-page-content
+    *ngIf="pageData && !loading"
+    [title]="pageData.title"
+    [description]="pageData.description">
+  </app-page-content>
+</div>

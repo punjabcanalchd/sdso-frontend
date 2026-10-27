@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { environment } from '../../../../environments/environment';
+
 
 export interface NavItem {
     id?: number;
@@ -29,6 +31,8 @@ export class NavbarComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   isAuthenticated$ = this.auth.isAuthenticated$();
 
+   private readonly baseUrl = environment.baseUrl;
+
   logout(): void {
     this.auth.logout();
     this.closeMenu();
@@ -54,7 +58,7 @@ export class NavbarComponent implements OnInit {
           let extUrl: string | undefined = undefined;
  
           if (m.page_id) {
-             internalRoute = `/pages/${m.page_id}`;
+              internalRoute = `/pages/${m.page_id}/1`;
           } else if (m.external_link) {
              if (m.external_link.startsWith('http')) {
                  extUrl = m.external_link;
@@ -83,6 +87,7 @@ export class NavbarComponent implements OnInit {
           .sort((a: any, b: any) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
  
         this.navItems = activeMenus.map((m: any) => mapMenu(m));
+        console.log("Menu Items",this.navItems);
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -136,4 +141,19 @@ export class NavbarComponent implements OnInit {
       this.closeMenu();
     }
   }
+
+
+
+ 
+
+  //   private getLanguagePrefix(): string {
+  //     return window.location.pathname.startsWith('/pb') ? 'pb' : 'en';
+  //   }
+
+  // private getMenuUrl(route: string): string {
+  //     const language = this.getLanguagePrefix();
+  //     const cleanRoute = route.replace(/^\/+/, '');
+
+  //     return `${this.baseUrl}/${language}/${cleanRoute}`;
+  //   }
 }

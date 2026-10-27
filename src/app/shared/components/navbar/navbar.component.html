@@ -99,7 +99,7 @@
   @for (child of childrenList; track child.label) {
     <li class="position-relative w-100" role="none">
       
-      @if (!child.children) {
+      @if (!child.children?.length) {
        @if (child.externalUrl) {
           <a [href]="child.externalUrl" 
              target="_blank" rel="noopener noreferrer"
