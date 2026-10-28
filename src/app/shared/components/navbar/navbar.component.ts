@@ -52,21 +52,48 @@ export class NavbarComponent implements OnInit {
     this.api.get<any>('/front/menus').subscribe({
       next: (res) => {
         const rawMenus = res.data || [];
- 
+
+
         const mapMenu = (m: any): NavItem => {
-          let internalRoute: string | undefined = '/';
-          let extUrl: string | undefined = undefined;
- 
-          if (m.page_id) {
-              internalRoute = `/pages/${m.page_id}/1`;
-          } else if (m.external_link) {
-             if (m.external_link.startsWith('http')) {
-                 extUrl = m.external_link;
-                 internalRoute = undefined;
-             } else {
-                 internalRoute = m.external_link.startsWith('/') ? m.external_link : `/${m.external_link}`;
-             }  
+        let internalRoute: string | undefined = '/';
+        let extUrl: string | undefined;
+
+        if (m.page_id) {
+          internalRoute = `/pages/${m.page_id}/1`;
+
+        } else if (m.external_link) {
+          const link = m.external_link.trim();
+
+          if (link.toLowerCase().endsWith('.pdf')) {
+            // PDF: open directly in a new tab
+            extUrl = link.startsWith('/') ? link : `/${link}`;
+            internalRoute = undefined;
+
+          } else if (/^https?:\/\//i.test(link)) {
+            // External website
+            extUrl = link;
+            internalRoute = undefined;
+
+          } else {
+            // Internal Angular route
+            internalRoute = link.startsWith('/') ? link : `/${link}`;
           }
+        }
+ 
+        // const mapMenu = (m: any): NavItem => {
+        //   let internalRoute: string | undefined = '/';
+        //   let extUrl: string | undefined = undefined;
+ 
+        //   if (m.page_id) {
+        //       internalRoute = `/pages/${m.page_id}/1`;
+        //   } else if (m.external_link) {
+        //      if (m.external_link.startsWith('http')) {
+        //          extUrl = m.external_link;
+        //          internalRoute = undefined;
+        //      } else {
+        //          internalRoute = m.external_link.startsWith('/') ? m.external_link : `/${m.external_link}`;
+        //      }  
+        //   }
  
           const mapped: NavItem = {
             label: m.english_description?.message || 'Unnamed Menu',

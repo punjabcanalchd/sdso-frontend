@@ -13,4 +13,11 @@ export class FrontendPagesService {
       `/front/pages/${pageId}/${languageId}`
     );
   }
+
+
+  getNoticeboard(id: number, languageId: number) {
+  return this.api.get<any>(
+    `/front/noticeboard/${id}/${languageId}`
+  );
+}
 }

@@ -64,8 +64,7 @@ loadPage(pageId: number, languageId: number): void {
   this.errorMessage = '';
 
   this.pageService.getPage(pageId, languageId).subscribe({
-    next: (res: any) => {
-      console.log('API response:', res);
+    next: (res: any) => {     
 
       if (res?.success && res?.data) {
          this.pageData = {
@@ -82,8 +81,6 @@ loadPage(pageId: number, languageId: number): void {
       this.loading = false;
       this.cdr.markForCheck();
 
-      console.log('Loading:', this.loading);
-      console.log('Page data:', this.pageData);
     },
 
     error: (err: any) => {
@@ -97,4 +94,5 @@ loadPage(pageId: number, languageId: number): void {
     }
   });
 }
+
 }

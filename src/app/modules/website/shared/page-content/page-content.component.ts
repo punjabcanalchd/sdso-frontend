@@ -10,8 +10,6 @@ import { Component, Input } from '@angular/core';
   styleUrl: './page-content.component.scss'
 })
 export class PageContentComponent {
-
-
   @Input() title: string = '';
   @Input() description: string = '';
 

@@ -40,7 +40,7 @@
         @for (item of navItems; track item.label) {
           <li class="nav-item dropdown" role="none">
             
-            @if (!item.children) {
+            <!-- @if (!item.children) {
               <a
                 [routerLink]="item.route"
                 routerLinkActive="bg-warning text-dark active"
@@ -59,7 +59,61 @@
 
               </a>
 
-            } @else {
+            } @else { -->
+@if (!item.children) {
+             @if (item.externalUrl) {
+    <!-- PDF or external website -->
+    <a
+      [href]="item.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center fw-bold h-100"
+      role="menuitem"
+      (click)="closeMenu()">
+
+      @if (item.icon) {
+        <i
+          class="bi {{ item.icon }} fs-5 lh-1 mb-1 d-none d-lg-inline-block"
+          aria-hidden="true"
+          [title]="item.label">
+        </i>
+        <span class="d-lg-none">{{ item.label }}</span>
+        <span class="visually-hidden d-none d-lg-inline-block">
+          {{ item.label }}
+        </span>
+      } @else {
+        <span>{{ item.label }}</span>
+      }
+
+    </a>
+  } @else {
+    <!-- Internal Angular route -->
+    <a
+      [routerLink]="item.route"
+      routerLinkActive="bg-warning text-dark active"
+      [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+      class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center fw-bold h-100"
+      role="menuitem"
+      (click)="closeMenu()">
+
+      @if (item.icon) {
+        <i
+          class="bi {{ item.icon }} fs-5 lh-1 mb-1 d-none d-lg-inline-block"
+          aria-hidden="true"
+          [title]="item.label">
+        </i>
+        <span class="d-lg-none">{{ item.label }}</span>
+        <span class="visually-hidden d-none d-lg-inline-block">
+          {{ item.label }}
+        </span>
+      } @else {
+        <span>{{ item.label }}</span>
+      }
+
+    </a>
+  }
+
+} @else {
               <button
                 type="button"
                 class="nav-link px-3 px-lg-2 px-xl-4 py-3 rounded-0 d-flex align-items-center gap-1 text-nowrap border-0 fw-bold h-100 w-100"

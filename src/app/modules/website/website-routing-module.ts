@@ -24,8 +24,9 @@ import { CircularsComponent } from './pages/circulars/circulars.component';
 import { FormsPerformaComponent } from './pages/forms-proforma/forms-proforma.component';
 import { UnderProgressComponent } from './pages/under-progress/under-progress.component';
 import { SearchComponent } from './pages/search/search-component';
-
 import { FrontendPagesComponent } from './pages/frontend-pages/frontend-pages.component';
+import { NoticeboardDetailComponent } from './pages/noticeboard-detail/noticeboard-detail.component';
+
 
 const routes: Routes = [
   {
@@ -34,6 +35,7 @@ const routes: Routes = [
     children: [
       { path: '',                component: HomeComponent,           title: 'Home – SDSO' },
       { path: 'login',           component: LoginComponent,          title: 'Sign In – SDSO' },
+      
       { path: 'faq',             component: FaqComponent,            title: 'FAQ – SDSO' },
       { path: 'act-rules',       component: ActRulesComponent,       title: 'Act and Rules – SDSO' },
       { path: 'contact',         component: ContactComponent,        title: 'Contact Us – SDSO' },
@@ -56,11 +58,15 @@ const routes: Routes = [
       { path: 'cons', component: UnderProgressComponent},
       { path: 'search', component: SearchComponent, title: 'Search - SDSO'},
       { path: 'contactus', redirectTo: 'contact', pathMatch: 'full' },
+
+        // Dynamic Data
       { path: 'announcements', redirectTo: 'noticeboard/circulars', pathMatch: 'full' },
       { path: 'ApplicationCalculator', redirectTo: 'fee-calculator/gw-extraction', pathMatch: 'full' },
       { path: 'pages/:id', redirectTo: 'cons', pathMatch: 'full' },       
       { path: 'pages/:pageId', component: FrontendPagesComponent },
       { path: 'pages/:pageId/:languageId', component: FrontendPagesComponent },
+      { path: 'noticeboard/:id', component: NoticeboardDetailComponent },
+      { path: ':lang/noticeboard/:id',component: NoticeboardDetailComponent },
     ],
   },
 ];

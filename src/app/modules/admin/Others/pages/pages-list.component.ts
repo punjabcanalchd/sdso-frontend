@@ -326,36 +326,11 @@ export class PagesComponent implements OnInit {
               'Before patch page_banner:',
               form.get('page_banner')?.value
             );
-
-
-
             // Patch API data
             form.patchValue(patchValue);
-
-            console.log(
-              'After patch page_banner:',
-              form.get('page_banner')?.value
-            );
-
+            console.log('After patch page_banner:', form.get('page_banner')?.value);
             const parentControl = form.get('page_banner');
-
-            const dynamicControl =
-              this.pageModal.dynamicForm.getControl('page_banner');
-
-            // console.log(
-            //   'Parent value:',
-            //   parentControl?.value
-            // );
-
-            // console.log(
-            //   'DynamicForm value:',
-            //   dynamicControl?.value
-            // );
-
-            // console.log(
-            //   'Same control:',
-            //   parentControl === dynamicControl
-            // );
+            const dynamicControl = this.pageModal.dynamicForm.getControl('page_banner');
 
             this.bindCheckboxLogic();
 
