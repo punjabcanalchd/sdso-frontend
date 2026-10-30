@@ -9,24 +9,41 @@
     <i [class]="isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'" aria-hidden="true"></i>
   </button>
 
-  <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1" aria-hidden="true">
+  <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1 flex-shrink-0" aria-hidden="true">
     Attention:
   </div>
 
-  <div class="overflow-hidden flex-grow-1 py-2 position-relative d-flex align-items-center" aria-live="off">
+  <div
+    class="overflow-hidden flex-grow-1 py-2 position-relative d-flex align-items-center"
+    aria-live="off"
+    (mouseenter)="isPaused = true"
+    (mouseleave)="isPaused = false">
     
     <div class="d-flex text-nowrap ticker-animation-track" [class.ticker-animation-paused]="isPaused">
       
-      <div class="text-dark fw-medium small pe-5 ticker-text-item ">
-        All fresh GW applications shall be submitted exclusively through the SDSO online portal.
-        <span class="mx-3 text-muted" aria-hidden="true">|</span>
-        New fee structure for Water Tanker permissions effective from April 2025.
-        <span class="mx-3 text-muted" aria-hidden="true">|</span>
-        Deadline for renewal of existing GW extraction permits: 30 June 2025.
-        <span class="mx-3 text-muted" aria-hidden="true">|</span>
+      <div class="text-dark fw-medium small pe-5 ticker-text-item d-flex align-items-center">
+        @if (tickerItems.length > 0) {
+          @for (item of tickerItems; track (item.id || item.title)) {
+            @if (item.external) {
+              <a [href]="item.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-dark text-decoration-none hover-link">
+                {{ item.title }}
+              </a>
+            } @else {
+              <a [routerLink]="item.url"
+                class="text-dark text-decoration-none hover-link">
+                {{ item.title }}
+              </a>
+            }
+            <span class="mx-3 text-muted" aria-hidden="true">|</span>
+          }
+        } @else {
+          <span>Welcome to State Dam Safety Organization (SDSO) Official Portal.</span>
+          <span class="mx-3 text-muted" aria-hidden="true">|</span>
+        }
       </div>
-
-     
 
     </div>
     

@@ -1,12 +1,17 @@
 .ticker-animation-track {
-  // linear timing so the speed never speeds up or slows down at loop junctions
-  animation: tickerScrollLoop 30s linear infinite; 
+  display: inline-flex;
+  white-space: nowrap;
   width: max-content;
+  padding-left: 100%;
+  animation: tickerScrollLoop 35s linear infinite; 
+  will-change: transform;
 }
 
 // Fixed alignment spacer for individual content streams
 .ticker-text-item {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 // Angular pause trigger mapping hook
@@ -16,10 +21,13 @@
 
 @keyframes tickerScrollLoop {
   0% {
-    transform: translate3d(70%, 0, 0);
+    transform: translateX(0);
   }
   100% {
-    // FIXED: Translating exactly -50% shifts the first half away, snapping the loop invisibly
-    transform: translate3d(-70%, 0, 0);
+    transform: translateX(-100%);
   }
+}
+
+.hover-link:hover {
+  text-decoration: underline !important;
 }
