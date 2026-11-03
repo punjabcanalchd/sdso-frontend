@@ -3,11 +3,6 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: '',
-    loadChildren: () =>
-      import('./modules/website/website-module').then((m) => m.WebsiteModule),
-  },
-  {
     path: 'auth',
     loadChildren: () =>
       import('./modules/auth/auth-module').then((m) => m.AuthModule),
@@ -22,7 +17,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/reports/reports-module').then((m) => m.ReportsModule),
   },
- 
-
-
+  {
+    path: '',
+    loadChildren: () =>
+      import('./modules/website/website-module').then((m) => m.WebsiteModule),
+  },
 ];

@@ -1,90 +1,101 @@
 <footer class="bg-primary text-white">
 
-  <!-- Top Section -->
+  <!-- Top Section: Dynamic Columns from Database -->
   <div class="py-5">
     <div class="container">
 
-      <div class="row text-center">
+      <div class="row">
 
-        <!-- Useful Links -->
-        <div class="col-lg-4 col-md-4 mb-4">
-          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">          
-            Useful Links
-          </h5>
+        <!-- Dynamic Category Columns -->
+        @for (col of columns; track col.title) {
+          <div class="col-lg-3 col-md-6 mb-4">
+            <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">          
+              {{ col.title }}
+            </h5>
 
-          <ul class="list-unstyled">
-            <li class="mb-2"  *ngFor="let link of usefulLinks">
-              <a
-                [routerLink]="link.url"
-                class="text-white text-decoration-none">
-                {{ link.label }}
-              </a>
-            </li>
-          </ul>
+            <ul class="list-unstyled mb-0">
+              @for (link of col.links; track link.label) {
+                <li class="mb-2">
+                  @if (link.external) {
+                    <a [href]="link.url"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-white text-decoration-none">
+                      {{ link.label }}
+                      <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
+                    </a>
+                  } @else {
+                    <a [routerLink]="link.url"
+                       class="text-white text-decoration-none">
+                      {{ link.label }}
+                    </a>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
+        }
 
-        </div>
-
-        <!-- Policies -->
-        <div class="col-lg-4 col-md-4 mb-4">
+        <!-- GIGW Policies / Top Links Column -->
+        <div class="col-lg-3 col-md-6 mb-4">
           <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">           
-            Policies
+            Policies & Help
           </h5>
 
-          <ul class="list-unstyled">
-            <li class="mb-2" *ngFor="let link of policyLinks">
-              <a
-                /* [routerLink]="link.url" */
-                class="text-white text-decoration-none">
-                {{ link.label }}
-              </a>
-            </li>
+          <ul class="list-unstyled mb-0">
+            @for (link of topLinks; track link.label) {
+              <li class="mb-2">
+                @if (link.external) {
+                  <a [href]="link.url"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     class="text-white text-decoration-none">
+                    {{ link.label }}
+                    <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
+                  </a>
+                } @else {
+                  <a [routerLink]="link.url"
+                     class="text-white text-decoration-none">
+                    {{ link.label }}
+                  </a>
+                }
+              </li>
+            }
           </ul>
-
         </div>
      
-    <!-- Site Statistics -->
-      <div class="col-lg-4 col-md-4 mb-4">
-        <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
-          <i class="bi bi-bar-chart-fill me-2"></i>
-          Site Statistics
-        </h5>
+        <!-- Site Statistics (GIGW 3.0 Compliance) -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
+            <i class="bi bi-bar-chart-fill me-2" aria-hidden="true"></i>
+            Site Statistics
+          </h5>
 
-        <div class="d-flex align-items-center justify-content-center mb-4">
-
-          <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
-            <i class="bi bi-people-fill fs-4 text-warning"></i>
-          </div>
-
-          <div class="text-start">
-            <div class="small text-uppercase text-light">
-              Total Visitors
+          <div class="d-flex align-items-center mb-4">
+            <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
+              <i class="bi bi-people-fill fs-4 text-warning" aria-hidden="true"></i>
             </div>
-
-            <div class="fw-bold fs-5 text-white">
-              {{ stats.totalVisitors || '—' }}
+            <div class="text-start">
+              <div class="small text-uppercase text-light">Total Visitors</div>
+              <div class="fw-bold fs-5 text-white">
+                {{ stats.totalVisitors ? (stats.totalVisitors | number) : '—' }}
+              </div>
             </div>
           </div>
 
-        </div>
-
-        <div class="d-flex align-items-center justify-content-center">
-          <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
-            <i class="bi bi-calendar-check-fill fs-4 text-warning"></i>
-          </div>
-
-          <div class="text-start">
-            <div class="small text-uppercase text-light">
-              Last Updated
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
+              <i class="bi bi-calendar-check-fill fs-4 text-warning" aria-hidden="true"></i>
             </div>
-
-            <div class="fw-bold text-white">
-              {{ stats.lastUpdated || '—' }}
+            <div class="text-start">
+              <div class="small text-uppercase text-light">Last Updated</div>
+              <div class="fw-bold text-white">
+                {{ stats.lastUpdated || '—' }}
+              </div>
             </div>
           </div>
 
         </div>
-
-      </div>
      
       </div>
 
@@ -124,24 +135,25 @@
              aria-label="Partner logos">
 
           <!-- Logos duplicated for seamless loop -->
-          <a *ngFor="let logo of scrollLogos"
-             [href]="logo.linkUrl"
-             class="gov-logo-item"
-             role="listitem"
-             target="_blank"
-             rel="noopener noreferrer"
-             [attr.aria-label]="logo.name + ' (opens in new tab)'">
-            <img [src]="logo.imageUrl"
-                 [alt]="logo.name"
-                 class="gov-logo-img-scroll"
-                 loading="eager"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-            <!-- Placeholder -->
-            <div class="gov-logo-placeholder-scroll" style="display:none;" aria-hidden="true">
-             <span class="material-icons" aria-hidden="true">business</span>
-              <span>{{ logo.name }}</span>
-            </div>
-          </a>
+          @for (logo of scrollLogos; track $index) {
+            <a [href]="logo.linkUrl"
+               class="gov-logo-item"
+               role="listitem"
+               target="_blank"
+               rel="noopener noreferrer"
+               [attr.aria-label]="logo.name + ' (opens in new tab)'">
+              <img [src]="logo.imageUrl"
+                   [alt]="logo.name"
+                   class="gov-logo-img-scroll"
+                   loading="eager"
+                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <!-- Placeholder -->
+              <div class="gov-logo-placeholder-scroll" style="display:none;" aria-hidden="true">
+               <span class="material-icons" aria-hidden="true">business</span>
+                <span>{{ logo.name }}</span>
+              </div>
+            </a>
+          }
 
         </div>
 
@@ -164,8 +176,8 @@
 <div class="bg-dark text-white py-3">
   <div class="container text-center">
     <p class="mb-2 small">
-      &copy; {{ currentYear }}
-      State Dam Safety Organization.
+      &copy; {{ copyright.year || currentYear }}
+      {{ copyright.organization || 'State Dam Safety Organization' }}.
       All Rights Reserved.
 
       |
@@ -195,6 +207,10 @@
         Sitemap
       </a>
 
+    </p>
+
+    <p class="mb-1 small text-white-50">
+      {{ copyright.developed_by }}
     </p>
 
     <p class="mb-0 small">

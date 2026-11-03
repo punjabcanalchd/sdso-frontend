@@ -3,6 +3,9 @@ import { Injectable, inject } from '@angular/core';
 
 import {
   CanActivate,
+  CanMatch,
+  Route,
+  UrlSegment,
   ActivatedRouteSnapshot,
   Router,
   UrlTree
@@ -13,10 +16,15 @@ import { LanguageService } from '../services/language.service';
 @Injectable({
   providedIn: 'root'
 })
-export class LanguageGuard implements CanActivate {
+export class LanguageGuard implements CanActivate, CanMatch {
 
   private languageService = inject(LanguageService);
   private router = inject(Router);
+
+  canMatch(route: Route, segments: UrlSegment[]): boolean {
+    const lang = segments[0]?.path;
+    return !!lang && this.languageService.isValidLanguage(lang);
+  }
 
   canActivate(
     route: ActivatedRouteSnapshot

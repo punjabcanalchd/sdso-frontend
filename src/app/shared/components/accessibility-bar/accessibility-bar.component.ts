@@ -49,7 +49,7 @@ export class AccessibilityBarComponent implements OnDestroy {
   ngOnInit(): void {
     this.intervalId = setInterval(() => {
       this.currentDateTime = new Date();
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     }, 1000);
   }
 
@@ -192,16 +192,13 @@ export class AccessibilityBarComponent implements OnDestroy {
   // ==========================================
 
   ngOnDestroy(): void {
-    // Cleanup if required in future
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
-
-
-
 
   // Language
-  get languages() {
-    return this.languageService.getAvailableLanguages();
-  }
+  readonly languages = this.languageService.getAvailableLanguages();
 
   get currentLanguage() {
     return this.languageService.getCurrentLang();

@@ -43,12 +43,14 @@ export class LanguageService {
     this.setLanguage(lang);
   }
 
+  private readonly availableLanguages = [
+    { code: 'en', name: 'English', id: 1 },
+    { code: 'pb', name: 'Punjabi', id: 2 },
+    // { code: 'hi', name: 'Hindi', id: 3 } // Preserved for future implementation
+  ];
+
   getAvailableLanguages() {
-    return [
-      { code: 'en', name: 'English', id: 1 },
-      { code: 'pb', name: 'Punjabi', id: 2 },
-      { code: 'hi', name: 'Hindi', id: 3 }
-    ];
+    return this.availableLanguages;
   }
 
 
