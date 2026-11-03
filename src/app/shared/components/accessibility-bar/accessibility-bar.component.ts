@@ -2,6 +2,7 @@ import { Component, HostListener,ChangeDetectorRef,  OnDestroy, inject } from '@
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-accessibility-bar',
@@ -13,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 export class AccessibilityBarComponent implements OnDestroy {
 
   private router = inject(Router);
+  
+  public languageService = inject(LanguageService);
 
   // ==========================================
   // Properties
@@ -155,12 +158,12 @@ export class AccessibilityBarComponent implements OnDestroy {
   // Language
   // ==========================================
 
-  toggleLanguage(): void {
-    this.currentLangLabel =
-      this.currentLangLabel === 'English'
-        ? 'ਪੰਜਾਬੀ'
-        : 'English';
-  }
+  // toggleLanguage(): void {
+  //   this.currentLangLabel =
+  //     this.currentLangLabel === 'English'
+  //       ? 'ਪੰਜਾਬੀ'
+  //       : 'English';
+  // }
 
   // ==========================================
   // High Contrast
@@ -191,4 +194,42 @@ export class AccessibilityBarComponent implements OnDestroy {
   ngOnDestroy(): void {
     // Cleanup if required in future
   }
+
+
+
+
+  // Language
+  get languages() {
+    return this.languageService.getAvailableLanguages();
+  }
+
+  get currentLanguage() {
+    return this.languageService.getCurrentLang();
+  }
+
+onLanguageChange(lang: string): void {
+
+  if (!lang) return;
+
+  // Update language service
+  this.languageService.changeLanguage(lang);
+
+  // Get current URL
+  const currentUrl = this.router.url;
+
+  // Remove existing language prefix
+  const cleanUrl = currentUrl.replace(
+    /^\/(en|pb|hi)(?=\/|$)/,
+    ''
+  );
+
+  // Build new URL
+  const newUrl = lang === 'en'
+    ? (cleanUrl || '/')
+    : `/${lang}${cleanUrl || '/'}`;
+
+  // Navigate without reloading browser
+  this.router.navigateByUrl(newUrl);
+}
+ 
 }

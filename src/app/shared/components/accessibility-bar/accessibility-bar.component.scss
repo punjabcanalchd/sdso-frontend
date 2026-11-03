@@ -2,3 +2,19 @@
 {
     background-color:var(--color-light-blue); ;
 }
+
+
+
+.language-selector {
+  display: inline-block;
+  margin: 10px;
+
+  select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+}

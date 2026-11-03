@@ -89,7 +89,7 @@
   } @else {
     <!-- Internal Angular route -->
     <a
-      [routerLink]="item.route"
+      [routerLink]="getLocalizedRoute(item.route)"
       routerLinkActive="bg-warning text-dark active"
       [routerLinkActiveOptions]="{ exact: item.route === '/' }"
       class="nav-link px-3 px-lg-2 px-xl-4 py-3 text-nowrap rounded-0 d-flex align-items-center fw-bold h-100"
@@ -163,7 +163,7 @@
             <span class="d-none d-lg-inline text-nowrap">{{ child.label }}</span>
           </a>
         } @else {
-          <a [routerLink]="child.route"
+          <a [routerLink]="getLocalizedRoute(child.route)"
              class="dropdown-item py-2 px-3 text-secondary-emphasis fs-6 border-bottom border-light-subtle d-block w-100 text-wrap lh-base"
              role="menuitem" (click)="closeMenu()">
             <span class="d-lg-none">{{ child.label }}</span>

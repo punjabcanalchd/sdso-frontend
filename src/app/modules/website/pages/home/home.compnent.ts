@@ -5,6 +5,8 @@ import { StatCardsComponent } from '../../components/stat-cards/stat-cards.compo
 import { NoticeBoardComponent } from '../../components/notice-board/notice-board-component';
 import { MapSectionComponent } from '../../components/map-section/map-component';
 import { QuickLinksComponent } from '../../components/quick-links/quick-links-component';
+import { BannerSlider } from './../../../../shared/components/banner-slider/banner-slider.component';
+
 
 @Component({
   selector: 'app-home',
@@ -15,6 +17,7 @@ import { QuickLinksComponent } from '../../components/quick-links/quick-links-co
     NoticeBoardComponent,
     MapSectionComponent,
     QuickLinksComponent,
+    BannerSlider,
   ],
   templateUrl: './home.compnent.html',
   styleUrl: './home.compnent.scss',

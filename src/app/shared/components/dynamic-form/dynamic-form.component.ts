@@ -782,19 +782,19 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
       if (
         row.language_id ===
-        this.languageService.getLanguageId('en')
+        this.languageService.getCurrentLanguageId()
       ) {
         result.name_en = row.name ?? '';
         result.description_en = row.description ?? '';
       }
 
-      if (
-        row.language_id ===
-        this.languageService.getLanguageId('pb')
-      ) {
-        result.name_pb = row.name ?? '';
-        result.description_pb = row.description ?? '';
-      }
+      // if (
+      //   row.language_id ===
+      //   this.languageService.getCurrentLanguageId('pb')
+      // ) {
+      //   result.name_pb = row.name ?? '';
+      //   result.description_pb = row.description ?? '';
+      // }
     }
 
     return result;
@@ -823,15 +823,15 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     return [
       {
-        language_id: this.languageService.getLanguageId('en'),
+        language_id: this.languageService.getCurrentLanguageId(),
         name: value.name_en ?? '',
         description: value.description_en ?? ''
       },
-      {
-        language_id: this.languageService.getLanguageId('pb'),
-        name: value.name_pb ?? '',
-        description: value.description_pb ?? ''
-      }
+      // {
+      //   language_id: this.languageService.getCurrentLanguageId(),
+      //   name: value.name_pb ?? '',
+      //   description: value.description_pb ?? ''
+      // }
     ];
   }
 

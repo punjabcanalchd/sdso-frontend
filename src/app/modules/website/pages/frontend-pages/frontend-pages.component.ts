@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit,ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FrontendPagesService } from './frontend-pages.service';
+import { Subject, takeUntil } from 'rxjs';
+import { LanguageService } from '../../../../core/services/language.service';
 import { PageContentComponent } from './../../shared/page-content/page-content.component';
 
 @Component({
@@ -15,6 +17,9 @@ export class FrontendPagesComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private pageService = inject(FrontendPagesService);
+  private languageService = inject(LanguageService);
+  private destroy$ = new Subject<void>();
+
   private cdr = inject(ChangeDetectorRef);
 
   pageData: any = null;
@@ -23,7 +28,9 @@ export class FrontendPagesComponent implements OnInit {
   languageId = 1;
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap
+       .pipe(takeUntil(this.destroy$))
+       .subscribe(params => {
       const pageId = Number(params.get('pageId'));
       const languageParam = params.get('languageId');
 
@@ -41,18 +48,12 @@ export class FrontendPagesComponent implements OnInit {
         return;
       }
 
-      const languageId = Number(languageParam);
+     // Get language ID from LanguageService
+        const languageId =
+          this.languageService.getCurrentLanguageId();
+          this.languageId = languageId;
+          this.loadPage(pageId, languageId);
 
-      if (![1, 2].includes(languageId)) {
-        this.pageData = null;
-        this.loading = false;
-         this.cdr.markForCheck();
-        this.errorMessage = 'Invalid language ID.';
-        return;
-      }
-
-      this.languageId = languageId;
-      this.loadPage(pageId, languageId);
     });
   }
 
@@ -94,5 +95,10 @@ loadPage(pageId: number, languageId: number): void {
     }
   });
 }
+
+ ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

@@ -5,6 +5,9 @@ import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { environment } from '../../../../environments/environment';
 
+import { LanguageService } from '../../../core/services/language.service';
+
+
 
 export interface NavItem {
     id?: number;
@@ -31,6 +34,9 @@ export class NavbarComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   isAuthenticated$ = this.auth.isAuthenticated$();
 
+  constructor(
+  public languageService: LanguageService
+) {}
    private readonly baseUrl = environment.baseUrl;
 
   logout(): void {
@@ -170,7 +176,38 @@ export class NavbarComponent implements OnInit {
   }
 
 
+getLocalizedRoute(route: string | undefined | null): string {
 
+  if (!route) {
+    return '/';
+  }
+
+  // Keep external URLs unchanged
+  if (
+    route.startsWith('http://') ||
+    route.startsWith('https://') ||
+    route.startsWith('mailto:')
+  ) {
+    return route;
+  }
+
+  const lang = this.languageService.getCurrentLang();
+
+  const cleanRoute = route.replace(/^\/+/, '');
+
+  if (lang === 'en') {
+    return '/' + cleanRoute;
+  }
+
+  if (
+    cleanRoute === lang ||
+    cleanRoute.startsWith(lang + '/')
+  ) {
+    return '/' + cleanRoute;
+  }
+
+  return '/' + lang + '/' + cleanRoute;
+}
  
 
   //   private getLanguagePrefix(): string {
