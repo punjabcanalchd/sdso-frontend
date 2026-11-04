@@ -1,75 +1,138 @@
+
 <div class="container mt-4">
+  <h3>{{ 'NOTICEBOARD.TITLE' | translate }}</h3>
   @if (loading) {
-    <div class="text-center py-4">Loading noticeboard...</div>
+    <div class="text-center py-4">
+      Loading noticeboard...
+    </div>
   }
 
-  @if (errorMessage) {
+  @else if (errorMessage) {
     <div class="alert alert-danger">
       {{ errorMessage }}
     </div>
   }
 
-  @if (!loading && categoryData) {
+  @else if (categoryData) {
+
     <div class="news_card">
-      <ul class="nav nav-tabs justify-content-center nav-fill custom_tabs" id="myTab" role="tablist">
-        <li class="nav-item tab_item" role="presentation">
-          <a style="text-decoration: none;" [href]="'/noticeboard/' + categoryData.template_id">
+
+      <ul class="nav nav-tabs justify-content-center nav-fill custom_tabs">
+
+        <li class="nav-item tab_item">
+
+          <a
+            style="text-decoration: none;"
+            [href]="'/noticeboard/' + categoryData.template_id">
+
             <button
-          class="nav-link custom_tab_link"
-          [class.active]="cid === categoryData.template_id"
-          type="button"
-          role="tab">
+              class="nav-link custom_tab_link"
+              [class.active]="cid === categoryData.template_id"
+              type="button">
 
-          {{ getCategoryName() }}
+              {{ getCategoryName() }}
 
-        </button>
-            
+            </button>
+
           </a>
+
         </li>
+
       </ul>
 
-      <div class="tab-content" id="myTabContent">
-        <div 
-          class="tab-pane fade show" 
-          [class.active]="cid === categoryData.template_id"
-          [id]="'category_' + categoryData.template_id" 
-          role="tabpanel" 
-          [attr.aria-labelledby]="'category_' + categoryData.template_id">
-          
+      <div class="tab-content">
+
+        <div
+          class="tab-pane fade show active"
+          role="tabpanel">
+
           <div class="tab_content">
+
             <div class="table-responsive">
+
               <table class="table custom_table">
+
                 <thead>
                   <tr>
-                    <th scope="col">Serial No.</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Publish Date</th>
-                    <th scope="col">Download</th>
+                      <th>{{ 'NOTICEBOARD.SERIAL_NO' | translate }}</th>
+                      <th>{{ 'NOTICEBOARD.DESCRIPTION' | translate }}</th>
+                      <th>{{ 'NOTICEBOARD.PUBLISH_DATE' | translate }}</th>
+                      <th>{{ 'NOTICEBOARD.DOWNLOAD' | translate }}</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  @if (notificationArray[categoryData.template_id]) {
-                    @for (nvalue of notificationArray[categoryData.template_id]; track $index) {
+
+                  @if (notificationArray[categoryData.template_id]?.length) {
+
+                    @for (
+                      nvalue of notificationArray[categoryData.template_id];
+                      track $index
+                    ) {
+
                       <tr>
-                        <th scope="row">{{ $index + 1 }}</th>
-                        <td>{{ nvalue.message }}</td>
-                        <td>{{ nvalue.publish_date }}</td>
+
+                        <th scope="row">
+                          {{ $index + 1 }}
+                        </th>
+
                         <td>
-                          @if (nvalue.upload_notice) {
-                            <a [href]="'/attachments/noticeboard/' + nvalue.upload_notice" class="btn shadow-none download_btn" download>
-                              <img src="/images/download.svg" class="img-fluid" alt="download">
-                            </a>
-                          }
+                          {{ nvalue.message }}
                         </td>
+
+                        <td>
+                          {{ nvalue.publish_date }}
+                        </td>
+
+                        <td>
+
+                          @if (nvalue.upload_notice) {
+
+                            <a
+                              [href]="'/attachments/noticeboard/' + nvalue.upload_notice"
+                              class="btn shadow-none download_btn"
+                              download>
+                              {{ 'NOTICEBOARD.DOWNLOAD' | translate }}
+
+                              <!-- <img
+                                src="/images/download.svg"
+                                class="img-fluid"
+                                alt="Download"> -->
+
+                            </a>
+
+                          }
+
+                        </td>
+
                       </tr>
+
                     }
+
+                  } @else {
+
+                    <tr>
+                      <td colspan="4" class="text-center">
+                        No records found.
+                      </td>
+                    </tr>
+
                   }
+
                 </tbody>
+
               </table>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   }
+
 </div>

@@ -1,10 +1,6 @@
-
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-
-
 
 export interface AppLanguage {
   code: string;
@@ -34,47 +30,50 @@ export class LanguageService {
   ];
 
   private currentLangSubject = new BehaviorSubject<string>('en');
-
   currentLang$ = this.currentLangSubject.asObservable();
 
-  // Set language
+  constructor(private translate: TranslateService) {
+    this.translate.addLangs(['en', 'pb']);
+    this.translate.setFallbackLang('en');
+  }
+
   setLanguage(lang: string): void {
-    if (!this.isValidLanguage(lang)) {
-      lang = 'en';
-    }
+    const language = this.isValidLanguage(lang) ? lang : 'en';
 
-    if (this.currentLangSubject.value !== lang) {
-      this.currentLangSubject.next(lang);
-    }
+    this.currentLangSubject.next(language);
+    localStorage.setItem('user_lang', language);
+
+    this.translate.use(language).subscribe();
   }
 
-  // Get current language
-  getCurrentLang(): string {
-    return this.currentLangSubject.value;
-  }
-
-  // Get current language ID
-  getCurrentLanguageId(): number {
-    return this.getLanguageId(this.getCurrentLang());
-  }
-
-  // Get language ID by code
-  getLanguageId(code: string): number {
-    return this.languages.find(l => l.code === code)?.id ?? 1;
-  }
-
-  // Validate language
-  isValidLanguage(lang: string): boolean {
-    return this.languages.some(l => l.code === lang);
-  }
-
-  // Change language
   changeLanguage(lang: string): void {
     this.setLanguage(lang);
   }
 
-  // Available languages
+  getCurrentLang(): string {
+    return this.currentLangSubject.value;
+  }
+
+  getCurrentLanguageId(): number {
+    return this.getLanguageId(this.getCurrentLang());
+  }
+
+  getLanguageId(code: string): number {
+    return this.languages.find(l => l.code === code)?.id ?? 1;
+  }
+
+  isValidLanguage(lang: string): boolean {
+    return this.languages.some(l => l.code === lang);
+  }
+
   getAvailableLanguages(): AppLanguage[] {
     return this.languages;
+  }
+
+  initializeLanguage(lang?: string): void {
+    const savedLanguage = localStorage.getItem('user_lang');
+    const language = lang || savedLanguage || 'en';
+
+    this.setLanguage(language);
   }
 }
