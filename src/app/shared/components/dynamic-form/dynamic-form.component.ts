@@ -291,9 +291,24 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     // Get the complete form data
     const formValue = this.form.getRawValue();
-    // Validate form
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    // Validate only visible fields
+    const allFields = this.schema?.steps
+      ? this.schema.steps.flatMap(step => step.fields)
+      : this.schema?.fields || [];
+
+    let hasVisibleInvalidField = false;
+    for (const field of allFields) {
+      if (!this.isFieldVisible(field)) {
+        continue;
+      }
+      const control = this.form.get(field.name);
+      if (control && control.invalid) {
+        control.markAsTouched();
+        hasVisibleInvalidField = true;
+      }
+    }
+
+    if (hasVisibleInvalidField) {
       this.showMissingFieldsWarning();
       return;
     }
@@ -613,16 +628,28 @@ export class DynamicFormComponent implements OnInit, OnChanges {
   }
 
   submitCurrentForm(): boolean {
+    const allFields = this.schema?.steps
+      ? this.schema.steps.flatMap(step => step.fields)
+      : this.schema?.fields || [];
 
-    this.form.markAllAsTouched();
+    let hasVisibleInvalidField = false;
+    for (const field of allFields) {
+      if (!this.isFieldVisible(field)) {
+        continue;
+      }
+      const control = this.form.get(field.name);
+      if (control && control.invalid) {
+        control.markAsTouched();
+        hasVisibleInvalidField = true;
+      }
+    }
 
-    if (this.form.invalid) {
+    if (hasVisibleInvalidField) {
       this.showMissingFieldsWarning();
       return false;
     }
 
     this.submitForm.emit(this.form.getRawValue());
-
     return true;
   }
 
@@ -679,10 +706,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     const currentValue = targetControl.value;
 
     if (Array.isArray(condition.value)) {
-      return condition.value.includes(currentValue);
+      return condition.value.some((v: any) => v == currentValue);
     }
 
-    return currentValue === condition.value;
+    return currentValue == condition.value;
   }
 
   forceNumericText(event: Event, field: any): void {

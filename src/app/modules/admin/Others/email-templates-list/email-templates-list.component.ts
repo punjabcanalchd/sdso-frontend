@@ -90,7 +90,7 @@ export class EmailTemplatesListComponent implements OnInit {
         this.data = (res.data || []).map((item: any, index: number) => {
           const englishSubject = item.name_en || 'N/A';
           const punjabiSubject = item.name_pb
-            ? `<div class="text-dark lh-1 pt-2">
+            ? `<div class="text-dark lh-base pt-1 text-break text-wrap">
                 <span class="text-muted fw-bold small">PB:</span>
                 ${item.name_pb}
               </div>`
@@ -101,7 +101,7 @@ export class EmailTemplatesListComponent implements OnInit {
             orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
             name: item.name,
             subjectHtml: `
-              <div class="text-dark pb-1 lh-1">
+              <div class="text-dark pb-1 lh-base text-break text-wrap">
                 <span class="text-muted fw-bold small">EN:</span>
                 ${englishSubject}
               </div>
@@ -298,3 +298,4 @@ export class EmailTemplatesListComponent implements OnInit {
   }
 
 }
+

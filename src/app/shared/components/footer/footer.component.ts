@@ -97,6 +97,12 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ngZone.runOutsideAngular(() => this.startAutoScroll());
     }
 
+    topLinksTitle = 'Policies & Help';
+
+    get isPb(): boolean {
+      return this.languageService.getCurrentLang() === 'pb';
+    }
+
     // ── Load Dynamic Data ─────────────────────────────────────────────────────
     loadFooterData(): void {
       this.isLoading = true;
@@ -110,6 +116,7 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
             const data = res.data;
             this.columns = data.columns || [];
             this.topLinks = data.top_links || [];
+            this.topLinksTitle = data.top_links_title || (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
             this.partnerLogos = data.partner_logos || [];
             if (data.copyright) {
               this.copyright = data.copyright;

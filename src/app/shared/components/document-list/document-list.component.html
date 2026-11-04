@@ -132,12 +132,12 @@
             @for (col of columns; track col.key) {
 
             @if (!col.type || col.type === 'text') {
-            <td class="text-start text-dark py-3 fw-normal text-break">
+            <td class="text-start text-dark py-3 fw-normal text-break text-wrap">
               {{ row[col.key] }}
             </td>
             }
             @if (col.type === 'html') {
-            <td class="text-start text-dark py-3 fw-normal text-break" [innerHTML]="row[col.key]">
+            <td class="text-start text-dark py-3 fw-normal text-break text-wrap" [innerHTML]="row[col.key]">
             </td>
             }
 

@@ -1,4 +1,5 @@
-import { Component, HostListener, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
@@ -27,7 +28,9 @@ export interface NavItem {
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
+  private rawMenus: any[] = [];
+  private langSub?: Subscription;
   private router = inject(Router);
   private auth = inject(AuthService);
   private api = inject(ApiService);
@@ -52,87 +55,86 @@ export class NavbarComponent implements OnInit {
   navItems: NavItem[] = [];
   ngOnInit() {
     this.fetchAndBuildNavbar();
+    this.langSub = this.languageService.currentLang$.subscribe(() => {
+      if (this.rawMenus.length > 0) {
+        this.buildNavTree();
+      }
+    });
   }
 
- fetchAndBuildNavbar() {
+  ngOnDestroy() {
+    this.langSub?.unsubscribe();
+  }
+
+  private isItemActive(item: any): boolean {
+    return !!item && (item.status === true || item.status == 1 || item.status === '1' || item.status === 'true');
+  }
+
+  private buildNavTree(): void {
+    const isPb = this.languageService.getCurrentLang() === 'pb';
+
+    const mapMenu = (m: any): NavItem => {
+      let internalRoute: string | undefined = '/';
+      let extUrl: string | undefined;
+
+      if (m.page_id) {
+        internalRoute = `/pages/${m.page_id}/1`;
+      } else if (m.external_link) {
+        const link = m.external_link.trim();
+
+        if (link.toLowerCase().endsWith('.pdf')) {
+          extUrl = link.startsWith('/') ? link : `/${link}`;
+          internalRoute = undefined;
+        } else if (/^https?:\/\//i.test(link)) {
+          extUrl = link;
+          internalRoute = undefined;
+        } else {
+          internalRoute = link.startsWith('/') ? link : `/${link}`;
+        }
+      }
+
+      const label = isPb
+        ? (m.punjabi_description?.message || m.name_pa || m.english_description?.message || m.name_en || 'Unnamed Menu')
+        : (m.english_description?.message || m.name_en || m.punjabi_description?.message || m.name_pa || 'Unnamed Menu');
+
+      const mapped: NavItem = {
+        label,
+        route: internalRoute,
+        externalUrl: extUrl,
+        isOpen: false,
+      };
+
+      if (m.children && m.children.length > 0) {
+        mapped.children = m.children
+          .filter((child: any) => this.isItemActive(child))
+          .map((child: any) => mapMenu(child));
+      }
+
+      return mapped;
+    };
+
+    const activeMenus = this.rawMenus
+      .filter((m: any) => this.isItemActive(m))
+      .sort((a: any, b: any) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
+
+    this.navItems = activeMenus.map((m: any) => mapMenu(m));
+    this.cdr.detectChanges();
+  }
+
+  fetchAndBuildNavbar() {
     this.api.get<any>('/front/menus').subscribe({
       next: (res) => {
-        const rawMenus = res.data || [];
-
-
-        const mapMenu = (m: any): NavItem => {
-        let internalRoute: string | undefined = '/';
-        let extUrl: string | undefined;
-
-        if (m.page_id) {
-          internalRoute = `/pages/${m.page_id}/1`;
-
-        } else if (m.external_link) {
-          const link = m.external_link.trim();
-
-          if (link.toLowerCase().endsWith('.pdf')) {
-            // PDF: open directly in a new tab
-            extUrl = link.startsWith('/') ? link : `/${link}`;
-            internalRoute = undefined;
-
-          } else if (/^https?:\/\//i.test(link)) {
-            // External website
-            extUrl = link;
-            internalRoute = undefined;
-
-          } else {
-            // Internal Angular route
-            internalRoute = link.startsWith('/') ? link : `/${link}`;
-          }
-        }
- 
-        // const mapMenu = (m: any): NavItem => {
-        //   let internalRoute: string | undefined = '/';
-        //   let extUrl: string | undefined = undefined;
- 
-        //   if (m.page_id) {
-        //       internalRoute = `/pages/${m.page_id}/1`;
-        //   } else if (m.external_link) {
-        //      if (m.external_link.startsWith('http')) {
-        //          extUrl = m.external_link;
-        //          internalRoute = undefined;
-        //      } else {
-        //          internalRoute = m.external_link.startsWith('/') ? m.external_link : `/${m.external_link}`;
-        //      }  
-        //   }
- 
-          const mapped: NavItem = {
-            label: m.english_description?.message || 'Unnamed Menu',
-            route: internalRoute,
-            externalUrl: extUrl,
-            isOpen: false,
-          };
- 
-          if (m.children && m.children.length > 0) {
-            mapped.children = m.children.map((child: any) => mapMenu(child));
-          }
- 
-          return mapped;
-        };
- 
-        const activeMenus = rawMenus
-          .filter((m: any) => (m.status == 1 || m.status === true))
-          .sort((a: any, b: any) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
- 
-        this.navItems = activeMenus.map((m: any) => mapMenu(m));
-        console.log("Menu Items",this.navItems);
-        this.cdr.detectChanges();
+        this.rawMenus = res.data || [];
+        this.buildNavTree();
       },
       error: (err) => {
-        console.error('Failed to load dynamic navbar, using fallback', err);
+        console.error('Failed to load dynamic navbar', err);
         this.cdr.detectChanges();
       }
     });
   }
-  
 
-
-  toggleMenu(): void {
+    toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
     if (!this.isMenuOpen) {
       this.closeAllSubmenus();

@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin, of, catchError, Subscription } from 'rxjs';
 import { ApiService } from '../../../../../core/services/api.service';
 import { ToastService } from '../../../../../shared/services/toast.service';
 import { DocumentListComponent, TableColumn } from '../../../../../shared/components/document-list/document-list.component';
@@ -17,7 +18,8 @@ declare const bootstrap: any;
   templateUrl: './menu-managment.component.html',
   styleUrls: ['./menu-managment.component.scss']
 })
-export class MenuManagementComponent implements OnInit {
+export class MenuManagementComponent implements OnInit, OnDestroy {
+  private checkboxSub = new Subscription();
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef)
@@ -116,6 +118,68 @@ export class MenuManagementComponent implements OnInit {
         className: 'col-md-6 ps-4 mt-0 pt-3 pb-0'
       },
 
+      // --- LINK DETAILS ---
+      {
+        name: 'header_link_details',
+        label: '',
+        type: 'html',
+        html: '<div class="pt-0 mt-2 font_color fw-bold text-uppercase small">Link Details</div>',
+        className: 'col-12 mt-0'
+      },
+      {
+        name: 'link_type',
+        label: 'Link Type',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Please select Link Type', value: '' },
+          { label: 'Page', value: 0 },
+          { label: 'Category', value: 3 },
+          { label: 'Module', value: 2 },
+          { label: 'External', value: 1 }
+        ],
+        className: 'col-md-6 border-end border-light-subtle pe-4 mt-0 pt-3'
+      },
+      // When link_type === 0 (Page)
+      {
+        name: 'page_id',
+        label: 'Page',
+        type: 'select',
+        required: true,
+        options: [{ label: 'Please select Page', value: '' }],
+        className: 'col-md-6 ps-4 mt-0 pt-3',
+        visibleWhen: {
+          field: 'link_type',
+          value: [0, '0']
+        }
+      },
+      // When link_type === 3 (Category)
+      {
+        name: 'category_link',
+        label: 'Category',
+        type: 'select',
+        required: true,
+        options: [{ label: 'Please select Category', value: '' }],
+        className: 'col-md-6 ps-4 mt-0 pt-3',
+        visibleWhen: {
+          field: 'link_type',
+          value: [3, '3']
+        }
+      },
+      // When link_type === 1 or 2 (External or Module)
+      {
+        name: 'external_link',
+        label: 'External Link / Module',
+        type: 'text',
+        placeholder: 'e.g. https://example.com or noticeboard',
+        required: true,
+        className: 'col-md-6 ps-4 mt-0 pt-3',
+        visibleWhen: {
+          field: 'link_type',
+          value: [1, 2, '1', '2']
+        }
+      },
+
       // --- SETTINGS HEADER ---
       {
         name: 'header_settings',
@@ -150,6 +214,8 @@ export class MenuManagementComponent implements OnInit {
   ngOnInit() {
     this.fetchMenus();
     this.fetchParentMenus();
+    this.fetchPages();
+    this.fetchCategories();
   }
 
   fetchMenus() {
@@ -176,22 +242,6 @@ export class MenuManagementComponent implements OnInit {
       error: () => { this.toast.show('error', 'Failed to load menus'); }
     });
   }
-  //  fetchParentMenus() {
-  //     this.api.get<any>('/admin/menus').subscribe({
-  //       next: (res) => {
-  //         const menus = res.data || [];
-  //         const parentOptions = menus.filter((m: any) => !m.parent_id).map((m: any) => ({ label: m.title, value: String(m.id) }));
-  //         const parentOptionsPb = menus.filter((m: any) => !m.parent_id).map((m: any) => ({ label: m.title_pb || m.title, value: String(m.id) }));
-  //         const parentField = this.menuFormSchema.fields?.find(f => f.name === 'parent_id');
-  //         if (parentField) parentField.options = [{ label: 'Please select Parent Menu (English)', value: '' }, ...parentOptions];
-
-  //         const parentFieldPb = this.menuFormSchema.fields?.find(f => f.name === 'parent_id_pb');
-  //         if (parentFieldPb) parentFieldPb.options = [{ label: 'Please select Parent Menu (Punjabi)', value: '' }, ...parentOptionsPb];
-
-  //         this.cdr.detectChanges();
-  //       }
-  //     });
-  //   }
 
   fetchParentMenus() {
     this.api.get<any>('/admin/menus').subscribe({
@@ -203,7 +253,7 @@ export class MenuManagementComponent implements OnInit {
           let path = isPb ? (current.name_pa || current.name_en) : current.name_en;
 
           while (current.parent_id) {
-            current = menus.find((x: any) => x.id === Number(current.parent_id));
+            current = menus.find((x: any) => (x.menu_id ?? x.id) === Number(current.parent_id));
             if (!current) break;
             const parentName = isPb ? (current.name_pa || current.name_en) : current.name_en;
             path = parentName + ' > ' + path;
@@ -235,34 +285,103 @@ export class MenuManagementComponent implements OnInit {
     });
   }
 
+  fetchPages() {
+    this.api.get<any>('/admin/pages?per_page=100').subscribe({
+      next: (res) => {
+        const pages = res?.data?.data || res?.data || [];
+        const options = pages.map((p: any) => ({
+          label: p.name_en || p.name_pb || ('Page ' + p.page_id),
+          value: String(p.page_id)
+        }));
+        const pageField = this.menuFormSchema.fields?.find(f => f.name === 'page_id');
+        if (pageField) {
+          pageField.options = [{ label: 'Please select Page', value: '' }, ...options];
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to load pages for menu:', err)
+    });
+  }
+
+  fetchCategories() {
+    const notice$ = this.api.get<any>('/admin/noticeboard-categories/dropdown').pipe(
+      catchError(() => this.api.get<any>('/admin/noticeboard/categories')),
+      catchError(() => of({ data: [] }))
+    );
+
+    const media$ = this.api.get<any>('/admin/media-categories/dropdown').pipe(
+      catchError(() => of({ data: [] }))
+    );
+
+    forkJoin({ notice: notice$, media: media$ }).subscribe({
+      next: ({ notice, media }) => {
+        const noticeCats = notice?.data || [];
+        const noticeOptions = noticeCats.map((c: any) => ({
+          label: 'Noticeboard: ' + (c.label || c.name),
+          value: 'noticeboard/' + (c.value || c.template_id || c.id)
+        }));
+
+        const mediaCats = media?.data || [];
+        const mediaOptions = mediaCats.map((m: any) => ({
+          label: 'Media: ' + (m.label || m.name),
+          value: 'media/' + (m.value || m.template_id || m.id)
+        }));
+
+        const allCats = [...noticeOptions, ...mediaOptions];
+        const catField = this.menuFormSchema.fields?.find(f => f.name === 'category_link');
+        if (catField) {
+          catField.options = [{ label: 'Please select Category', value: '' }, ...allCats];
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Failed to load categories for menu:', err)
+    });
+  }
 
   bindCheckboxLogic() {
+    this.checkboxSub.unsubscribe();
+    this.checkboxSub = new Subscription();
+
     const dForm = this.menuModal?.dynamicForm;
 
     if (dForm && dForm.form) {
       const formGroup = dForm.form;
 
-      formGroup.get('same_as_english')?.valueChanges.subscribe(isChecked => {
+      const sub1 = formGroup.get('same_as_english')?.valueChanges.subscribe(isChecked => {
         if (isChecked) {
           formGroup.get('name_pa')?.setValue(formGroup.get('name_en')?.value);
           formGroup.get('parent_id_pb')?.setValue(formGroup.get('parent_id')?.value);
         }
       });
-      formGroup.get('name_en')?.valueChanges.subscribe(val => {
+      const sub2 = formGroup.get('name_en')?.valueChanges.subscribe(val => {
         if (formGroup.get('same_as_english')?.value) formGroup.get('name_pa')?.setValue(val);
       });
-      formGroup.get('parent_id')?.valueChanges.subscribe(val => {
+      const sub3 = formGroup.get('parent_id')?.valueChanges.subscribe(val => {
         if (formGroup.get('same_as_english')?.value) formGroup.get('parent_id_pb')?.setValue(val);
       });
+
+      if (sub1) this.checkboxSub.add(sub1);
+      if (sub2) this.checkboxSub.add(sub2);
+      if (sub3) this.checkboxSub.add(sub3);
     }
   }
 
-
+  ngOnDestroy() {
+    this.checkboxSub.unsubscribe();
+  }
 
   openCreateModal() {
     this.isEditMode = false;
     this.editingMenuId = null;
-    this.formInitialData = { status: true };
+    this.fetchParentMenus();
+    this.formInitialData = {
+      status: true,
+      sort_order: 1,
+      link_type: '',
+      page_id: '',
+      category_link: '',
+      external_link: ''
+    };
     this.modalHelper.openModal({
       modalRef: this.menuModal,
       schema: this.menuFormSchema,
@@ -272,39 +391,59 @@ export class MenuManagementComponent implements OnInit {
       onOpen: () => this.bindCheckboxLogic() 
     });
   }
-  // handleTableAction(event: { action: string, row: any }) {
-  //   if (event.action === 'edit') {
-  //     this.isEditMode = true;
-  //     this.editingMenuId = event.row.public_id;
-  //     this.formInitialData = {
-  //       ...event.row,
-  //       status: event.row.status == 1 || event.row.status === true,
-  //           parent_id: event.row.parent_id ? String(event.row.parent_id) : '',
-  //       parent_id_pb: event.row.parent_id ? String(event.row.parent_id) : ''
-  //     };
 
-  //     this.menuModal.open();
-
-  //     setTimeout(() => this.bindCheckboxLogic(), 100);
-  //   }
-    handleTableAction(event: { action: string, row: any }) {
+  handleTableAction(event: { action: string, row: any }) {
     if (event.action === 'edit') {
       this.isEditMode = true;
       this.editingMenuId = event.row.public_id;
       
+      const row = event.row;
+
+      // Exclude self from parent options to prevent circular hierarchy
+      const parentField = this.menuFormSchema.fields?.find(f => f.name === 'parent_id');
+      const parentFieldPb = this.menuFormSchema.fields?.find(f => f.name === 'parent_id_pb');
+      const nonSelfMenus = this.menus.filter((m: any) => m.menu_id !== row.menu_id);
+      if (parentField) {
+        parentField.options = [
+          { label: 'Please select Parent Menu (English)', value: '' },
+          ...nonSelfMenus.map((m: any) => ({ label: m.name_en, value: String(m.menu_id) }))
+        ];
+      }
+      if (parentFieldPb) {
+        parentFieldPb.options = [
+          { label: 'Please select Parent Menu (Punjabi)', value: '' },
+          ...nonSelfMenus.map((m: any) => ({ label: m.name_pa || m.name_en, value: String(m.menu_id) }))
+        ];
+      }
+      let rawLinkType: any = (row.link_type !== null && row.link_type !== undefined) ? Number(row.link_type) : '';
+      let catLink = '';
+      if (rawLinkType === 3) {
+        catLink = row.external_link || '';
+        if (catLink.startsWith('/')) {
+          catLink = catLink.substring(1);
+        }
+        if (catLink && /^\d+$/.test(catLink)) {
+          catLink = 'noticeboard/' + catLink;
+        }
+      }
+
       this.formInitialData = {
-        ...event.row,
-        status: event.row.status == 1 || event.row.status === true,
-        parent_id: event.row.parent_id ? String(event.row.parent_id) : '',
-        parent_id_pb: event.row.parent_id ? String(event.row.parent_id) : ''
+        ...row,
+        status: row.status == 1 || row.status === true,
+        parent_id: row.parent_id ? String(row.parent_id) : '',
+        parent_id_pb: row.parent_id ? String(row.parent_id) : '',
+        link_type: rawLinkType !== '' ? rawLinkType : '',
+        page_id: row.page_id ? String(row.page_id) : '',
+        category_link: catLink,
+        external_link: row.external_link || ''
       };
       this.modalHelper.openModal({
         modalRef: this.menuModal,
         schema: this.menuFormSchema,
         submitLabel: 'Save',
         patchData: this.formInitialData,
-        useRouting: false, // Menus don't use routing!
-        onOpen: () => this.bindCheckboxLogic() // Triggers your custom UI logic safely
+        useRouting: false,
+        onOpen: () => this.bindCheckboxLogic()
       });
     }
     else if (event.action === 'delete') {
@@ -323,10 +462,38 @@ export class MenuManagementComponent implements OnInit {
       });
     }
   }
+
   handleFormSubmit(event: any) {
     let payload = { ...(event.formValue ? event.formValue : event) };
 
     payload.status = payload.status ? 1 : 0;
+    payload.parent_id = payload.parent_id ? Number(payload.parent_id) : null;
+    payload.sort_order = (payload.sort_order !== null && payload.sort_order !== undefined && payload.sort_order !== '') ? Number(payload.sort_order) : 0;
+
+    if (payload.link_type !== '' && payload.link_type !== null && payload.link_type !== undefined) {
+      payload.link_type = Number(payload.link_type);
+    } else {
+      payload.link_type = null;
+    }
+
+    if (payload.link_type === 0) {
+      payload.page_id = payload.page_id ? Number(payload.page_id) : null;
+      payload.external_link = null;
+    } else if (payload.link_type === 3) {
+      payload.page_id = null;
+      payload.external_link = payload.category_link || null;
+    } else if (payload.link_type === 1 || payload.link_type === 2) {
+      payload.page_id = null;
+      payload.external_link = payload.external_link ? payload.external_link.trim() : null;
+    } else {
+      payload.page_id = null;
+      payload.external_link = null;
+    }
+
+    delete payload.category_link;
+    delete payload.parent_id_pb;
+    delete payload.same_as_english;
+
     const apiCall = this.isEditMode
       ? this.api.post(`/admin/menus/${this.editingMenuId}/update`, payload)
       : this.api.post('/admin/menus', payload);

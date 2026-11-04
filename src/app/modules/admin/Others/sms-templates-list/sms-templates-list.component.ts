@@ -89,7 +89,7 @@ export class SmsTemplatesListComponent implements OnInit {
         this.data = (res.data || []).map((item: any, index: number) => {
           const englishMessage = item.description_en || 'N/A';
           const punjabiMessage = item.description_pb
-            ? `<div class="text-dark lh-1 pt-2">
+            ? `<div class="text-dark lh-base pt-1 text-break text-wrap">
                 <span class="text-muted fw-bold small">PB:</span>
                 ${item.description_pb}
               </div>`
@@ -98,12 +98,12 @@ export class SmsTemplatesListComponent implements OnInit {
           return {
             id: item.public_id,
             orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1,
-            name: item.name_en || 'N/A',
+            name: item.name || item.name_en || item.name_pb || 'N/A',
             templateid: item.templateid || 'N/A',
             message_en: item.message_en,
             message_pb: item.message_pb,
             messageHtml: `
-              <div class="text-dark pb-1 lh-1">
+              <div class="text-dark pb-1 lh-base text-break text-wrap">
                 <span class="text-muted fw-bold small">EN:</span>
                 ${englishMessage}
               </div>
@@ -320,3 +320,4 @@ export class SmsTemplatesListComponent implements OnInit {
   }
 
 }
+

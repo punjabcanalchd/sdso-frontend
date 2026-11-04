@@ -39,7 +39,7 @@
         <!-- GIGW Policies / Top Links Column -->
         <div class="col-lg-3 col-md-6 mb-4">
           <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">           
-            Policies & Help
+            {{ topLinksTitle }}
           </h5>
 
           <ul class="list-unstyled mb-0">
@@ -64,48 +64,27 @@
           </ul>
         </div>
      
-        <!-- Site Statistics (GIGW 3.0 Compliance) -->
-        <div class="col-lg-3 col-md-6 mb-4">
-          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
-            <i class="bi bi-bar-chart-fill me-2" aria-hidden="true"></i>
-            Site Statistics
-          </h5>
-
-          <div class="d-flex align-items-center mb-4">
-            <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
-              <i class="bi bi-people-fill fs-4 text-warning" aria-hidden="true"></i>
-            </div>
-            <div class="text-start">
-              <div class="small text-uppercase text-light">Total Visitors</div>
-              <div class="fw-bold fs-5 text-white">
-                {{ stats.totalVisitors ? (stats.totalVisitors | number) : '—' }}
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex align-items-center">
-            <div class="rounded-circle border border-light d-flex align-items-center justify-content-center me-3 stats_icon_css">
-              <i class="bi bi-calendar-check-fill fs-4 text-warning" aria-hidden="true"></i>
-            </div>
-            <div class="text-start">
-              <div class="small text-uppercase text-light">Last Updated</div>
-              <div class="fw-bold text-white">
-                {{ stats.lastUpdated || '—' }}
-              </div>
-            </div>
-          </div>
-
-        </div>
-     
       </div>
 
     </div>
   </div>
 
+  <!-- ── SITE STATISTICS: Horizontal Bar Directly Above Logos ── -->
+  <div class="border-top border-secondary border-opacity-25 py-3 bg-dark bg-opacity-25">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="small fw-semibold text-white">
+          <span>{{ isPb ? 'ਕੁੱਲ ਵਿਜ਼ਿਟਰ' : 'Total Visitors' }} :</span>
+          <span class="text-warning ms-2 fw-bold fs-6">{{ stats.totalVisitors || '—' }}</span>
+        </div>
+        <div class="small fw-semibold text-white">
+          <span>{{ isPb ? 'ਆਖਰੀ ਅੱਪਡੇਟ' : 'Last Updated' }} :</span>
+          <span class="text-warning ms-2 fw-bold">{{ stats.lastUpdated || '—' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-
-  
-        <!-- Start Footer -->
   <!-- ── MIDDLE SECTION: Partner logos — continuous scroll ── -->
   <div class="gov-footer-partners" aria-labelledby="partners-heading">
     <div class="container-fluid px-0">
