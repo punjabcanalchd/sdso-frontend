@@ -69,17 +69,12 @@ const websiteChildren: Routes = [
 
   // Noticeboard
   { path: 'noticeboard/:id', component: NoticeboardDetailComponent },
+  { path: ':lang/noticeboard/:id',component: NoticeboardDetailComponent },
 
 ];
 
 const routes: Routes = [
 
-  // Default English routes
-  {
-    path: '',
-    component: WebsiteLayout,
-    children: websiteChildren
-  },
 
   // Other language routes: pb, hi, etc.
   {
@@ -88,7 +83,14 @@ const routes: Routes = [
     canMatch: [LanguageGuard],
     canActivate: [LanguageGuard],
     children: websiteChildren
-  }
+  },
+  
+  // Default English routes
+  {
+    path: '',
+    component: WebsiteLayout,
+    children: websiteChildren
+  },
 
 ];
 

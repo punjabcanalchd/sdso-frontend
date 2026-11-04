@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FrontendPagesService } from './../../pages/frontend-pages/frontend-pages.service';
+import { LanguageService } from '../../../../core/services/language.service';
 
 @Component({
   selector: 'app-noticeboard-detail',
@@ -13,6 +14,7 @@ import { FrontendPagesService } from './../../pages/frontend-pages/frontend-page
 export class NoticeboardDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private pageService = inject(FrontendPagesService);
+  private languageService = inject(LanguageService);
 
   categoryData: any = null;
   notificationArray: { [key: number]: any[] } = {};
@@ -26,14 +28,8 @@ export class NoticeboardDetailComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = Number(params.get('id'));
-      const lang = params.get('lang') || 'en';
-
-      const languageIds: Record<string, number> = {
-        en: 1,
-        pb: 2,      
-      };
-
-      const languageId = languageIds[lang] ?? 1;
+      const lang = this.languageService.getCurrentLang();
+      const languageId = this.languageService.getLanguageId(lang);
 
       if (id > 0) {
         this.loadNoticeboard(id, languageId);
@@ -103,7 +99,14 @@ export class NoticeboardDetailComponent implements OnInit {
   // }
 
   // Helper to extract the description message based on active language or fallback
-  getCategoryName(): string {
-    return this.categoryData?.name || '';
-  }
+getCategoryName(): string {
+
+  const languageId = this.languageService.getCurrentLanguageId();
+
+  const description = this.categoryData?.descriptions?.find(
+    (item: any) => item.language_id === languageId
+  );
+
+  return description?.message || this.categoryData?.name || '';
+}
 }

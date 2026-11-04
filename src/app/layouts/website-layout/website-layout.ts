@@ -59,16 +59,4 @@ export class WebsiteLayout {
       /^\/(pb|hi)\/?$/.test(this.router.url.split('?')[0]);
   }
 
-
-  //   public languageService = inject(LanguageService);
-  // // private router = inject(Router);
-
-  // get languages() {
-  //   return this.languageService.getAvailableLanguages();
-  // }
-
-  // get currentLanguage() {
-  //   return this.languageService.getCurrentLang();
-  // }
-
 }

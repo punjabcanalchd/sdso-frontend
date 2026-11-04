@@ -24,11 +24,16 @@ export class FrontendPagesService {
 
 
  // Update this method to accept both id and languageId
-  getNoticeboard(id: number, languageId: number) {
-    const langId = this.languageService.getCurrentLanguageId();
-    return this.api.get<any>(
-      `/front/noticeboard/${langId}/${id}`
-    );
-  }
+  // getNoticeboard(id: number, languageId: number) {
+  //   const langId = this.languageService.getCurrentLanguageId();
+  //   return this.api.get<any>(
+  //     `/front/noticeboard/${langId}/${id}`
+  //   );
+  // }
 
+  getNoticeboard(id: number, languageId: number) {
+  return this.api.get<any>(
+    `/front/noticeboard/${languageId}/${id}`
+  );
+}
 }

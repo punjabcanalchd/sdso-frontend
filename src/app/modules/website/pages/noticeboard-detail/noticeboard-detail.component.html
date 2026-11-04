@@ -14,16 +14,16 @@
       <ul class="nav nav-tabs justify-content-center nav-fill custom_tabs" id="myTab" role="tablist">
         <li class="nav-item tab_item" role="presentation">
           <a style="text-decoration: none;" [href]="'/noticeboard/' + categoryData.template_id">
-            <button 
-              class="nav-link custom_tab_link" 
-              [class.active]="cid === categoryData.template_id"
-              [id]="'category_parent_' + categoryData.template_id" 
-              type="button" 
-              role="tab" 
-              aria-controls="all" 
-              aria-selected="true">
-              {{ categoryData.description?.message || categoryData.name }}
-            </button>
+            <button
+          class="nav-link custom_tab_link"
+          [class.active]="cid === categoryData.template_id"
+          type="button"
+          role="tab">
+
+          {{ getCategoryName() }}
+
+        </button>
+            
           </a>
         </li>
       </ul>

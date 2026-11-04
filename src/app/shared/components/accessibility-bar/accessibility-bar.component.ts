@@ -200,33 +200,41 @@ export class AccessibilityBarComponent implements OnDestroy {
   // Language
   readonly languages = this.languageService.getAvailableLanguages();
 
-  get currentLanguage() {
-    return this.languageService.getCurrentLang();
-  }
+get currentLanguage() {
+  return this.languageService.getCurrentLang();
+}
 
 onLanguageChange(lang: string): void {
 
-  if (!lang) return;
+  if (!this.languageService.isValidLanguage(lang)) {
+    return;
+  }
 
-  // Update language service
+  // Update selected language
   this.languageService.changeLanguage(lang);
 
   // Get current URL
-  const currentUrl = this.router.url;
+  const currentUrl = this.router.url.split('?')[0].split('#')[0];
+
+  const segments = currentUrl.split('/').filter(Boolean);
 
   // Remove existing language prefix
-  const cleanUrl = currentUrl.replace(
-    /^\/(en|pb|hi)(?=\/|$)/,
-    ''
-  );
+  if (
+    segments.length > 0 &&
+    this.languageService.isValidLanguage(segments[0])
+  ) {
+    segments.shift();
+  }
 
-  // Build new URL
-  const newUrl = lang === 'en'
-    ? (cleanUrl || '/')
-    : `/${lang}${cleanUrl || '/'}`;
+  // Add language prefix
+  if (lang !== 'en') {
+    segments.unshift(lang);
+  }
 
-  // Navigate without reloading browser
+  const newUrl = '/' + segments.join('/');
+
+  // Navigate without browser reload
   this.router.navigateByUrl(newUrl);
 }
- 
+
 }
