@@ -15,6 +15,7 @@ isModalOpen: boolean = false;
   // Track our 2-step zoom state
   isZoomedIn: boolean = false;
 
+   imageUrl ="assets/images/front/map/map-img.jpg";
   openModal() {
     this.isModalOpen = true;
     this.isZoomedIn = false; // Always reset to 'Fit' view when opening
