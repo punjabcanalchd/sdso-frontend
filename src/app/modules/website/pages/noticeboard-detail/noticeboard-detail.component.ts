@@ -87,6 +87,45 @@ export class NoticeboardDetailComponent implements OnInit {
 
           this.notificationArray = data.notificationarray || {};
 
+          // Defensively parse any stringified JSON description/title
+          if (this.notificationArray) {
+            for (const keyStr of Object.keys(this.notificationArray)) {
+              const catKey = Number(keyStr);
+              this.notificationArray[catKey] = (this.notificationArray[catKey] || []).map((item: any) => {
+                let title = item.title || '';
+                let description = item.description || '';
+                let msg = item.message || '';
+
+                if (typeof msg === 'string' && msg.trim().startsWith('{')) {
+                  try {
+                    const parsed = JSON.parse(msg);
+                    if (parsed && typeof parsed === 'object') {
+                      title = parsed.title || title;
+                      description = parsed.description || description;
+                    }
+                  } catch (e) {}
+                }
+
+                if (typeof title === 'string' && title.trim().startsWith('{')) {
+                  try {
+                    const parsed = JSON.parse(title);
+                    if (parsed && typeof parsed === 'object') {
+                      title = parsed.title || '';
+                      description = description || parsed.description || '';
+                    }
+                  } catch (e) {}
+                }
+
+                return {
+                  ...item,
+                  title: title || item.name || '',
+                  description: description || (!title ? msg : ''),
+                  message: description || title || msg,
+                };
+              });
+            }
+          }
+
           this.noticeboardData = data.noticeboard_data || null;
 
           this.cid = Number(data.cid) || 0;

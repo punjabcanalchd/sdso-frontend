@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges, Output, EventEmitter, ContentChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SafeHtmlPipe } from '../../pipes/safe-html.pipe';
 
 
 export interface DropdownItem {
@@ -33,7 +34,7 @@ export interface TableColumn {
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SafeHtmlPipe],
   templateUrl: './document-list.component.html',
   styleUrl: './document-list.component.scss',
 })
@@ -78,7 +79,7 @@ export class DocumentListComponent implements OnChanges {
     direction: 'asc' | 'desc';
   }>();
 
-  // ── Internal State 
+  // â”€â”€ Internal State 
   activeSortColumn= "";
   activeSortDirection: 'asc' | 'desc' | '' = '';
   searchTerm = '';

@@ -43,7 +43,7 @@ export class TickerComponent implements OnInit {
           const isPb = this.languageService.getCurrentLang() === 'pb';
           this.tickerItems = res.data.map((item: any) => ({
             id: item.id,
-            title: (isPb && item.title_pb) ? item.title_pb : item.title,
+            title: this.cleanTitle((isPb && item.title_pb) ? item.title_pb : item.title),
             title_pb: item.title_pb,
             date: item.date || item.raw_date || '',
             url: item.url || item.file_url || '/notice',
@@ -59,6 +59,16 @@ export class TickerComponent implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  cleanTitle(raw: string): string {
+    if (typeof raw === 'string' && raw.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed.title || parsed.description || raw;
+      } catch (e) {}
+    }
+    return raw || '';
   }
 
   togglePause(): void {

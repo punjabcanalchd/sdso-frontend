@@ -59,7 +59,7 @@ export class NoticeBoardComponent implements OnInit {
             route: cat.route || '/notice',
             notices: (cat.notices || []).map((n: any) => ({
               id: n.id,
-              title: (isPb && n.title_pb) ? n.title_pb : n.title,
+              title: this.cleanTitle((isPb && n.title_pb) ? n.title_pb : n.title),
               date: n.date || n.raw_date || '',
               url: n.url || n.file_url || '/notice',
               file_url: n.file_url,
@@ -86,6 +86,16 @@ export class NoticeBoardComponent implements OnInit {
     this.activeTabId = tabId;
     const tab = this.tabs.find(t => t.id === tabId);
     this.currentNotices = tab?.notices || [];
+  }
+
+  cleanTitle(raw: string): string {
+    if (typeof raw === 'string' && raw.trim().startsWith('{')) {
+      try {
+        const parsed = JSON.parse(raw);
+        return parsed.title || parsed.description || raw;
+      } catch (e) {}
+    }
+    return raw || '';
   }
 
   get activeRoute(): string {

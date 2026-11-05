@@ -76,8 +76,8 @@
                           {{ $index + 1 }}
                         </th>
 
-                        <td>
-                          {{ nvalue.message }}
+                        <td class="notice-description-cell">
+                          <div class="notice-html-content text-break" [innerHTML]="(nvalue.description || nvalue.title || nvalue.message) | safeHtml"></div>
                         </td>
 
                         <td>
