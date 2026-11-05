@@ -50,7 +50,7 @@ export class Districts implements OnInit {
     pagination: any = {};
     search = '';
     sortColumn = '';
-    sortDirection = 'asc';
+    sortDirection = 'desc';
     isLoaded = false;
   
     ngOnInit(): void {
@@ -329,3 +329,4 @@ export class Districts implements OnInit {
   }
     
 }
+

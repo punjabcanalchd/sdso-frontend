@@ -47,7 +47,7 @@ export class States implements OnInit {
   pagination: any = {};
   search = '';
   sortColumn = '';
-  sortDirection = 'asc';
+  sortDirection = 'desc';
 
   ngOnInit(): void {
     this.loadStates();
@@ -318,4 +318,5 @@ export class States implements OnInit {
   }
   
 }
+
 

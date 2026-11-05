@@ -28,13 +28,14 @@
     (pageChange)="loadTranslations($event)"
     (searchChange)="onSearchChange($event)"
     (sortChange)="onSortChange($event)"
-    (createClick)="openCreateModal()">
+    (createClick)="openCreateModal()"
+    (actionClick)="handleAction($event)">
   </app-document-list>
 
 </div>
 
 <app-modal-form
-  title="Create Translation"
+  [title]="isEditMode ? 'Edit Translation' : 'Create Translation'"
   [schema]="translationSchema"
   [initialValue]="formInitialData"
   size="lg"

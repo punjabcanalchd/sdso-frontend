@@ -28,6 +28,8 @@ export class TranslationsListComponent implements OnInit {
   sortColumn = 'key_id';
   sortDirection = 'asc';
 
+  isEditMode = false;
+  editingKeyId: number | string | null = null;
   formInitialData: any = {};
   translationSchema = translationSchema;
 
@@ -39,9 +41,10 @@ export class TranslationsListComponent implements OnInit {
   selectedGroup = 1;
 
   tableColumns: TableColumn[] = [
-    { key: 'translation_key', label: 'Unique Key', widthClass: 'col-4', sortable: true },
+    { key: 'translation_key', label: 'Unique Key', widthClass: 'col-3', sortable: true },
     { key: 'pb', label: 'PB', widthClass: 'col-4', sortable: false },
     { key: 'en', label: 'EN', widthClass: 'col-4', sortable: false },
+    { key: 'action', label: 'Actions', type: 'edit', widthClass: 'col-1' }
   ];
 
   ngOnInit(): void {
@@ -70,6 +73,7 @@ export class TranslationsListComponent implements OnInit {
         this.data = (res.data || []).map((item: any, index: number) => ({
           ...item,
           id: item.key_id,
+          canEdit: true,
           orignalSeq: (this.currentPage - 1) * this.pageSize + index + 1
         }));
         this.pagination = res.pagination || {};
@@ -81,7 +85,15 @@ export class TranslationsListComponent implements OnInit {
     });
   }
 
+  handleAction(event: any): void {
+    if (event.action === 'edit') {
+      this.openEditModal(event.row);
+    }
+  }
+
   openCreateModal(): void {
+    this.isEditMode = false;
+    this.editingKeyId = null;
     this.translationSchema.submitLabel = 'Create Translation';
     this.formInitialData = {
       group: this.selectedGroup,
@@ -109,6 +121,63 @@ export class TranslationsListComponent implements OnInit {
       this.bindCheckboxLogic();
       this.cdr.detectChanges();
     }, 100);
+  }
+
+  openEditModal(row: any): void {
+    this.isEditMode = true;
+    this.editingKeyId = row.key_id || row.id;
+    this.translationSchema.submitLabel = 'Update Translation';
+
+    this.api.get<any>(`/admin/translations/${this.editingKeyId}`).subscribe({
+      next: (res) => {
+        const item = res.data || row;
+        const isSame = (item.en === item.pb && !!item.en);
+
+        this.formInitialData = {
+          group: Number(item.group || this.selectedGroup),
+          translation_key: item.translation_key,
+          en: item.en || '',
+          same_as_english_pb: isSame,
+          pb: item.pb || '',
+          group_pb: Number(item.group || this.selectedGroup),
+          translation_key_pb: item.translation_key
+        };
+
+        this.translationModal.open();
+
+        setTimeout(() => {
+          const dynamicForm = this.translationModal?.dynamicForm;
+          if (dynamicForm && dynamicForm.form) {
+            dynamicForm.activeTab = 'en';
+            dynamicForm.activeChildTab = '';
+            dynamicForm.form.reset(this.formInitialData);
+            if (isSame) {
+              dynamicForm.form.get('group_pb')?.disable();
+              dynamicForm.form.get('translation_key_pb')?.disable();
+            } else {
+              dynamicForm.form.get('group_pb')?.enable();
+              dynamicForm.form.get('translation_key_pb')?.enable();
+            }
+          }
+          this.bindCheckboxLogic();
+          this.cdr.detectChanges();
+        }, 100);
+      },
+      error: () => {
+        const isSame = (row.en === row.pb && !!row.en);
+        this.formInitialData = {
+          group: Number(row.group || this.selectedGroup),
+          translation_key: row.translation_key,
+          en: row.en || '',
+          same_as_english_pb: isSame,
+          pb: row.pb || '',
+          group_pb: Number(row.group || this.selectedGroup),
+          translation_key_pb: row.translation_key
+        };
+        this.translationModal.open();
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   bindCheckboxLogic(): void {
@@ -191,19 +260,27 @@ export class TranslationsListComponent implements OnInit {
       pb: formValue.pb || ''
     };
 
-    this.api.post<any>('/admin/translations', payload).subscribe({
+    const request$ = (this.isEditMode && this.editingKeyId)
+      ? this.api.post<any>(`/admin/translations/${this.editingKeyId}/update`, payload)
+      : this.api.post<any>('/admin/translations', payload);
+
+    request$.subscribe({
       next: (res) => {
-        this.toast.show('success', res.message || 'Translation created successfully.', 3000);
+        const msg = this.isEditMode ? 'Translation updated successfully.' : 'Translation created successfully.';
+        this.toast.show('success', res.message || msg, 3000);
         this.translationModal.close();
         this.loadTranslations();
       },
       error: (err) => {
-        this.toast.show('error', err.error?.message || 'Failed to create translation');
+        const action = this.isEditMode ? 'update' : 'create';
+        this.toast.show('error', err.error?.message || `Failed to ${action} translation`);
       }
     });
   }
 
   onModalClosed(): void {
+    this.isEditMode = false;
+    this.editingKeyId = null;
     this.formInitialData = {};
   }
 
