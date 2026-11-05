@@ -24,7 +24,7 @@ export class LanguageService {
     {
       id: 2,
       code: 'pb',
-      label: 'Punjabi',
+      label: 'ਪੰਜਾਬੀ',
       nativeLabel: 'ਪੰ'
     }
   ];
