@@ -4,12 +4,12 @@
   <div class="py-5">
     <div class="container">
 
-      <div class="row">
+      <div class="row text-center">
 
         <!-- Dynamic Category Columns -->
         @for (col of columns; track col.title) {
-          <div class="col-lg-3 col-md-6 mb-4">
-            <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">          
+          <div class="col-lg-4 col-md-4 mb-4">
+            <h5 class="text-warning fw-bold justify-content-between align-items-center text-uppercase border-bottom border-secondary pb-3 mb-4">          
               {{ col.title }}
             </h5>
 
@@ -37,7 +37,7 @@
         }
 
         <!-- GIGW Policies / Top Links Column -->
-        <div class="col-lg-3 col-md-6 mb-4">
+        <div class="col-lg-4 col-md-4 mb-4">
           <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">           
             {{ topLinksTitle }}
           </h5>
@@ -63,14 +63,61 @@
             }
           </ul>
         </div>
-     
+
+         <div class="col-lg-4 col-md-4 mb-4">
+        <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
+          <i class="bi bi-bar-chart-fill me-2"></i>
+          Site Statistics
+        </h5>
+
+      <!-- Total Visitors -->
+<div class="d-flex align-items-center justify-content-start gap-3 mb-4 w-100">
+
+  <div class="rounded-circle border border-light d-flex align-items-center justify-content-center flex-shrink-0 stats_icon_css">
+    <i class="bi bi-people-fill fs-4 text-warning"></i>
+  </div>
+
+  <div class="text-start flex-grow-1">
+
+    <div class="small text-uppercase text-light border-bottom border-secondary pb-2 mb-2">
+      {{ isPb ? 'ਕੁੱਲ ਵਿਜ਼ਿਟਰ' : 'Total Visitors' }}
+    </div>
+
+    <div class="fw-bold fs-5 text-white">
+      {{ stats.totalVisitors || '—' }}
+    </div>
+
+  </div>
+</div>
+
+<!-- Last Updated -->
+  <div class="d-flex ustify-content-between  gap-3 w-100">
+
+    <div class="rounded-circle border border-light d-flex align-items-center justify-content-center flex-shrink-0 stats_icon_css">
+      <i class="bi bi-calendar-check-fill fs-4 text-warning"></i>
+    </div>
+
+    <div class="text-start flex-grow-1">
+
+      <div class="small text-uppercase text-light border-bottom border-secondary pb-2 mb-2">
+        {{ isPb ? 'ਆਖਰੀ ਅੱਪਡੇਟ' : 'Last Updated' }}
       </div>
+
+      <div class="fw-bold text-white">
+        {{ stats.lastUpdated || '—' }}
+      </div>
+
+    </div>
+  </div>
+  </div>
+  
+  </div>
 
     </div>
   </div>
 
   <!-- ── SITE STATISTICS: Horizontal Bar Directly Above Logos ── -->
-  <div class="border-top border-secondary border-opacity-25 py-3 bg-dark bg-opacity-25">
+  <!-- <div class="border-top border-secondary border-opacity-25 py-3 bg-dark bg-opacity-25">
     <div class="container">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div class="small fw-semibold text-white">
@@ -83,8 +130,9 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
+  
   <!-- ── MIDDLE SECTION: Partner logos — continuous scroll ── -->
   <div class="gov-footer-partners" aria-labelledby="partners-heading">
     <div class="container-fluid px-0">

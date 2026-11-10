@@ -6,6 +6,9 @@ import { NoticeBoardComponent } from '../../components/notice-board/notice-board
 import { MapSectionComponent } from '../../components/map-section/map-component';
 import { QuickLinksComponent } from '../../components/quick-links/quick-links-component';
 import { BannerSlider } from './../../../../shared/components/banner-slider/banner-slider.component';
+import { WorkGallery } from '../../../../shared/components/work-gallery/work-gallery.component';
+import { Announcements } from '../../../../shared/components/announcements/announcements.component';
+
 
 
 @Component({
@@ -18,6 +21,8 @@ import { BannerSlider } from './../../../../shared/components/banner-slider/bann
     MapSectionComponent,
     QuickLinksComponent,
     BannerSlider,
+    WorkGallery,
+    Announcements
   ],
   templateUrl: './home.compnent.html',
   styleUrl: './home.compnent.scss',

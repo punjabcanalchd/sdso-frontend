@@ -114,7 +114,7 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
           this.isLoading = false;
           if (res?.success && res.data) {
             const data = res.data;
-            this.columns = data.columns || [];
+            this.columns = data.columns || [];         
             this.topLinks = data.top_links || [];
             this.topLinksTitle = data.top_links_title || (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
             this.partnerLogos = data.partner_logos || [];
