@@ -10,7 +10,7 @@
   </button>
 
   <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1 flex-shrink-0" aria-hidden="true">
-    Attention:
+    {{ 'TICKER.ATTENTION' | translate }}
   </div>
 
   <div
@@ -40,7 +40,7 @@
             <span class="mx-3 text-muted" aria-hidden="true">|</span>
           }
         } @else {
-          <span>Welcome to State Dam Safety Organization (SDSO) Official Portal.</span>
+          <span>{{ 'TICKER.DEFAULT_MESSAGE' | translate }}</span>
           <span class="mx-3 text-muted" aria-hidden="true">|</span>
         }
       </div>

@@ -7,8 +7,23 @@
     "DOWNLOAD": "ਡਾਊਨਲੋਡ",
     "NO_RECORDS": "ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ ਮਿਲਿਆ"
   },
-  "Header":{
-    "HeadLine":"ਰਾਜ ਡੈਮ ਸੁਰੱਖਿਆ ਸੰਗਠਨ (SDSO) | ਡੈਮ ਸੁਰੱਖਿਆ ਸੰਗਠਨ"
-    }
+  "Header": {
+    "HeadLine": "ਰਾਜ ਡੈਮ ਸੁਰੱਖਿਆ ਸੰਗਠਨ (SDSO) | ਡੈਮ ਸੁਰੱਖਿਆ ਸੰਗਠਨ"
+  },
+  "FOOTER": {
+    "POLICIES_AND_HELP": "ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ",
+    "SITE_STATISTICS": "ਸਾਈਟ ਅੰਕੜੇ",
+    "TOTAL_VISITORS": "ਕੁੱਲ ਵਿਜ਼ਿਟਰ",
+    "LAST_UPDATED": "ਆਖਰੀ ਅੱਪਡੇਟ",
+    "ALL_RIGHTS_RESERVED": "ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ",
+    "PRIVACY_POLICY": "ਪ੍ਰਾਈਵੇਸੀ ਪਾਲਿਸੀ",
+    "TERMS_OF_USE": "ਵਰਤੋਂ ਦੀਆਂ ਸ਼ਰਤਾਂ",
+    "ACCESSIBILITY": "ਪਹੁੰਚਯੋਗਤਾ",
+    "SITEMAP": "ਸਾਈਟਮੈਪ",
+    "FOLLOWS": "ਪਾਲਣਾ ਕਰਦਾ ਹੈ"
+  },
+  "TICKER": {
+    "ATTENTION": "ਧਿਆਨ ਦਿਓ:",
+    "DEFAULT_MESSAGE": "ਸਟੇਟ ਡੈਮ ਸੇਫਟੀ ਆਰਗੇਨਾਈਜ਼ੇਸ਼ਨ (SDSO) ਦੇ ਅਧਿਕਾਰਤ ਪੋਰਟਲ 'ਤੇ ਤੁਹਾਡਾ ਸਵਾਗਤ ਹੈ।"
+  }
 }
-

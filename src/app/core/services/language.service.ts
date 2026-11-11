@@ -35,6 +35,9 @@ export class LanguageService {
   constructor(private translate: TranslateService) {
     this.translate.addLangs(['en', 'pb']);
     this.translate.setFallbackLang('en');
+    const savedLang = localStorage.getItem('user_lang');
+    const initialLang = (savedLang && this.isValidLanguage(savedLang)) ? savedLang : 'en';
+    this.setLanguage(initialLang);
   }
 
   setLanguage(lang: string): void {

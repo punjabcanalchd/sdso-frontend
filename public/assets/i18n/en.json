@@ -7,8 +7,23 @@
     "DOWNLOAD": "Download",
     "NO_RECORDS": "No records found"
   },
-
-  "Header":{
-    "HeadLine":"State Dam Safety Organization (SDSO) | Dam Safety Organisation"
+  "Header": {
+    "HeadLine": "State Dam Safety Organization (SDSO) | Dam Safety Organisation"
+  },
+  "FOOTER": {
+    "POLICIES_AND_HELP": "Policies & Help",
+    "SITE_STATISTICS": "Site Statistics",
+    "TOTAL_VISITORS": "Total Visitors",
+    "LAST_UPDATED": "Last Updated",
+    "ALL_RIGHTS_RESERVED": "All Rights Reserved",
+    "PRIVACY_POLICY": "Privacy Policy",
+    "TERMS_OF_USE": "Terms of Use",
+    "ACCESSIBILITY": "Accessibility",
+    "SITEMAP": "Sitemap",
+    "FOLLOWS": "Follows"
+  },
+  "TICKER": {
+    "ATTENTION": "Attention:",
+    "DEFAULT_MESSAGE": "Welcome to State Dam Safety Organization (SDSO) Official Portal."
   }
 }

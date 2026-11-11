@@ -1,7 +1,48 @@
-.stats_icon_css
-{
-width:48px;
-height:48px;
+.stats-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: fit-content;
+  max-width: 290px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+.stats-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stats-text {
+  text-align: left;
+  flex-grow: 1;
+}
+
+.stats-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.stats-value {
+  font-weight: 700;
+  color: #fff;
 }
 
 

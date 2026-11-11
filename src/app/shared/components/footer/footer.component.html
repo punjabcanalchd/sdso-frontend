@@ -64,52 +64,45 @@
           </ul>
         </div>
 
-         <div class="col-lg-4 col-md-4 mb-4">
-        <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
-          <i class="bi bi-bar-chart-fill me-2"></i>
-          Site Statistics
-        </h5>
+        <div class="col-lg-4 col-md-4 mb-4">
+          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
+            <i class="bi bi-bar-chart-fill me-2" aria-hidden="true"></i>
+            {{ 'FOOTER.SITE_STATISTICS' | translate }}
+          </h5>
 
-      <!-- Total Visitors -->
-<div class="d-flex align-items-center justify-content-start gap-3 mb-4 w-100">
+          <!-- Centered Site Statistics Container -->
+          <div class="stats-container mx-auto">
+            <!-- Total Visitors -->
+            <div class="stats-item mb-4">
+              <div class="stats-icon">
+                <i class="bi bi-people-fill fs-4 text-warning" aria-hidden="true"></i>
+              </div>
+              <div class="stats-text">
+                <div class="stats-label">
+                  {{ 'FOOTER.TOTAL_VISITORS' | translate }}
+                </div>
+                <div class="stats-value fs-5">
+                  {{ stats.totalVisitors || '—' }}
+                </div>
+              </div>
+            </div>
 
-  <div class="rounded-circle border border-light d-flex align-items-center justify-content-center flex-shrink-0 stats_icon_css">
-    <i class="bi bi-people-fill fs-4 text-warning"></i>
-  </div>
-
-  <div class="text-start flex-grow-1">
-
-    <div class="small text-uppercase text-light border-bottom border-secondary pb-2 mb-2">
-      {{ isPb ? 'ਕੁੱਲ ਵਿਜ਼ਿਟਰ' : 'Total Visitors' }}
-    </div>
-
-    <div class="fw-bold fs-5 text-white">
-      {{ stats.totalVisitors || '—' }}
-    </div>
-
-  </div>
-</div>
-
-<!-- Last Updated -->
-  <div class="d-flex ustify-content-between  gap-3 w-100">
-
-    <div class="rounded-circle border border-light d-flex align-items-center justify-content-center flex-shrink-0 stats_icon_css">
-      <i class="bi bi-calendar-check-fill fs-4 text-warning"></i>
-    </div>
-
-    <div class="text-start flex-grow-1">
-
-      <div class="small text-uppercase text-light border-bottom border-secondary pb-2 mb-2">
-        {{ isPb ? 'ਆਖਰੀ ਅੱਪਡੇਟ' : 'Last Updated' }}
-      </div>
-
-      <div class="fw-bold text-white">
-        {{ stats.lastUpdated || '—' }}
-      </div>
-
-    </div>
-  </div>
-  </div>
+            <!-- Last Updated -->
+            <div class="stats-item">
+              <div class="stats-icon">
+                <i class="bi bi-calendar-check-fill fs-4 text-warning" aria-hidden="true"></i>
+              </div>
+              <div class="stats-text">
+                <div class="stats-label">
+                  {{ 'FOOTER.LAST_UPDATED' | translate }}
+                </div>
+                <div class="stats-value">
+                  {{ stats.lastUpdated || '—' }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
   
   </div>
 
@@ -173,9 +166,9 @@
                    [alt]="logo.name"
                    class="gov-logo-img-scroll"
                    loading="eager"
-                   onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                   onerror="this.classList.add('d-none');this.nextElementSibling.classList.remove('d-none');" />
               <!-- Placeholder -->
-              <div class="gov-logo-placeholder-scroll" style="display:none;" aria-hidden="true">
+              <div class="gov-logo-placeholder-scroll d-none" aria-hidden="true">
                <span class="material-icons" aria-hidden="true">business</span>
                 <span>{{ logo.name }}</span>
               </div>
@@ -205,33 +198,33 @@
     <p class="mb-2 small">
       &copy; {{ copyright.year || currentYear }}
       {{ copyright.organization || 'State Dam Safety Organization' }}.
-      All Rights Reserved.
+      {{ 'FOOTER.ALL_RIGHTS_RESERVED' | translate }}
 
       |
       <a routerLink="/privacy-policy"
          class="text-white text-decoration-none">
-        Privacy Policy
+        {{ 'FOOTER.PRIVACY_POLICY' | translate }}
       </a>
 
       |
 
       <a routerLink="/terms"
          class="text-white text-decoration-none">
-        Terms of Use
+        {{ 'FOOTER.TERMS_OF_USE' | translate }}
       </a>
 
       |
 
       <a routerLink="/accessibility-statement"
          class="text-white text-decoration-none">
-        Accessibility
+        {{ 'FOOTER.ACCESSIBILITY' | translate }}
       </a>
 
       |
 
       <a routerLink="/sitemap"
          class="text-white text-decoration-none">
-        Sitemap
+        {{ 'FOOTER.SITEMAP' | translate }}
       </a>
 
     </p>
@@ -242,7 +235,7 @@
 
     <p class="mb-0 small">
 
-      Follows
+      {{ 'FOOTER.FOLLOWS' | translate }}
 
       <a
         href="https://guidelines.india.gov.in"

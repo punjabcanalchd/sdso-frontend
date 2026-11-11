@@ -83,7 +83,7 @@ export class NoticeboardListComponent implements OnInit {
               ${punjabiTitle}
             `,
             category: item.category_name,
-            publishDate: item.publish_date || '—',
+            publishDate: item.publish_date || 'â€”',
             lastSubmissionDate: item.last_submission_date || '',
             status: item.status,
             nameEn: item.name_en,
@@ -93,7 +93,7 @@ export class NoticeboardListComponent implements OnInit {
             categoryId: item.category_id,
             uploadNotice: item.upload_notice,
             languageId: item.language_id || 1,
-            isLatestNews: item.is_latest_news ?? false,
+            isLatestNews: item.is_latest_news === true || item.is_latest_news === 1 || item.is_latest_news === '1',
             accessType: item.access_type || 'public',
             raw: item
           };
@@ -183,11 +183,11 @@ export class NoticeboardListComponent implements OnInit {
       description_pb: row.descriptionPb || row.raw?.description_pb || '',
       category_id: row.categoryId ? Number(row.categoryId) : '',
       notice_file: row.uploadNotice || row.raw?.upload_notice || null,
-      publish_date: row.publishDate && row.publishDate !== '—' ? row.publishDate : '',
-      last_submission_date: row.lastSubmissionDate && row.lastSubmissionDate !== '—' ? row.lastSubmissionDate : '',
+      publish_date: row.publishDate && row.publishDate !== 'â€”' ? row.publishDate : '',
+      last_submission_date: row.lastSubmissionDate && row.lastSubmissionDate !== 'â€”' ? row.lastSubmissionDate : '',
       status: row.status ? 1 : 0,
       language_id: row.languageId || 1,
-      is_latest_news: row.isLatestNews ?? false,
+      is_latest_news: row.isLatestNews === true || row.isLatestNews === 1 || row.isLatestNews === '1',
       access_type: row.accessType || 'public'
     };
 
