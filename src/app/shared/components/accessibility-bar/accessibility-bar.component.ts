@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LanguageService } from '../../../core/services/language.service';
+import { SharedModule } from './../../shared-module';
 
 @Component({
   selector: 'app-accessibility-bar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,SharedModule],
   templateUrl: './accessibility-bar.component.html',
   styleUrl: './accessibility-bar.component.scss',
 })

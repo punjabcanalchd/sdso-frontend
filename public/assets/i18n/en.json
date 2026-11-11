@@ -6,5 +6,9 @@
     "PUBLISH_DATE": "Publish Date",
     "DOWNLOAD": "Download",
     "NO_RECORDS": "No records found"
+  },
+
+  "Header":{
+    "HeadLine":"State Dam Safety Organization (SDSO) | Dam Safety Organisation"
   }
 }

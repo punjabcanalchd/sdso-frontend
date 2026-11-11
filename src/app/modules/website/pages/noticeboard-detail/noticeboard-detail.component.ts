@@ -132,9 +132,9 @@ export class NoticeboardDetailComponent implements OnInit {
 
           this.moduleMetaTitle = data.module_meta_title || '';
 
-          console.log('Category Data:', this.categoryData);
-          console.log('Notification Array:', this.notificationArray);
-          console.log('Noticeboard Data:', this.noticeboardData);
+          // console.log('Category Data:', this.categoryData);
+          // console.log('Notification Array:', this.notificationArray);
+          // console.log('Noticeboard Data:', this.noticeboardData);
 
         } else {
 

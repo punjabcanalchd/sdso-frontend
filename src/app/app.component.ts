@@ -1,5 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastComponent } from './shared/components/toast/toast.component';
 
 @Component({
@@ -10,5 +12,15 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   styleUrl: './app.component.scss'
 })
 export class App {
-  protected readonly title = signal('SDSO-frontend');
+
+    private titleService = inject(Title);
+  private translate = inject(TranslateService);
+
+  constructor() {
+    this.translate.stream('Header.HeadLine').subscribe((title: string) => {
+      if (title && title !== 'Header.HeadLine') {
+        this.titleService.setTitle(title);
+      }
+    });
+  }
 }

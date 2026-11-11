@@ -3,13 +3,11 @@ import {
   ApplicationConfig
 } from '@angular/core';
 
-import {
-  provideRouter
-} from '@angular/router';
+import { provideRouter } from '@angular/router';
 
 import {
   provideHttpClient,
-  withInterceptors,
+  withInterceptors
 } from '@angular/common/http';
 
 import { firstValueFrom } from 'rxjs';
@@ -33,17 +31,6 @@ import {
 } from '@ngx-translate/http-loader';
 
 
-// export function translateLoaderFactory(
-//   http: HttpClient
-// ) {
-//   return new TranslateHttpLoader(
-//     http,
-//     './assets/i18n/',
-//     '.json'
-//   );
-// }
-
-
 export function initializeApp(
   authService: AuthService
 ) {
@@ -57,7 +44,7 @@ export const appConfig: ApplicationConfig = {
 
   providers: [
 
-     provideAnimationsAsync(),
+    provideAnimationsAsync(),
 
     provideRouter(routes),
 
@@ -67,12 +54,13 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
 
-   provideTranslateService({
-    loader: provideTranslateHttpLoader({
-      prefix: './assets/i18n/',
-      suffix: '.json'
-    })
-  }),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: '/assets/i18n/',
+        suffix: '.json'
+      }),
+      fallbackLang: 'en'
+    }),
 
     {
       provide: APP_INITIALIZER,
@@ -80,7 +68,6 @@ export const appConfig: ApplicationConfig = {
       deps: [AuthService],
       multi: true
     }
-
 
   ]
 
