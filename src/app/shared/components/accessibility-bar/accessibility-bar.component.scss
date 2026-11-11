@@ -18,3 +18,22 @@
     font-size: 14px;
   }
 }
+
+
+.language-dropdown {
+  width: 89px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.language-dropdown:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.15);
+  outline: none;
+}
