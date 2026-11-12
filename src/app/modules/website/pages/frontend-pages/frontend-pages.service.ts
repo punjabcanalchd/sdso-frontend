@@ -9,12 +9,11 @@ export class FrontendPagesService {
   private api = inject(ApiService);
   private languageService = inject(LanguageService);
 
-  // getPage(pageId: number, languageId: number) {
-  //   const langId = this.languageService.getCurrentLanguageId();
-  //   return this.api.get<any>(
-  //     `/front/pages/${pageId}/${langId}`
-  //   );
-  // }
+  
+  getHomeSliders() {
+    return this.api.get<any>('/front/sliders');
+  }
+
 
   getPage(pageId: number, languageId: number) {
   return this.api.get<any>(
@@ -22,18 +21,11 @@ export class FrontendPagesService {
   );
 }
 
-
- // Update this method to accept both id and languageId
-  // getNoticeboard(id: number, languageId: number) {
-  //   const langId = this.languageService.getCurrentLanguageId();
-  //   return this.api.get<any>(
-  //     `/front/noticeboard/${langId}/${id}`
-  //   );
-  // }
-
   getNoticeboard(id: number, languageId: number) {
-  return this.api.get<any>(
-    `/front/noticeboard/${languageId}/${id}`
-  );
-}
+    return this.api.get<any>(
+      `/front/noticeboard/${languageId}/${id}`
+    );
+ }
+
+
 }

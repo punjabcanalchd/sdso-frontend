@@ -27,4 +27,8 @@ import { Announcements } from '../../../../shared/components/announcements/annou
   templateUrl: './home.compnent.html',
   styleUrl: './home.compnent.scss',
 })
-export class HomeComponent {}
+export class HomeComponent {
+
+
+  
+}

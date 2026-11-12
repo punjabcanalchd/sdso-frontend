@@ -112,8 +112,27 @@ export class SliderImageComponent implements OnInit {
     });
   }
 
+
+  getImageUrl(imageName: string | null): string {
+
+  if (!imageName) {
+    return '';
+  }
+
+  if (imageName.startsWith('http')) {
+    return imageName;
+  }
+
+  const baseUrl = environment.baseUrl.replace(/\/$/, '');
+
+  const imagePath = imageName.replace(/^\/+/, '');
+
+  return `${baseUrl}/${imagePath}`;
+}
+
   loadSliderImages(page: number = this.currentPage): void {
     this.currentPage = page;
+
     const params: any = {
       page: this.currentPage,
       per_page: this.pageSize,
@@ -121,21 +140,21 @@ export class SliderImageComponent implements OnInit {
       sort_column: this.sortColumn,
       sort_direction: this.sortDirection
     };
+
     if (this.imageType) {
       params.type = this.imageType;
     }
     this.isLoading = true;
-    this.authService.getSliderImages(this.sliderId, params).subscribe({
 
+    this.authService.getSliderImages(this.sliderId, params).subscribe({
+      
       next: (res: any) => {
-        // console.log('FULL SLIDER IMAGE RESPONSE:', res);
 
         const images = res.data?.data || [];
-
         this.data = images.map((image: any, index: number) => ({
           id: image.public_id || image.id,
           public_id: image.public_id || image.id,
-
+            
           slider_id_encrypted:
             image.slider_id_encrypted ||
             image.slider_id ||
@@ -143,11 +162,10 @@ export class SliderImageComponent implements OnInit {
 
           originalSeq:
             (params.page - 1) * params.per_page + index + 1,
-
-          image: image.image_name
-            ? `${environment.baseUrl}/${image.image_name}`
-            : '',
-
+            image: this.getImageUrl(image.image_name),
+          // image: image.image_name
+          //   ? `${environment.baseUrl}/${image.image_name}`
+          //   : '',
           status: Number(image.status),
 
           sortOrder: image.sort_order ?? 0,
@@ -601,5 +619,8 @@ export class SliderImageComponent implements OnInit {
     // this.editingImageId = '';
     this.formInitialData = {};
   }
+
+
+  
 
 }
