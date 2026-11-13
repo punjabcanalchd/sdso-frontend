@@ -1,0 +1,28 @@
+@if (loaderService.isLoading()) {
+
+  <div
+    class="spinner-backdrop position-fixed top-0 start-0 w-100 h-100
+           d-flex justify-content-center align-items-center"
+    [class.fullscreen]="fullScreen"
+    role="status"
+    aria-live="polite"
+    aria-label="Loading">
+
+    <div class="spinner-card rounded-4 p-4 text-center">
+
+      <div class="spinner-border text-primary custom-spinner mb-3"
+           role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+
+      @if (loaderService.message()) {
+        <div class="fw-semibold text-primary">
+          {{ loaderService.message() }}
+          <span class="spinner-grow spinner-grow-sm text-primary ms-1"></span>
+        </div>
+      }
+
+    </div>
+  </div>
+
+}

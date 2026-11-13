@@ -10,9 +10,9 @@ export class FrontendPagesService {
   private languageService = inject(LanguageService);
 
   
-  getHomeSliders() {
-    return this.api.get<any>('/front/sliders');
-  }
+  // getHomeSliders() {
+  //   return this.api.get<any>('/front/sliders');
+  // }
 
 
   getPage(pageId: number, languageId: number) {

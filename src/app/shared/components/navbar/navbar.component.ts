@@ -5,7 +5,6 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/auth/auth.service';
 import { environment } from '../../../../environments/environment';
-
 import { LanguageService } from '../../../core/services/language.service';
 
 
@@ -35,7 +34,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private auth = inject(AuthService);
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
+  
   isAuthenticated$ = this.auth.isAuthenticated$();
+  isLoading = false;
 
   constructor(
   public languageService: LanguageService
@@ -122,13 +123,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   fetchAndBuildNavbar() {
-    this.api.get<any>('/front/menus').subscribe({
+    this.isLoading = true;  
+      this.api.get<any>(`/front/home/${this.languageService.getCurrentLang()}`).subscribe({
+
       next: (res) => {
-        this.rawMenus = res.data || [];
+       this.rawMenus = res.data?.menus || [];
+        // console.log('HOME API RESPONSE:', res);
+        // console.log("MENUS===",this.rawMenus);
         this.buildNavTree();
+         this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Failed to load dynamic navbar', err);
+      error: (err) => {          
+        console.error('Home API error:', err);
+        this.isLoading = false;
         this.cdr.detectChanges();
       }
     });

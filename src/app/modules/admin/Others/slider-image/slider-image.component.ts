@@ -113,21 +113,17 @@ export class SliderImageComponent implements OnInit {
   }
 
 
-  getImageUrl(imageName: string | null): string {
-
-  if (!imageName) {
+  getImageUrl(imageName: string | null): string 
+  {
+    if (!imageName) {
     return '';
-  }
-
-  if (imageName.startsWith('http')) {
+    }
+    if (imageName.startsWith('http')) {
     return imageName;
-  }
-
-  const baseUrl = environment.baseUrl.replace(/\/$/, '');
-
-  const imagePath = imageName.replace(/^\/+/, '');
-
-  return `${baseUrl}/${imagePath}`;
+    }
+    const baseUrl = environment.baseUrl.replace(/\/$/, '');
+    const imagePath = imageName.replace(/^\/+/, '');
+    return `${baseUrl}/${imagePath}`;
 }
 
   loadSliderImages(page: number = this.currentPage): void {

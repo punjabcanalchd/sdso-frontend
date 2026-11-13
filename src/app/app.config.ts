@@ -39,6 +39,7 @@ export function initializeApp(
   );
 }
 
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
 
@@ -50,7 +51,9 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withInterceptors([
-        authInterceptor
+        authInterceptor,
+        loadingInterceptor
+
       ])
     ),
 

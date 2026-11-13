@@ -3,17 +3,19 @@ import { RouterOutlet } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastComponent } from './shared/components/toast/toast.component';
+import { SpinnerComponent } from './shared/components/spinner/spinner.component';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ToastComponent],
+  imports: [RouterOutlet, ToastComponent,SpinnerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class App {
 
-    private titleService = inject(Title);
+  private titleService = inject(Title);
   private translate = inject(TranslateService);
 
   constructor() {
@@ -23,4 +25,6 @@ export class App {
       }
     });
   }
+
+  
 }

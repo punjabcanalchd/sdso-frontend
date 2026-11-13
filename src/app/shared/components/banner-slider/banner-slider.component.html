@@ -26,11 +26,19 @@
         class="carousel-item"
         [class.active]="i === currentIndex">
 
-        <img
+        <!-- <img
           [src]="slide.imageUrl"
           class="d-block w-100"
           [alt]="slide.altText"
-          loading="eager">
+          loading="eager"> -->
+
+          <img
+            [src]="slide.imageUrl"
+            class="d-block w-100"
+            [alt]="slide.altText"
+            loading="eager"
+            (load)="onBannerImageLoaded()"
+            (error)="onBannerImageLoaded()">
 
         <div class="carousel-caption text-start">
 

@@ -4,7 +4,8 @@ import {
   OnDestroy,
   HostListener,
   NgZone,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  inject
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -12,6 +13,8 @@ import { RouterLink } from '@angular/router';
 
 import { FrontendPagesService } from '../../../modules/website/pages/frontend-pages/frontend-pages.service';
 import { environment } from '../../../../environments/environment';
+import { ApiService } from '../../../core/services/api.service';
+import { LoaderService } from '../../../core/services/loader.service';
 
 
 interface BannerSlide {
@@ -39,7 +42,11 @@ export class BannerSlider implements OnInit, OnDestroy {
   isLoading = false;
 
   slides: BannerSlide[] = [];
+  private api = inject(ApiService);
 
+  private loaderService = inject(LoaderService);
+  private pendingBannerImages = 0;
+  private bannerLoaderActive = false;
 
 
   private autoPlayInterval: ReturnType<typeof setInterval> | null = null;
@@ -56,61 +63,138 @@ export class BannerSlider implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.stopAutoPlay();
+      this.stopAutoPlay();
+      this.finishBannerLoading();
   }
 
   // Get slider data from Laravel API
-loadHomeSliders(): void {
-  this.frontendPagesService.getHomeSliders().subscribe({
-    next: (response: any) => {
-      console.log('Complete Slider Response:', response);
-      // Extract images from results array
-      const images = response.data?.results || [];
-      // Get selected language
-      const currentLanguage = localStorage.getItem('user_lang') || 'en';
+// loadHomeSliders(): void {
 
-      this.slides = images.map((item: any, index: number) => ({
+//   // this.frontendPagesService.getHomeSliders().subscribe({
+//     // next: (response: any) => {
+
+//   const currentLanguage = localStorage.getItem('user_lang') || 'en';
+
+//   this.api.get<any>(`/front/home/${currentLanguage}`).subscribe({
+//     next: (res: any) => {
+
+//       console.log('Complete Slider Response:', res);
+//       // Extract images from results array
+//       const images = res.data?.results || [];
+//       // Get selected language
+//       const currentLanguage = localStorage.getItem('user_lang') || 'en';
+//       //  this.sliderData = res.data?.sliders || [];
+
+//       this.slides = images.map((item: any, index: number) => ({
+//         id: item.id,
+//         imageUrl: this.getImageUrl(item.image_name),
+
+//          altText: currentLanguage === 'pb'
+//           ? (item.title_pb || 'SDSO Banner')
+//           : (item.title_en || 'SDSO Banner'),
+
+//          title: currentLanguage === 'pb'
+//           ? (item.title_pb || '')
+//           : (item.title_en || ''),
+
+//         // subtitle: currentLanguage === 'pb'
+//         //   ? (item.description_pb || '')
+//         //   : (item.description_en || ''),
+
+//         // subtitle: item.description || '',
+
+//         ctaLabel: item.link ? 'Read More' : '',
+//         ctaUrl: item.link || ''
+//       }));
+
+//       this.currentIndex = 0;
+
+//       if (this.slides.length > 1 && this.isAutoPlaying) {
+//         this.startAutoPlay();
+//       }
+
+//       console.log('Mapped Slider Images:', this.slides);
+
+//       this.cdr.detectChanges();
+
+//     },
+
+//     error: (error: any) => {
+//       console.error('Slider API Error:', error);
+//     }
+
+//   });
+
+// }
+loadHomeSliders(): void {
+
+  const currentLanguage = localStorage.getItem('user_lang') || 'en';
+
+  // Keep loader active until all banner images finish loading
+  this.loaderService.show('Loading banners...');
+  this.bannerLoaderActive = true;
+
+  this.api.get<any>(`/front/home/${currentLanguage}`).subscribe({
+
+    next: (res: any) => {
+
+      console.log('Home API Response:', res);
+
+      const images = res.data?.sliders?.results || [];
+
+      this.pendingBannerImages = images.length;
+
+      this.slides = images.map((item: any) => ({
+
         id: item.id,
+
         imageUrl: this.getImageUrl(item.image_name),
 
-         altText: currentLanguage === 'pb'
-          ? (item.title_pb || 'SDSO Banner')
-          : (item.title_en || 'SDSO Banner'),
+        altText: currentLanguage === 'pb'
+          ? (item.title_pb || item.title_en || 'SDSO Banner')
+          : (item.title_en || item.title_pb || 'SDSO Banner'),
 
-         title: currentLanguage === 'pb'
-          ? (item.title_pb || '')
-          : (item.title_en || ''),
+        title: currentLanguage === 'pb'
+          ? (item.title_pb || item.title_en || '')
+          : (item.title_en || item.title_pb || ''),
 
-        // subtitle: currentLanguage === 'pb'
-        //   ? (item.description_pb || '')
-        //   : (item.description_en || ''),
-
-        // subtitle: item.description || '',
+        subtitle: '',
 
         ctaLabel: item.link ? 'Read More' : '',
         ctaUrl: item.link || ''
+
       }));
 
       this.currentIndex = 0;
-
-      if (this.slides.length > 1 && this.isAutoPlaying) {
-        this.startAutoPlay();
-      }
 
       console.log('Mapped Slider Images:', this.slides);
 
       this.cdr.detectChanges();
 
+      // Start autoplay after receiving slider data
+      if (this.slides.length > 1 && this.isAutoPlaying) {
+        this.startAutoPlay();
+      }
+
+      // No images returned
+      if (this.pendingBannerImages === 0) {
+        this.finishBannerLoading();
+      }
+
     },
 
-    error: (error: any) => {
-      console.error('Slider API Error:', error);
+    error: (err: any) => {
+
+      console.error('Home API Error:', err);
+
+      this.slides = [];
+
+      this.finishBannerLoading();
+
     }
 
   });
-
 }
-
 
 
 getImageUrl(imageName: string): string {
@@ -215,4 +299,32 @@ getImageUrl(imageName: string): string {
 
   }
 
+
+
+
+  onBannerImageLoaded(): void {
+
+  if (this.pendingBannerImages > 0) {
+    this.pendingBannerImages--;
+  }
+
+  if (this.pendingBannerImages === 0) {
+    this.finishBannerLoading();
+  }
+
+}
+
+private finishBannerLoading(): void {
+
+  if (this.bannerLoaderActive) {
+
+    this.bannerLoaderActive = false;
+
+    this.pendingBannerImages = 0;
+
+    this.loaderService.hide();
+
+  }
+
+}
 }
