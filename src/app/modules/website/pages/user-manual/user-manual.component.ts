@@ -36,13 +36,13 @@ export class UserManualComponent implements OnInit {
 
   ngOnInit() {
   
-    const rawNotices = this.noticeService.getAllByCategory('user-manual');
+    // const rawNotices = this.noticeService.getAllByCategory('user-manual');
 
-    this.documents = rawNotices.map((notice, index) => ({
-      id: index + 1,
-      description: notice.title,
-      publishDate: notice.date,
-      fileUrl: notice.link
-    }));
+    // this.documents = rawNotices.map((notice, index) => ({
+    //   id: index + 1,
+    //   description: notice.title,
+    //   publishDate: notice.date,
+    //   fileUrl: notice.link
+    // }));
   }
 }

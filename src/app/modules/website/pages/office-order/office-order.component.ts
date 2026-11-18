@@ -35,13 +35,13 @@ export class OfficeOrdersComponent implements OnInit {
   documents: OfficeOrderItem[] = [];
 
   ngOnInit() {
-    const rawNotices = this.noticeService.getAllByCategory('office-orders');
+    // const rawNotices = this.noticeService.getAllByCategory('office-orders');
 
-    this.documents = rawNotices.map((notice, index) => ({
-      id: index + 1,
-      description: notice.title,
-      publishDate: notice.date,
-      fileUrl: notice.link
-    }));
+    // this.documents = rawNotices.map((notice, index) => ({
+    //   id: index + 1,
+    //   description: notice.title,
+    //   publishDate: notice.date,
+    //   fileUrl: notice.link
+    // }));
   }
 }

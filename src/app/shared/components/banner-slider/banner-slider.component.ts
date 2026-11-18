@@ -138,7 +138,7 @@ loadHomeSliders(): void {
 
     next: (res: any) => {
 
-      console.log('Home API Response:', res);
+      // console.log('Home API Response:', res);
 
       const images = res.data?.sliders?.results || [];
 
@@ -167,7 +167,7 @@ loadHomeSliders(): void {
 
       this.currentIndex = 0;
 
-      console.log('Mapped Slider Images:', this.slides);
+      // console.log('Mapped Slider Images:', this.slides);
 
       this.cdr.detectChanges();
 
@@ -299,9 +299,6 @@ getImageUrl(imageName: string): string {
 
   }
 
-
-
-
   onBannerImageLoaded(): void {
 
   if (this.pendingBannerImages > 0) {
@@ -323,8 +320,6 @@ private finishBannerLoading(): void {
     this.pendingBannerImages = 0;
 
     this.loaderService.hide();
-
   }
-
 }
 }

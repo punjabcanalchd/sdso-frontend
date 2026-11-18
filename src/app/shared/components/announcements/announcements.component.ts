@@ -17,12 +17,16 @@ interface ImportantLink {
   styleUrl: './announcements.component.scss',
 })
 export class Announcements {
-  importantLinks: ImportantLink[] = [
-    { label: 'Invest Portal',     url: '#', external: true },
-    { label: 'Water Portal',      url: '#', external: true },
-    { label: 'Digital India',     url: '#', external: true },
-    { label: 'India.gov.in',      url: '#', external: true },
-    { label: 'RTI Online Portal', url: '#', external: true },
-    { label: 'Grievance',         url: '#', external: true },
-  ];
+
+
+
+
+  // importantLinks: ImportantLink[] = [
+  //   { label: 'Invest Portal',     url: '#', external: true },
+  //   { label: 'Water Portal',      url: '#', external: true },
+  //   { label: 'Digital India',     url: '#', external: true },
+  //   { label: 'India.gov.in',      url: '#', external: true },
+  //   { label: 'RTI Online Portal', url: '#', external: true },
+  //   { label: 'Grievance',         url: '#', external: true },
+  // ];
 }

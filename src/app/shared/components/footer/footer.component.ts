@@ -106,37 +106,80 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // ── Load Dynamic Data ─────────────────────────────────────────────────────
-    loadFooterData(): void {
-      this.isLoading = true;
-      const isPb = this.languageService.getCurrentLang() === 'pb';
-      const languageId = isPb ? 2 : 1;
+    // loadFooterData(): void {
+    //   this.isLoading = true;
+    //   const isPb = this.languageService.getCurrentLang() === 'pb';
+    //   const languageId = isPb ? 2 : 1;
 
-      this.api.get<any>(`/front/footer?language_id=${languageId}`).subscribe({
-        next: (res) => {
-          this.isLoading = false;
-          if (res?.success && res.data) {
-            const data = res.data;
-            this.columns = data.columns || [];         
-            this.topLinks = data.top_links || [];
-            this.topLinksTitle = data.top_links_title || (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
-            this.partnerLogos = data.partner_logos || [];
-            if (data.copyright) {
-              this.copyright = data.copyright;
-            }
-            if (data.stats) {
-              this.stats = data.stats;
-            }
-          }
-          this.updateScrollLogos();
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          this.isLoading = false;
-          console.error('Failed to load dynamic footer data:', err);
-          this.cdr.markForCheck();
-        }
-      });
+    //   this.api.get<any>(`/front/home/footer?language_id=${languageId}`).subscribe({
+    //     next: (res) => {
+    //       this.isLoading = false;
+    //       if (res?.success && res.data) {
+    //         const data = res.data.footer;
+    //         this.columns = data.columns || [];         
+    //         this.topLinks = data.top_links || [];
+    //         this.topLinksTitle = data.top_links_title || (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
+    //         this.partnerLogos = data.partner_logos || [];
+    //         if (data.copyright) {
+    //           this.copyright = data.copyright;
+    //         }
+    //         if (data.stats) {
+    //           this.stats = data.stats;
+    //         }
+    //       }
+    //       this.updateScrollLogos();
+    //       this.cdr.markForCheck();
+    //     },
+    //     error: (err) => {
+    //       this.isLoading = false;
+    //       console.error('Failed to load dynamic footer data:', err);
+    //       this.cdr.markForCheck();
+    //     }
+    //   });
+    // }
+
+
+    loadFooterData(): void {
+  this.isLoading = true;
+
+  const currentLanguage = this.languageService.getCurrentLang() || 'en';
+  const isPb = currentLanguage === 'pb';
+
+  this.api.get<any>(`/front/home/${currentLanguage}`).subscribe({
+    next: (res) => {
+      this.isLoading = false;
+        // console.log('Footer Data ==', res?.data?.footer);
+
+      if (res?.success && res?.data?.footer) {
+        const data = res.data.footer;
+
+        console.log('Footer Data ==', data);
+
+        this.columns = data.columns || [];
+        this.topLinks = data.top_links || [];
+
+        this.topLinksTitle =
+          data.top_links_title ||
+          (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
+
+        this.partnerLogos = data.partner_logos || [];
+        this.copyright = data.copyright || '';
+        this.stats = data.stats || [];
+      }
+
+      this.updateScrollLogos();
+      this.cdr.markForCheck();
+    },
+
+    error: (err) => {
+      this.isLoading = false;
+
+      console.error('Failed to load dynamic footer data:', err);
+
+      this.cdr.markForCheck();
     }
+  });
+}
 
     // ── Hover pause ───────────────────────────────────────────────────────────
     onHover(hovered: boolean): void {
