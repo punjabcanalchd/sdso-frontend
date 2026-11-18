@@ -1,6 +1,7 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ApiService } from '../../../../core/services/api.service';
 import { LanguageService } from '../../../../core/services/language.service';
 
@@ -31,7 +32,7 @@ export interface NoticeCategoryTab {
   templateUrl: './notice-board-component.html',
   styleUrl: './notice-board-component.scss',
 })
-export class NoticeBoardComponent implements OnInit {
+export class NoticeBoardComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private languageService = inject(LanguageService);
@@ -40,19 +41,29 @@ export class NoticeBoardComponent implements OnInit {
   tabs: NoticeCategoryTab[] = [];
   activeTabId: number | string | null = null;
   currentNotices: NoticeItem[] = [];
+  private langSub?: Subscription;
 
   ngOnInit(): void {
-    this.loadTabs();
+    this.langSub = this.languageService.currentLang$.subscribe(() => {
+      this.loadTabs();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
   }
 
   loadTabs(): void {
     this.isLoading = true;
-    this.api.get<any>('/front/noticeboard-tabs').subscribe({
+    const currentLanguage = this.languageService.getCurrentLang() || 'en';
+    const isPb = currentLanguage === 'pb';
+
+    this.api.get<any>(`/front/home/${currentLanguage}`).subscribe({
       next: (res) => {
         this.isLoading = false;
-        if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
-          const isPb = this.languageService.getCurrentLang() === 'pb';
-          this.tabs = res.data.map((cat: any) => ({
+        const tabsData = res?.data?.noticeboardTabs || (Array.isArray(res?.data) ? res.data : []);
+        if (Array.isArray(tabsData) && tabsData.length > 0) {
+          this.tabs = tabsData.map((cat: any) => ({
             id: cat.id,
             name: (isPb && cat.name_pb) ? cat.name_pb : cat.name,
             name_pb: cat.name_pb,
@@ -71,6 +82,9 @@ export class NoticeBoardComponent implements OnInit {
           if (this.tabs.length > 0) {
             this.setTab(this.tabs[0].id);
           }
+        } else {
+          this.tabs = [];
+          this.currentNotices = [];
         }
         this.cdr.markForCheck();
       },

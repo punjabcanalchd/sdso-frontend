@@ -108,14 +108,14 @@ export class FooterComponent implements OnInit, AfterViewInit, OnDestroy {
   // ── Load Dynamic Data ─────────────────────────────────────────────────────
   loadFooterData(): void {
     this.isLoading = true;
-    const isPb = this.languageService.getCurrentLang() === 'pb';
-    const languageId = isPb ? 2 : 1;
+    const currentLanguage = this.languageService.getCurrentLang() || 'en';
+    const isPb = currentLanguage === 'pb';
 
-    this.api.get<any>(`/front/footer?language_id=${languageId}`).subscribe({
+    this.api.get<any>(`/front/home/${currentLanguage}`).subscribe({
       next: (res) => {
         this.isLoading = false;
-        if (res?.success && res.data) {
-          const data = res.data;
+        const data = res?.data?.footer || res?.data;
+        if (data) {
           this.columns = data.columns || [];
           this.topLinks = data.top_links || [];
           this.topLinksTitle = data.top_links_title || (isPb ? 'ਨੀਤੀਆਂ ਅਤੇ ਸਹਾਇਤਾ' : 'Policies & Help');
