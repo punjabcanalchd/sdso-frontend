@@ -219,6 +219,10 @@ export class MediaCategoriesListComponent implements OnInit {
     this.api.get<any>(`/admin/media-categories/${this.editingCategoryId}`).subscribe({
       next: (res) => {
         const cat = res.data;
+        const existingImages = cat.images && cat.images.length > 0
+          ? cat.images
+          : (cat.category_image ? [{ id: 0, file_name: cat.category_image, url: cat.category_image }] : []);
+
         this.initialFormData = {
           name_en: cat.name_en || '',
           description_en: cat.description_en || '',
@@ -228,7 +232,7 @@ export class MediaCategoriesListComponent implements OnInit {
           display_on_home_page: cat.display_on_home_page ? 1 : 0,
           status: cat.status ? 1 : 0,
           parent_id: cat.parent_id || '',
-          category_image: cat.category_image || null
+          category_image: existingImages
         };
         this.isFormLoading = false;
         this.bindCheckboxLogic();
@@ -294,10 +298,37 @@ export class MediaCategoriesListComponent implements OnInit {
       formData.append('parent_id', String(formValue.parent_id));
     }
 
-    if (formValue.category_image instanceof File) {
-      formData.append('category_image', formValue.category_image);
-    } else if (typeof formValue.category_image === 'string' && formValue.category_image.trim()) {
-      formData.append('category_image', formValue.category_image.trim());
+    if (formValue.category_image) {
+      const catImg = formValue.category_image;
+      if (typeof catImg === 'object' && !Array.isArray(catImg) && !(catImg instanceof File)) {
+        if (Array.isArray(catImg.files) && catImg.files.length > 0) {
+          catImg.files.forEach((file: File) => {
+            formData.append('category_images[]', file);
+          });
+        }
+        if (Array.isArray(catImg.deleted)) {
+          catImg.deleted.forEach((delId: any) => {
+            formData.append('deleted_images[]', String(delId));
+          });
+        }
+        if (Array.isArray(catImg.existing) && catImg.existing.length > 0) {
+          if (!catImg.files || catImg.files.length === 0) {
+            const firstExisting = catImg.existing[0];
+            const exName = typeof firstExisting === 'string' ? firstExisting : (firstExisting.file_name || firstExisting.name);
+            if (exName) formData.append('category_image', exName);
+          }
+        }
+      } else if (Array.isArray(catImg)) {
+        catImg.forEach((item: any) => {
+          if (item instanceof File) {
+            formData.append('category_images[]', item);
+          }
+        });
+      } else if (catImg instanceof File) {
+        formData.append('category_images[]', catImg);
+      } else if (typeof catImg === 'string' && catImg.trim()) {
+        formData.append('category_image', catImg.trim());
+      }
     }
 
     const apiCall = this.isEditMode

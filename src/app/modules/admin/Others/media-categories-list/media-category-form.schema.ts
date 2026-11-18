@@ -114,9 +114,10 @@ export const mediaCategorySchema: FormSchema = {
     // Row 2: Category Image & Parent Category
     {
       name: 'category_image',
-      label: 'Category Image',
+      label: 'Category Images',
       type: 'file',
-      placeholder: 'Choose File',
+      multiple: true,
+      placeholder: 'Choose Files',
       className: 'col-md-6',
       required: true,
       validators: [

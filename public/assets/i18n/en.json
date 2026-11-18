@@ -25,5 +25,13 @@
   "TICKER": {
     "ATTENTION": "Attention:",
     "DEFAULT_MESSAGE": "Welcome to State Dam Safety Organization (SDSO) Official Portal."
+  },
+  "WORK_GALLERY": {
+    "TITLE": "Work Gallery",
+    "VIEW_ALL": "View All",
+    "IMAGE_COMING_SOON": "Image Coming Soon",
+    "SHOWING": "Showing",
+    "OF": "of",
+    "NO_ITEMS": "No gallery items available at this time."
   }
 }

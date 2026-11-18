@@ -4,48 +4,42 @@
   <div class="row align-items-center d-none d-md-flex py-2 accessibility_bk">
 
     <!-- Left -->    
-    
-    <div class="col-md-3">
+    <div class="col-auto">
         <i class="bi bi-calendar3 me-2"></i>
-        <span class="small text-secondary">
+        <span class="small text-secondary text-nowrap">
           {{ currentDateTime | date:'dd MMM yyyy, hh:mm:ss a' }}
         </span>
     </div>
 
     <!-- Center -->
-    <div class="col-md-6 text-center">
+    <div class="col text-center px-2">
       <h2 class="h5 fw-bold text-dark mb-0">
-        <!-- State Dam Safety Organization (SDSO) | Dam Safety Organisation\ -->
-
-      {{ 'Header.HeadLine' | translate }}
+        {{ 'Header.HeadLine' | translate }}
       </h2>
     </div>
 
     <!-- Right -->
-    <div class="col-md-3">
+    <div class="col-auto ms-auto">
 
-      <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+      <div class="d-flex justify-content-end align-items-center text-nowrap gap-1 gap-xl-2">
 
-        <!-- Language -->
-         <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
-            <select
-                class="form-select form-select-sm language-dropdown"
-                [ngModel]="currentLanguage"
-                (ngModelChange)="onLanguageChange($event)"
-                aria-label="Select language">
-
-                <option
-                  *ngFor="let lang of languages"
-                  [value]="lang.code">
-                  {{ lang.label }}
-                </option>
-
-              </select>
+        <!-- Language Switcher (Segmented Button Group) -->
+        <div class="btn-group btn-group-sm text-nowrap" role="group" aria-label="Language selection">
+          <button
+            *ngFor="let lang of languages"
+            type="button"
+            class="btn btn-sm"
+            [class.btn-primary]="currentLanguage === lang.code"
+            [class.btn-outline-secondary]="currentLanguage !== lang.code"
+            (click)="onLanguageChange(lang.code)">
+            {{ lang.label }}
+          </button>
         </div>
+
         <!-- Skip -->
         <a
           href="#main-content"
-          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1">
+          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1 text-nowrap">
 
           <i class="bi bi-arrow-down"></i>
           <span>Skip</span>
@@ -59,7 +53,7 @@
 
           <button
             type="button"
-            class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1"
+            class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1 text-nowrap"
             (click)="toggleSearch()">
 
             <i class="bi bi-search"></i>
@@ -68,7 +62,7 @@
           </button>
 
           @if (isSearchOpen) {
-          <div class="position-absolute end-0 mt-2 bg-white border rounded shadow p-2" style="min-width:260px; z-index:1050;">
+          <div class="position-absolute end-0 mt-2 bg-white border rounded shadow p-2 search-dropdown-menu">
 
             <form
               class="d-flex gap-2"
@@ -99,10 +93,7 @@
         <div class="vr"></div>
 
         <!-- Font Size -->
-
-        <div class="btn-group btn-group-sm">
-
-       
+        <div class="btn-group btn-group-sm text-nowrap">
 
           <button
             class="btn btn-outline-secondary"
@@ -127,10 +118,9 @@
         <div class="vr"></div>
 
         <!-- Sitemap -->
-
         <a
           href="/sitemap"
-          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1">
+          class="btn btn-link text-secondary text-decoration-none p-1 d-flex align-items-center gap-1 text-nowrap">
 
           <i class="bi bi-diagram-3"></i>
           <span>Sitemap</span>
@@ -144,17 +134,28 @@
   </div>
 
   <!-- Mobile -->
-
   <div class="d-md-none py-2">
 
     <div class="d-flex justify-content-between align-items-center">
 
       <h2 class="h6 fw-bold text-dark mb-0">
         State Dam Safety Organization
-
       </h2>
 
       <div class="d-flex align-items-center gap-1">
+
+        <!-- Mobile Language Switcher -->
+        <div class="btn-group btn-group-sm me-1" role="group" aria-label="Language selection">
+          <button
+            *ngFor="let lang of languages"
+            type="button"
+            class="btn btn-sm px-2"
+            [class.btn-primary]="currentLanguage === lang.code"
+            [class.btn-outline-secondary]="currentLanguage !== lang.code"
+            (click)="onLanguageChange(lang.code)">
+            {{ lang.nativeLabel || lang.label }}
+          </button>
+        </div>
 
         <button
           class="btn btn-link text-secondary p-1"

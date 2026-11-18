@@ -1,48 +1,105 @@
 <!-- FILE INPUT -->
 <input
-#fileInput
+  #fileInput
   type="file"
   class="form-control"
+  [multiple]="multiple"
   (change)="onFileSelect($event)"
-  
   (click)="onFileClick()"
-  
 />
-<!-- EXISTING / SELECTED IMAGE PREVIEW -->
-<div *ngIf="filePreviewUrl" class="mb-3">
-  <img
-    [src]="filePreviewUrl"
-    alt="Slider Image"
-    class="img-thumbnail"
-    style="max-width: 300px; max-height: 150px; object-fit: cover;"
-  />
-</div>
 
+<!-- SINGLE FILE PREVIEW (when multiple is false) -->
+<ng-container *ngIf="!multiple">
+  <!-- EXISTING / SELECTED IMAGE PREVIEW -->
+  <div *ngIf="filePreviewUrl" class="mb-3 mt-2">
+    <img
+      [src]="filePreviewUrl"
+      alt="Preview Image"
+      class="img-thumbnail single-preview-thumbnail"
+      (error)="onImageError($event)"
+    />
+  </div>
 
-
-<!-- EXISTING / SELECTED FILE -->
-<div class="form-text mt-1">
-
-  <span *ngIf="fileName; else noFile">
+  <!-- EXISTING / SELECTED FILE -->
+  <div class="form-text mt-1">
+    <span *ngIf="fileName; else noFile">
       <i class="bi bi-file-earmark-text me-1"></i>
       <a href="javascript:void(0)" (click)="openFile($event)" class="text-primary text-decoration-underline">
         {{ fileName }}
       </a>
-        <!-- Quick remove button -->
-  <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1" title="Remove file" (click)="clearFile($event)">
-    <i class="bi bi-x-circle"></i>
-  </button>
+      <!-- Quick remove button -->
+      <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1" title="Remove file" (click)="clearFile($event)">
+        <i class="bi bi-x-circle"></i>
+      </button>
     </span>
 
-  <ng-template #noFile>
-    <span class="text-muted">
-      No file selected
-    </span>
+    <ng-template #noFile>
+      <span class="text-muted">
+        No file selected
+      </span>
+    </ng-template>
+  </div>
+</ng-container>
+
+<!-- MULTIPLE FILES PREVIEW & MANAGEMENT (when multiple is true) -->
+<div *ngIf="multiple" class="mt-2">
+  <div *ngIf="existingFilesList.length > 0 || newFilesList.length > 0; else noMultiFiles" class="multi-file-grid">
+    <!-- Existing Files from server -->
+    <div *ngFor="let item of existingFilesList; let i = index" class="multi-file-item card shadow-sm">
+      <div class="position-relative">
+        <img
+          *ngIf="item.url"
+          [src]="item.url"
+          [alt]="item.name"
+          class="multi-file-img"
+          (error)="onImageError($event)"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-danger rounded-circle multi-file-remove-btn"
+          title="Delete image"
+          (click)="removeExistingImage(i, $event)">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="p-1 text-truncate small multi-file-name" [title]="item.name">
+        <a href="javascript:void(0)" (click)="openUrl(item.url, $event)" class="text-decoration-none text-dark">
+          {{ item.name }}
+        </a>
+      </div>
+    </div>
+
+    <!-- Newly Added Files -->
+    <div *ngFor="let item of newFilesList; let i = index" class="multi-file-item card shadow-sm border-primary">
+      <div class="position-relative">
+        <img
+          *ngIf="item.previewUrl"
+          [src]="item.previewUrl"
+          [alt]="item.name"
+          class="multi-file-img"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-danger rounded-circle multi-file-remove-btn"
+          title="Remove image"
+          (click)="removeNewImage(i, $event)">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="p-1 text-truncate small multi-file-name" [title]="item.name">
+        <span class="badge bg-primary me-1">New</span>
+        <span>{{ item.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noMultiFiles>
+    <div class="form-text text-muted mt-1">
+      No files selected
+    </div>
   </ng-template>
+</div>
 
-
-
-  
 <!-- Validation Messages -->
 <div
   class="invalid-feedback d-block"
@@ -60,12 +117,7 @@
     {{ control.errors['suspiciousFile'].message }}
   </div>
 
-  <!-- <div *ngIf="control.errors['imageDimensions']">
-    Page banner dimensions must be exactly
-    {{ control.errors['imageDimensions'].requiredWidth }}
-    x
-    {{ control.errors['imageDimensions'].requiredHeight }}
-    pixels.
-  </div> -->
-</div>
+  <div *ngIf="control.errors['validationMessage']">
+    {{ control.errors['validationMessage'] }}
+  </div>
 </div>

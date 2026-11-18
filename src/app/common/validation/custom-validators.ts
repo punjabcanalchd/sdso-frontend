@@ -414,9 +414,21 @@ static longitude(): ValidatorFn {
     );
   }
 
-  /* ------------------------------------------------------------------
+ /* ------------------------------------------------------------------
   * FILE UPLOAD (UX-ONLY VALIDATION)
   * ---------------------------------------------------------------- */
+
+  private static extractFiles(value: any): File[] {
+    if (!value) return [];
+    if (value instanceof File) return [value];
+    if (Array.isArray(value)) {
+      return value.filter((f): f is File => f instanceof File);
+    }
+    if (typeof value === 'object' && Array.isArray(value.files)) {
+      return value.files.filter((f: any): f is File => f instanceof File);
+    }
+    return [];
+  }
 
  static fileRequired(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -439,6 +451,18 @@ static longitude(): ValidatorFn {
       return null;
     }
 
+    if (Array.isArray(value) && value.length > 0) {
+      return null;
+    }
+
+    if (typeof value === 'object') {
+      const hasFiles = Array.isArray(value.files) && value.files.length > 0;
+      const hasExisting = Array.isArray(value.existing) && value.existing.length > 0;
+      if (hasFiles || hasExisting) {
+        return null;
+      }
+    }
+
     return {
       validationMessage: 'Please select a file.'
     };
@@ -450,17 +474,18 @@ static fileMaxSizeKB(maxKB: number): ValidatorFn {
   const maxBytes = maxKB * 1024;
 
   return (control: AbstractControl): ValidationErrors | null => {
-    const file = control.value;
+    const files = CustomValidators.extractFiles(control.value);
+    if (!files.length) return null;
 
-    if (!(file instanceof File)) {
-      return null;
-    }
-
-    return file.size <= maxBytes
-      ? null
-      : {
+    for (const file of files) {
+      if (file.size > maxBytes) {
+        return {
           validationMessage: `File size must not exceed ${maxKB} KB.`
         };
+      }
+    }
+
+    return null;
   };
 }
 
@@ -469,14 +494,18 @@ static fileMaxSizeKB(maxKB: number): ValidatorFn {
     const maxBytes = maxMB * 1024 * 1024;
 
     return (control: AbstractControl): ValidationErrors | null => {
-      const file = control.value;
-      if (!(file instanceof File)) return null;
+      const files = CustomValidators.extractFiles(control.value);
+      if (!files.length) return null;
 
-      return file.size <= maxBytes
-        ? null
-        : {
+      for (const file of files) {
+        if (file.size > maxBytes) {
+          return {
             validationMessage: `File size must not exceed ${maxMB} MB.`
           };
+        }
+      }
+
+      return null;
     };
   }
 
@@ -486,18 +515,16 @@ static fileMaxSizeKB(maxKB: number): ValidatorFn {
 
   return (control: AbstractControl): ValidationErrors | null => {
 
-    const file = control.value;
+    const files = CustomValidators.extractFiles(control.value);
+    if (!files.length) return null;
 
-    if (!(file instanceof File)) {
-      return null;
-    }
-
-    const ext = file.name.split('.').pop()?.toLowerCase();
-
-    if (!ext || !allowed.includes(ext)) {
-      return {
-        validationMessage: `Allowed file types: ${allowed.join(', ')}`
-      };
+    for (const file of files) {
+      const ext = file.name.split('.').pop()?.toLowerCase();
+      if (!ext || !allowed.includes(ext)) {
+        return {
+          validationMessage: `Allowed file types: ${allowed.join(', ')}`
+        };
+      }
     }
 
     return null;
@@ -778,17 +805,8 @@ static maskIdProof(value: string): string {
 static suspiciousFileUpload(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
 
-    const file = control.value as File;
-
-    if (!file) {
-      return null;
-    }
-
-   const fileName = file?.name?.toLowerCase();
-
-if (!fileName) {
-  return null;
-}
+    const files = CustomValidators.extractFiles(control.value);
+    if (!files.length) return null;
 
     const blockedExtensions = [
       'exe', 'bat', 'cmd', 'com', 'msi',
@@ -796,44 +814,32 @@ if (!fileName) {
       'php', 'jsp', 'asp', 'aspx', 'jar'
     ];
 
-    const extension = fileName.split('.').pop() || '';
+    for (const file of files) {
+      const fileName = file?.name?.toLowerCase();
+      if (!fileName) continue;
 
-    if (blockedExtensions.includes(extension)) {
+      const extension = fileName.split('.').pop() || '';
 
-          return {
+      if (blockedExtensions.includes(extension)) {
+        return {
           validationMessage: 'Executable or script files are not allowed.'
-          };
-      // return {
-        
-        // suspiciousFile: {
-        //   message: 'Executable or script files are not allowed.'
-        // }
-      // };
-    }
+        };
+      }
 
-    // Reject files like document.pdf.exe
-    const parts = fileName.split('.');
-    if (parts.length > 2) {
-      // return {
-      //   suspiciousFile: {
-      //     message: 'Files with multiple extensions are not allowed.'
-      //   }
-      // };
-
-          return {
+      // Reject files like document.pdf.exe
+      const parts = fileName.split('.');
+      if (parts.length > 2) {
+        return {
           validationMessage: 'Files with multiple extensions are not allowed.'
-          };
-    }
+        };
+      }
 
-    // Invalid filename characters
-    if (/[<>:"/\\|?*\x00-\x1F]/.test(fileName)) {
-      return {
+      // Invalid filename characters
+      if (/[<>:"/\\|?*\x00-\x1F]/.test(fileName)) {
+        return {
           validationMessage: 'The file name contains invalid characters.'
-
-        // suspiciousFile: {
-        //   message: 'The file name contains invalid characters.'
-        // }
-      };
+        };
+      }
     }
 
     return null;

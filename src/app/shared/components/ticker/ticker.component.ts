@@ -67,7 +67,7 @@ export class TickerComponent implements OnInit {
       try {
         const parsed = JSON.parse(raw);
         return parsed.title || parsed.description || raw;
-      } catch (e) {}
+      } catch (e) { }
     }
     return raw || '';
   }

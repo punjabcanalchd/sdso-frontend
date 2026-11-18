@@ -16,18 +16,17 @@
           photo_library
         </span>
 
-        Work Gallery
+        {{ 'WORK_GALLERY.TITLE' | translate }}
       </h2>
 
       <a routerLink="/gallery"
          class="btn btn-outline-primary btn-sm">
 
-        <span class="material-icons align-middle me-1"
-              style="font-size:18px;">
+        <span class="material-icons align-middle me-1 view-all-icon">
           grid_view
         </span>
 
-        View All
+        {{ 'WORK_GALLERY.VIEW_ALL' | translate }}
 
       </a>
 
@@ -35,24 +34,38 @@
 
     <!-- Filter Buttons -->
     <div class="d-flex flex-wrap gap-2 mb-4"
-         role="tablist">
+         role="tablist"
+         *ngIf="categories.length > 0">
 
       <button
         *ngFor="let cat of categories"
         class="btn btn-sm"
-        [class.btn-primary]="activeFilter===cat"
-        [class.btn-outline-secondary]="activeFilter!==cat"
+        [class.btn-primary]="activeFilter === cat.id"
+        [class.btn-outline-secondary]="activeFilter !== cat.id"
         (click)="setFilter(cat)"
         type="button">
 
-        {{cat}}
+        {{ cat.name }}
 
       </button>
 
     </div>
 
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredItems.length === 0" class="text-center py-5 text-muted">
+      <span class="material-icons fs-1 d-block mb-2 text-secondary">photo_size_select_actual</span>
+      <p class="mb-0">{{ 'WORK_GALLERY.NO_ITEMS' | translate }}</p>
+    </div>
+
     <!-- Gallery -->
-    <div class="position-relative">
+    <div class="position-relative" *ngIf="!isLoading && filteredItems.length > 0">
 
       <div class="row g-4">
 
@@ -66,7 +79,6 @@
             <!-- Image -->
             <div
               class="position-relative overflow-hidden gallery-image"
-              style="height:220px;cursor:pointer;"
               (click)="openLightbox(i)"
               tabindex="0"
               role="button"
@@ -88,7 +100,7 @@
                   image
                 </span>
 
-                <small>Image Coming Soon</small>
+                <small>{{ 'WORK_GALLERY.IMAGE_COMING_SOON' | translate }}</small>
 
               </div>
 
@@ -106,7 +118,7 @@
               <span
                 class="badge bg-dark position-absolute top-0 end-0 m-2">
 
-                {{item.category}}
+                {{ item.categoryName || item.category }}
 
               </span>
 
@@ -117,13 +129,13 @@
 
               <h5 class="card-title text-primary fw-semibold mb-2">
 
-                {{item.title}}
+                {{ item.title }}
 
               </h5>
 
               <p class="card-text text-muted small mb-0">
 
-                {{item.caption}}
+                {{ item.caption }}
 
               </p>
 
@@ -137,10 +149,11 @@
 
       <!-- Previous -->
       <button
-        *ngIf="totalSlides>1"
+        *ngIf="totalSlides > 1"
         class="gallery-nav gallery-prev"
         (click)="prevSlide()"
-        type="button">
+        type="button"
+        aria-label="Previous slide">
 
         <span class="material-icons">
           chevron_left
@@ -150,10 +163,11 @@
 
       <!-- Next -->
       <button
-        *ngIf="totalSlides>1"
+        *ngIf="totalSlides > 1"
         class="gallery-nav gallery-next"
         (click)="nextSlide()"
-        type="button">
+        type="button"
+        aria-label="Next slide">
 
         <span class="material-icons">
           chevron_right
@@ -165,15 +179,16 @@
 
     <!-- Dots -->
     <div
-      *ngIf="totalSlides>1"
+      *ngIf="!isLoading && totalSlides > 1"
       class="d-flex justify-content-center gap-2 mt-4">
 
       <button
         *ngFor="let x of [].constructor(totalSlides); let i=index"
         class="gallery-dot"
-        [class.active]="currentSlide===i"
+        [class.active]="currentSlide === i"
         (click)="goToSlide(i)"
-        type="button">
+        type="button"
+        [attr.aria-label]="'Go to slide ' + (i + 1)">
 
       </button>
 
@@ -181,14 +196,14 @@
 
     <!-- Counter -->
     <div
-      *ngIf="totalSlides>1"
+      *ngIf="!isLoading && totalSlides > 1"
       class="text-center text-muted mt-2 small">
 
-      Showing
-      {{ currentSlide*itemsPerSlide+1 }}
+      {{ 'WORK_GALLERY.SHOWING' | translate }}
+      {{ currentSlide * itemsPerSlide + 1 }}
       -
       {{ slideEnd() }}
-      of
+      {{ 'WORK_GALLERY.OF' | translate }}
       {{ filteredItems.length }}
 
     </div>
@@ -200,20 +215,20 @@
 <!-- ===================== LIGHTBOX ===================== -->
 
 <div
-  *ngIf="lightboxOpen"
+  *ngIf="lightboxOpen && lightboxItem"
   class="gallery-lightbox"
   (click)="closeLightbox()">
 
   <div
-    class="position-relative w-100"
-    style="max-width:900px;"
+    class="position-relative w-100 lightbox-container"
     (click)="$event.stopPropagation()">
 
     <!-- Close -->
     <button
       class="gallery-close"
       (click)="closeLightbox()"
-      type="button">
+      type="button"
+      aria-label="Close lightbox">
 
       <span class="material-icons">
         close
@@ -225,7 +240,8 @@
     <button
       class="gallery-lightbox-nav gallery-lightbox-prev"
       (click)="lightboxPrev()"
-      type="button">
+      type="button"
+      aria-label="Previous image">
 
       <span class="material-icons">
         chevron_left
@@ -235,14 +251,12 @@
 
     <!-- Image -->
     <div
-      class="bg-dark rounded overflow-hidden d-flex justify-content-center align-items-center"
-      style="min-height:300px;max-height:75vh;">
+      class="bg-dark rounded overflow-hidden d-flex justify-content-center align-items-center lightbox-frame">
 
       <img
         [src]="lightboxItem.imageUrl"
         [alt]="lightboxItem.altText"
-        class="img-fluid"
-        style="max-height:75vh;"
+        class="img-fluid lightbox-img"
         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
 
       <div
@@ -252,7 +266,7 @@
           image
         </span>
 
-        <span>Image Coming Soon</span>
+        <span>{{ 'WORK_GALLERY.IMAGE_COMING_SOON' | translate }}</span>
 
       </div>
 
@@ -263,15 +277,15 @@
 
       <span class="badge bg-warning text-dark me-2">
 
-        {{lightboxItem.category}}
+        {{ lightboxItem.categoryName || lightboxItem.category }}
 
       </span>
 
-      <strong>{{lightboxItem.title}}</strong>
+      <strong>{{ lightboxItem.title }}</strong>
 
-      <div class="small mt-2">
+      <div class="small mt-2" *ngIf="lightboxItem.caption">
 
-        {{lightboxItem.caption}}
+        {{ lightboxItem.caption }}
 
       </div>
 
@@ -281,7 +295,8 @@
     <button
       class="gallery-lightbox-nav gallery-lightbox-next"
       (click)="lightboxNext()"
-      type="button">
+      type="button"
+      aria-label="Next image">
 
       <span class="material-icons">
         chevron_right
@@ -292,7 +307,7 @@
     <!-- Counter -->
     <div class="text-center text-white-50 mt-3">
 
-      {{lightboxIndex+1}} / {{filteredItems.length}}
+      {{ lightboxIndex + 1 }} / {{ filteredItems.length }}
 
     </div>
 

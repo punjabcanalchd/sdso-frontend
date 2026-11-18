@@ -293,6 +293,7 @@
       *ngSwitchCase="'file'" 
       [control]="getControl(field.name)"
       [label]="field.label"
+      [multiple]="field.multiple || false"
       [isEditMode]="isEditMode"
       [requiredWidth]="field.requiredWidth"
       [requiredHeight]="field.requiredHeight" >

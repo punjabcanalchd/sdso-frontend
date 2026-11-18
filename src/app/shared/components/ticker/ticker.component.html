@@ -1,52 +1,46 @@
-<div class="d-flex align-items-center bg-warning-subtle border-bottom border-warning-subtle" role="region" aria-label="Important announcements">
+<div class="d-flex align-items-center bg-warning-subtle border-bottom border-warning-subtle" role="region"
+  aria-label="Important announcements">
 
-  <button
-    type="button"
+  <button type="button"
     class="btn btn-secondary border-0 rounded-0 px-3 py-2 d-flex align-items-center justify-content-center z-1"
-    (click)="togglePause()"
-    [attr.aria-label]="isPaused ? 'Resume ticker' : 'Pause ticker'"
+    (click)="togglePause()" [attr.aria-label]="isPaused ? 'Resume ticker' : 'Pause ticker'"
     [attr.title]="isPaused ? 'Resume' : 'Pause'">
     <i [class]="isPaused ? 'bi bi-play-fill' : 'bi bi-pause-fill'" aria-hidden="true"></i>
   </button>
 
-  <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1 flex-shrink-0" aria-hidden="true">
+  <div class="bg-warning text-dark fw-bold px-3 py-2 text-uppercase small shadow-sm z-1 flex-shrink-0"
+    aria-hidden="true">
     {{ 'TICKER.ATTENTION' | translate }}
   </div>
 
-  <div
-    class="overflow-hidden flex-grow-1 py-2 position-relative d-flex align-items-center"
-    aria-live="off"
-    (mouseenter)="isPaused = true"
-    (mouseleave)="isPaused = false">
-    
+  <div class="overflow-hidden flex-grow-1 py-2 position-relative d-flex align-items-center" aria-live="off"
+    (mouseenter)="isPaused = true" (mouseleave)="isPaused = false">
+
     <div class="d-flex text-nowrap ticker-animation-track" [class.ticker-animation-paused]="isPaused">
-      
+
       <div class="text-dark fw-medium small pe-5 ticker-text-item d-flex align-items-center">
         @if (tickerItems.length > 0) {
-          @for (item of tickerItems; track (item.id || item.title)) {
-            @if (item.external) {
-              <a [href]="item.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-dark text-decoration-none hover-link">
-                {{ item.title }}
-              </a>
-            } @else {
-              <a [routerLink]="item.url"
-                class="text-dark text-decoration-none hover-link">
-                {{ item.title }}
-              </a>
-            }
-            <span class="mx-3 text-muted" aria-hidden="true">|</span>
-          }
+        @for (item of tickerItems; track (item.id || item.title)) {
+        @if (item.external) {
+        <a [href]="item.url" target="_blank" rel="noopener noreferrer"
+          class="text-dark text-decoration-none hover-link">
+          {{ item.title }}
+        </a>
         } @else {
-          <span>{{ 'TICKER.DEFAULT_MESSAGE' | translate }}</span>
-          <span class="mx-3 text-muted" aria-hidden="true">|</span>
+        <a [routerLink]="item.url" class="text-dark text-decoration-none hover-link">
+          {{ item.title }}
+        </a>
+        }
+        <span class="mx-3 text-muted" aria-hidden="true">|</span>
+        }
+        } @else {
+        <span>{{ 'TICKER.DEFAULT_MESSAGE' | translate }}</span>
+        <span class="mx-3 text-muted" aria-hidden="true">|</span>
         }
       </div>
 
     </div>
-    
+
   </div>
 
 </div>

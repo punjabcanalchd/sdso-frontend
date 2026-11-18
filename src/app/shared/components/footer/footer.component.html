@@ -8,58 +8,51 @@
 
         <!-- Dynamic Category Columns -->
         @for (col of columns; track col.title) {
-          <div class="col-lg-4 col-md-4 mb-4">
-            <h5 class="text-warning fw-bold justify-content-between align-items-center text-uppercase border-bottom border-secondary pb-3 mb-4">          
-              {{ col.title }}
-            </h5>
+        <div class="col-lg-4 col-md-4 mb-4">
+          <h5
+            class="text-warning fw-bold justify-content-between align-items-center text-uppercase border-bottom border-secondary pb-3 mb-4">
+            {{ col.title }}
+          </h5>
 
-            <ul class="list-unstyled mb-0">
-              @for (link of col.links; track link.label) {
-                <li class="mb-2">
-                  @if (link.external) {
-                    <a [href]="link.url"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       class="text-white text-decoration-none">
-                      {{ link.label }}
-                      <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
-                    </a>
-                  } @else {
-                    <a [routerLink]="link.url"
-                       class="text-white text-decoration-none">
-                      {{ link.label }}
-                    </a>
-                  }
-                </li>
+          <ul class="list-unstyled mb-0">
+            @for (link of col.links; track link.label) {
+            <li class="mb-2">
+              @if (link.external) {
+              <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none">
+                {{ link.label }}
+                <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
+              </a>
+              } @else {
+              <a [routerLink]="link.url" class="text-white text-decoration-none">
+                {{ link.label }}
+              </a>
               }
-            </ul>
-          </div>
+            </li>
+            }
+          </ul>
+        </div>
         }
 
         <!-- GIGW Policies / Top Links Column -->
         <div class="col-lg-4 col-md-4 mb-4">
-          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">           
+          <h5 class="text-warning fw-bold text-uppercase border-bottom border-secondary pb-3 mb-4">
             {{ topLinksTitle }}
           </h5>
 
           <ul class="list-unstyled mb-0">
             @for (link of topLinks; track link.label) {
-              <li class="mb-2">
-                @if (link.external) {
-                  <a [href]="link.url"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     class="text-white text-decoration-none">
-                    {{ link.label }}
-                    <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
-                  </a>
-                } @else {
-                  <a [routerLink]="link.url"
-                     class="text-white text-decoration-none">
-                    {{ link.label }}
-                  </a>
-                }
-              </li>
+            <li class="mb-2">
+              @if (link.external) {
+              <a [href]="link.url" target="_blank" rel="noopener noreferrer" class="text-white text-decoration-none">
+                {{ link.label }}
+                <i class="bi bi-box-arrow-up-right small ms-1 opacity-75" aria-hidden="true"></i>
+              </a>
+              } @else {
+              <a [routerLink]="link.url" class="text-white text-decoration-none">
+                {{ link.label }}
+              </a>
+              }
+            </li>
             }
           </ul>
         </div>
@@ -103,8 +96,8 @@
             </div>
           </div>
         </div>
-  
-  </div>
+
+      </div>
 
     </div>
   </div>
@@ -125,7 +118,7 @@
     </div>
   </div> -->
 
-  
+
   <!-- ── MIDDLE SECTION: Partner logos — continuous scroll ── -->
   <div class="gov-footer-partners" aria-labelledby="partners-heading">
     <div class="container-fluid px-0">
@@ -133,56 +126,39 @@
       <h2 id="partners-heading" class="visually-hidden">Partner Logos</h2>
 
       <!-- Scroll wrapper -->
-      <div class="gov-logo-scroll-wrap position-relative"
-           (mouseenter)="onHover(true)"
-           (mouseleave)="onHover(false)"
-           aria-label="Partner logos. Hover to pause scrolling.">
+      <div class="gov-logo-scroll-wrap position-relative" (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"
+        aria-label="Partner logos. Hover to pause scrolling.">
 
         <!-- Left fade + arrow -->
         <div class="gov-logo-fade gov-logo-fade-left" aria-hidden="true"></div>
-        <button class="gov-logo-arrow gov-logo-arrow-left"
-                type="button"
-                (click)="scrollLeft()"
-                aria-label="Scroll partners left">
+        <button class="gov-logo-arrow gov-logo-arrow-left" type="button" (click)="scrollLeft()"
+          aria-label="Scroll partners left">
           <span class="material-icons" aria-hidden="true">chevron_left</span>
         </button>
 
         <!-- Scrolling track -->
-        <div class="gov-logo-track"
-             #logoTrack
-             [class.paused]="isPaused"
-             role="list"
-             aria-label="Partner logos">
+        <div class="gov-logo-track" #logoTrack [class.paused]="isPaused" role="list" aria-label="Partner logos">
 
           <!-- Logos duplicated for seamless loop -->
           @for (logo of scrollLogos; track $index) {
-            <a [href]="logo.linkUrl"
-               class="gov-logo-item"
-               role="listitem"
-               target="_blank"
-               rel="noopener noreferrer"
-               [attr.aria-label]="logo.name + ' (opens in new tab)'">
-              <img [src]="logo.imageUrl"
-                   [alt]="logo.name"
-                   class="gov-logo-img-scroll"
-                   loading="eager"
-                   onerror="this.classList.add('d-none');this.nextElementSibling.classList.remove('d-none');" />
-              <!-- Placeholder -->
-              <div class="gov-logo-placeholder-scroll d-none" aria-hidden="true">
-               <span class="material-icons" aria-hidden="true">business</span>
-                <span>{{ logo.name }}</span>
-              </div>
-            </a>
+          <a [href]="logo.linkUrl" class="gov-logo-item" role="listitem" target="_blank" rel="noopener noreferrer"
+            [attr.aria-label]="logo.name + ' (opens in new tab)'">
+            <img [src]="logo.imageUrl" [alt]="logo.name" class="gov-logo-img-scroll" loading="eager"
+              onerror="this.classList.add('d-none');this.nextElementSibling.classList.remove('d-none');" />
+            <!-- Placeholder -->
+            <div class="gov-logo-placeholder-scroll d-none" aria-hidden="true">
+              <span class="material-icons" aria-hidden="true">business</span>
+              <span>{{ logo.name }}</span>
+            </div>
+          </a>
           }
 
         </div>
 
         <!-- Right fade + arrow -->
-        <button class="gov-logo-arrow gov-logo-arrow-right"
-                type="button"
-                (click)="scrollRight()"
-                aria-label="Scroll partners right">
-         <span class="material-icons" aria-hidden="true">chevron_right</span>
+        <button class="gov-logo-arrow gov-logo-arrow-right" type="button" (click)="scrollRight()"
+          aria-label="Scroll partners right">
+          <span class="material-icons" aria-hidden="true">chevron_right</span>
         </button>
         <div class="gov-logo-fade gov-logo-fade-right" aria-hidden="true"></div>
 
@@ -192,91 +168,64 @@
     </div>
   </div>
 
-<!-- Bottom Footer -->
-<div class="bg-dark text-white py-3">
-  <div class="container text-center">
-    <p class="mb-2 small">
-      &copy; {{ copyright.year || currentYear }}
-      {{ copyright.organization || 'State Dam Safety Organization' }}.
-      {{ 'FOOTER.ALL_RIGHTS_RESERVED' | translate }}
+  <!-- Bottom Footer -->
+  <div class="bg-dark text-white py-3">
+    <div class="container text-center">
+      <p class="mb-2 small">
+        &copy; {{ copyright.year || currentYear }}
+        {{ copyright.organization || 'State Dam Safety Organization' }}.
+        {{ 'FOOTER.ALL_RIGHTS_RESERVED' | translate }}
 
-      |
-      <a routerLink="/privacy-policy"
-         class="text-white text-decoration-none">
-        {{ 'FOOTER.PRIVACY_POLICY' | translate }}
-      </a>
+        |
+        <a routerLink="/privacy-policy" class="text-white text-decoration-none">
+          {{ 'FOOTER.PRIVACY_POLICY' | translate }}
+        </a>
 
-      |
+        |
 
-      <a routerLink="/terms"
-         class="text-white text-decoration-none">
-        {{ 'FOOTER.TERMS_OF_USE' | translate }}
-      </a>
+        <a routerLink="/terms" class="text-white text-decoration-none">
+          {{ 'FOOTER.TERMS_OF_USE' | translate }}
+        </a>
 
-      |
+        |
 
-      <a routerLink="/accessibility-statement"
-         class="text-white text-decoration-none">
-        {{ 'FOOTER.ACCESSIBILITY' | translate }}
-      </a>
+        <a routerLink="/accessibility-statement" class="text-white text-decoration-none">
+          {{ 'FOOTER.ACCESSIBILITY' | translate }}
+        </a>
 
-      |
+        |
 
-      <a routerLink="/sitemap"
-         class="text-white text-decoration-none">
-        {{ 'FOOTER.SITEMAP' | translate }}
-      </a>
+        <a routerLink="/sitemap" class="text-white text-decoration-none">
+          {{ 'FOOTER.SITEMAP' | translate }}
+        </a>
 
-    </p>
+      </p>
 
-    <p class="mb-1 small text-white-50">
-      {{ copyright.developed_by }}
-    </p>
+      <p class="mb-1 small text-white-50">
+        {{ copyright.developed_by }}
+      </p>
 
-    <p class="mb-0 small">
+      <p class="mb-0 small">
 
-      {{ 'FOOTER.FOLLOWS' | translate }}
+        {{ 'FOOTER.FOLLOWS' | translate }}
 
-      <a
-        href="https://guidelines.india.gov.in"
-        target="_blank"
-        class="text-warning text-decoration-none">
+        <a href="https://guidelines.india.gov.in" target="_blank" class="text-warning text-decoration-none">
 
-        GIGW 3.0
+          GIGW 3.0
 
-      </a>
+        </a>
 
-      |
-      WCAG 2.1 AA
-      |
-      DPDP Act
+        |
+        WCAG 2.1 AA
+        |
+        DPDP Act
 
-    </p>
+      </p>
+
+    </div>
 
   </div>
-
-</div>
-        <!-- END Footer -->
+  <!-- END Footer -->
 
 
 </footer>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
