@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LanguageService } from '../../../core/services/language.service';
+import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { SharedModule } from './../../shared-module';
 
 @Component({
@@ -17,6 +18,8 @@ export class AccessibilityBarComponent implements OnDestroy {
   private router = inject(Router);
   
   public languageService = inject(LanguageService);
+  private siteSettings = inject(SiteSettingsService);
+  public headline$ = this.siteSettings.headline$;
 
   // ==========================================
   // Properties
