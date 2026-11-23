@@ -1,0 +1,28 @@
+.gallery-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+  }
+}
+
+.gallery-modal-backdrop {
+  z-index: 1055;
+}
+
+.gallery-viewer {
+  min-height: 280px;
+  max-height: 70vh;
+}
+
+.gallery-viewer-img {
+  max-height: 70vh;
+  object-fit: contain;
+}

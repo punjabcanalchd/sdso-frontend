@@ -332,7 +332,7 @@
       </ng-container>
 
       <!-- VALIDATION -->
-      <div *ngIf="isInvalid(field.name)" class="text-danger small mt-1">
+      <div *ngIf="field.type !== 'file' && isInvalid(field.name)" class="text-danger small mt-1">
 
         {{ getErrorMessage(field.name) }}
 

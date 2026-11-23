@@ -100,24 +100,46 @@
   </ng-template>
 </div>
 
+<!-- Format, Size & Dimension Rules Guidance -->
+<div class="form-text text-muted mt-1 small">
+  <i class="bi bi-info-circle me-1"></i>Allowed formats: JPG, JPEG, PNG, WEBP | Max size: 2 MB<span *ngIf="requiredWidth && requiredHeight"> | Required dimensions: {{ requiredWidth }}x{{ requiredHeight }}px</span>
+</div>
+
 <!-- Validation Messages -->
 <div
-  class="invalid-feedback d-block"
-  *ngIf="control.touched && control.errors"
+  class="invalid-feedback d-block mt-1"
+  *ngIf="fileErrorMessage || ((control.touched || control.dirty) && control.errors)"
 >
-  <div *ngIf="control.errors['fileTypes']">
-    {{ control.errors['fileTypes'].message }}
+  <div *ngIf="fileErrorMessage">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ fileErrorMessage }}
   </div>
+  <div *ngIf="!fileErrorMessage && control.errors">
+    <div *ngIf="control.errors['serverError']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['serverError'] }}
+    </div>
 
-  <div *ngIf="control.errors['fileMaxSizeKB']">
-    {{ control.errors['fileMaxSizeKB'].message }}
-  </div>
+    <div *ngIf="control.errors['imageDimensions']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>Image dimensions must be {{ control.errors['imageDimensions'].requiredWidth }} x {{ control.errors['imageDimensions'].requiredHeight }} pixels (Selected: {{ control.errors['imageDimensions'].actualWidth }} x {{ control.errors['imageDimensions'].actualHeight }} pixels).
+    </div>
 
-  <div *ngIf="control.errors['suspiciousFile']">
-    {{ control.errors['suspiciousFile'].message }}
-  </div>
+    <div *ngIf="control.errors['fileTypes']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['fileTypes'].message || control.errors['fileTypes'] }}
+    </div>
 
-  <div *ngIf="control.errors['validationMessage']">
-    {{ control.errors['validationMessage'] }}
+    <div *ngIf="control.errors['fileMaxSizeMB']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['fileMaxSizeMB'].message || control.errors['fileMaxSizeMB'] }}
+    </div>
+
+    <div *ngIf="control.errors['fileMaxSizeKB']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['fileMaxSizeKB'].message || control.errors['fileMaxSizeKB'] }}
+    </div>
+
+    <div *ngIf="control.errors['suspiciousFile']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['suspiciousFile'].message || control.errors['suspiciousFile'] }}
+    </div>
+
+    <div *ngIf="control.errors['validationMessage']">
+      <i class="bi bi-exclamation-triangle-fill me-1"></i>{{ control.errors['validationMessage'] }}
+    </div>
   </div>
 </div>

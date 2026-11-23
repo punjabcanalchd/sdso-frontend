@@ -28,6 +28,7 @@ import { UnderProgressComponent } from './pages/under-progress/under-progress.co
 import { SearchComponent } from './pages/search/search-component';
 import { FrontendPagesComponent } from './pages/frontend-pages/frontend-pages.component';
 import { NoticeboardDetailComponent } from './pages/noticeboard-detail/noticeboard-detail.component';
+import { GalleryPageComponent } from './pages/gallery/gallery.component';
 
 import { LanguageGuard } from '../../core/guards/language.guard';
 
@@ -42,6 +43,12 @@ const websiteChildren: Routes = [
   { path: 'screen-reader', component: ScreenReaderComponent },
   { path: 'rti', component: RtiComponent },
   { path: 'events', component: AuthorityEventComponent },
+
+  // Gallery & Media
+  { path: 'gallery', component: GalleryPageComponent, title: 'Photo Gallery – SDSO' },
+  { path: 'gallery/:id', component: GalleryPageComponent, title: 'Photo Gallery – SDSO' },
+  { path: 'media', component: GalleryPageComponent, title: 'Photo Gallery – SDSO' },
+  { path: 'media/:id', component: GalleryPageComponent, title: 'Photo Gallery – SDSO' },
 
   { path: 'water-meter-spec', component: WaterMeter },
   { path: 'div-wise-alloc', component: DivisionWiseAllocComponent },

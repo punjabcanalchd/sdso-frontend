@@ -121,7 +121,7 @@ export const mediaCategorySchema: FormSchema = {
       className: 'col-md-6',
       required: true,
       validators: [
-        CustomValidators.fileMaxSizeMB(5),
+        CustomValidators.fileMaxSizeMB(2),
         CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
         CustomValidators.suspiciousFileUpload()
       ]

@@ -7,7 +7,8 @@ import {
   SimpleChanges,
   ViewChild,
   ElementRef,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  inject
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -20,6 +21,7 @@ import {
 import { Subscription } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
+import { ToastService } from '../../../services/toast.service';
 
 export interface ExistingMediaFile {
   id?: string | number;
@@ -59,6 +61,9 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
   existingFilesList: ExistingMediaFile[] = [];
   newFilesList: NewMediaFile[] = [];
   deletedFilesList: Array<string | number> = [];
+  fileErrorMessage: string | null = null;
+
+  private toast = inject(ToastService);
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -378,7 +383,8 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
   onImageError(event: Event): void {
     const target = event.target as HTMLImageElement;
     if (target) {
-      target.src = 'assets/images/placeholder.png';
+      target.onerror = null;
+      target.src = '/assets/images/placeholder.png';
     }
   }
 
@@ -404,9 +410,53 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
+    this.fileErrorMessage = null;
+    this.removeError('serverError');
+    this.removeError('validationMessage');
+
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    const maxSizeBytes = 2 * 1024 * 1024; // 2 MB (server upload limit)
+    const blockedExtensions = ['exe', 'bat', 'cmd', 'com', 'msi', 'js', 'vbs', 'ps1', 'sh', 'php', 'jsp', 'asp', 'aspx', 'jar'];
+
     if (this.multiple) {
       const selectedFiles: File[] = Array.from(input.files);
+
       for (const file of selectedFiles) {
+        const ext = file.name.split('.').pop()?.toLowerCase() || '';
+
+        if (blockedExtensions.includes(ext)) {
+          this.fileErrorMessage = `File "${file.name}" is not allowed. Executable or script files are prohibited.`;
+          this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+          this.control?.markAsDirty();
+          this.control?.markAsTouched();
+          this.toast.show('warning', this.fileErrorMessage, 4000);
+          input.value = '';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        if (!allowedExtensions.includes(ext)) {
+          this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: JPG, JPEG, PNG, WEBP.`;
+          this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+          this.control?.markAsDirty();
+          this.control?.markAsTouched();
+          this.toast.show('warning', this.fileErrorMessage, 4000);
+          input.value = '';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        if (file.size > maxSizeBytes) {
+          this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of 2 MB. Please select an image under 2 MB.`;
+          this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+          this.control?.markAsDirty();
+          this.control?.markAsTouched();
+          this.toast.show('warning', this.fileErrorMessage, 4000);
+          input.value = '';
+          this.cdr.detectChanges();
+          return;
+        }
+
         const previewUrl = file.type && file.type.startsWith('image/')
           ? URL.createObjectURL(file)
           : '';
@@ -416,6 +466,8 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
           previewUrl: previewUrl
         });
       }
+
+      this.fileErrorMessage = null;
       input.value = '';
       this.updateMultipleControlValue();
       return;
@@ -424,6 +476,42 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
     const file = input.files[0];
     if (!file) return;
 
+    const ext = file.name.split('.').pop()?.toLowerCase() || '';
+
+    if (blockedExtensions.includes(ext)) {
+      this.fileErrorMessage = `File "${file.name}" is not allowed. Executable or script files are prohibited.`;
+      this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+      this.control?.markAsDirty();
+      this.control?.markAsTouched();
+      this.toast.show('warning', this.fileErrorMessage, 4000);
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (!allowedExtensions.includes(ext)) {
+      this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: JPG, JPEG, PNG, WEBP.`;
+      this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+      this.control?.markAsDirty();
+      this.control?.markAsTouched();
+      this.toast.show('warning', this.fileErrorMessage, 4000);
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    if (file.size > maxSizeBytes) {
+      this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of 2 MB. Please select an image under 2 MB.`;
+      this.control?.setErrors({ validationMessage: this.fileErrorMessage });
+      this.control?.markAsDirty();
+      this.control?.markAsTouched();
+      this.toast.show('warning', this.fileErrorMessage, 4000);
+      input.value = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.fileErrorMessage = null;
     this.control.setValue(file);
     this.control.markAsDirty();
     this.control.markAsTouched();

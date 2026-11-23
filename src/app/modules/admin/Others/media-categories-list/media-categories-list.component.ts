@@ -286,6 +286,22 @@ export class MediaCategoriesListComponent implements OnInit {
     const formValue = event?.formValue ? event.formValue : event;
     if (!formValue) return;
 
+    // Check dynamic form validation
+    const dForm = this.adminFormLayout?.dynamicForm;
+    if (dForm && dForm.form && dForm.form.invalid) {
+      dForm.form.markAllAsTouched();
+      let firstErrorMsg = 'Please fix the errors in the form before submitting.';
+      for (const key of Object.keys(dForm.form.controls)) {
+        const c = dForm.form.get(key);
+        if (c && c.invalid && c.errors) {
+          firstErrorMsg = c.errors['validationMessage'] || c.errors['message'] || `Field "${key}" is invalid.`;
+          break;
+        }
+      }
+      this.toast.show('warning', firstErrorMsg, 4000);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('name_en', formValue.name_en || '');
     formData.append('name_pb', formValue.name_pb || '');
@@ -342,8 +358,39 @@ export class MediaCategoriesListComponent implements OnInit {
         this.loadCategories();
       },
       error: (err: any) => {
-        const backendMessage = err.error?.message || 'Failed to save media category. Please check the fields.';
-        this.toast.show('error', backendMessage);
+        let backendMessage = err.error?.message || 'Failed to save media category. Please check the fields.';
+        let isImageError = false;
+
+        if (err.error?.errors) {
+          const firstKey = Object.keys(err.error.errors)[0];
+          if (firstKey && err.error.errors[firstKey]?.length) {
+            backendMessage = err.error.errors[firstKey][0];
+            if (firstKey.toLowerCase().includes('image')) {
+              isImageError = true;
+            }
+          }
+        }
+
+        if (backendMessage.toLowerCase().includes('image') || backendMessage.toLowerCase().includes('upload')) {
+          isImageError = true;
+        }
+
+        if (isImageError) {
+          const dForm = this.adminFormLayout?.dynamicForm;
+          if (dForm && dForm.form) {
+            const imgControl = dForm.form.get('category_image');
+            if (imgControl) {
+              const ruleMessage = 'Image failed to upload. Allowed formats: JPG, JPEG, PNG, WEBP | Max size: 2 MB.';
+              imgControl.setErrors({ serverError: ruleMessage });
+              imgControl.markAsTouched();
+              imgControl.markAsDirty();
+              this.cdr.detectChanges();
+            }
+          }
+          this.toast.show('error', 'Image upload failed. Allowed formats: JPG, JPEG, PNG, WEBP (Max 2 MB).', 5000);
+        } else {
+          this.toast.show('error', backendMessage, 5000);
+        }
       }
     });
   }

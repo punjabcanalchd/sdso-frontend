@@ -5,7 +5,7 @@
     <div class="card h-100 shadow-sm border rounded-3 overflow-hidden">
 
       <div class="ratio ratio-4x3 bg-light">
-        <img [src]="event.coverUrl" alt="Event Cover" class="object-fit-cover w-100 h-100 hover-zoom" loading="lazy">
+        <img [src]="event.coverUrl" [alt]="event.title || 'Event Cover'" class="object-fit-cover w-100 h-100 hover-zoom" loading="lazy" (error)="onImageError($event)">
       </div>
 
       <div class="card-body d-flex flex-column text-start">
@@ -51,6 +51,7 @@
 
             @if (activeIndex === $index) {
             <img [src]="img.url" [alt]="img.alt" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
+              (error)="onImageError($event)"
               [@slideAnimation]="{value: '',
        params: {
          enterOffset: direction === 'next' ? '100%' : '-100%',
