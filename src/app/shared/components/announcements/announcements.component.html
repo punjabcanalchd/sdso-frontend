@@ -66,31 +66,37 @@
 
             <ul class="list-group list-group-flush">
 
-              <!-- <li
+              <li
                 *ngFor="let link of importantLinks"
                 class="list-group-item">
 
-                <a
+                 <a
+                  [href]="link.url"
+                  class="text-decoration-none d-flex align-items-center gap-2"
+                  *ngIf="link.url">
+
+                <!-- <a 
                   [href]="link.url"
                   class="text-decoration-none d-flex align-items-center gap-2"
                   [attr.target]="link.external ? '_blank' : null"
                   [attr.rel]="link.external ? 'noopener noreferrer' : null"
-                  [attr.aria-label]="link.label + (link.external ? ' (opens in new tab)' : '')">
+                  [attr.aria-label]="link.label + (link.external ? ' (opens in new tab)' : '')"> -->
 
                   <span class="material-icons small" aria-hidden="true">
                     open_in_new
                   </span>
 
-                  {{ link.label }}
+                  {{ link.name }}
 
-                </a>
+                <!-- </a> -->
+               </a>
 
               </li>
-
+            
               <li *ngIf="!importantLinks || importantLinks.length === 0"
                   class="list-group-item text-muted text-center">
                 No important links available.
-              </li> -->
+              </li> 
 
             </ul>
 
