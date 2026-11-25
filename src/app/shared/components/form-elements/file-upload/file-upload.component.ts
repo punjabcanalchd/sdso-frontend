@@ -22,6 +22,7 @@ import { Subscription } from 'rxjs';
 
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../services/toast.service';
+import { FormField } from '../../../../core/models/form-schema.model';
 
 export interface ExistingMediaFile {
   id?: string | number;
@@ -48,12 +49,66 @@ export interface NewMediaFile {
 export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() control!: FormControl;
+  @Input() field?: FormField;
   @Input() label = '';
   @Input() isEditMode = false;
   @Input() multiple = false;
   @Input() existingFile: string | null = null;
   @Input() requiredWidth?: number | null = null;
   @Input() requiredHeight?: number | null = null;
+  @Input() accept?: string;
+  @Input() allowedExtensions?: string[];
+  @Input() maxSizeMB?: number;
+
+  get resolvedAllowedExtensions(): string[] {
+    if (this.allowedExtensions && this.allowedExtensions.length > 0) {
+      return this.allowedExtensions.map(e => e.toLowerCase().replace(/^\./, ''));
+    }
+    if (this.field?.allowedExtensions && this.field.allowedExtensions.length > 0) {
+      return this.field.allowedExtensions.map(e => e.toLowerCase().replace(/^\./, ''));
+    }
+    const acceptStr = this.accept || this.field?.accept;
+    if (acceptStr) {
+      const parts = acceptStr.split(',').map(s => s.trim().toLowerCase().replace(/^\./, ''));
+      const parsed: string[] = [];
+      for (const p of parts) {
+        if (p === 'image/*') {
+          parsed.push('jpg', 'jpeg', 'png', 'webp');
+        } else if (p) {
+          parsed.push(p);
+        }
+      }
+      if (parsed.length > 0) return Array.from(new Set(parsed));
+    }
+    const fname = (this.field?.name || '').toLowerCase();
+    const flabel = (this.field?.label || this.label || '').toLowerCase();
+    if (fname === 'site_icon' || fname === 'website_icon') {
+      return ['ico', 'png', 'jpg', 'jpeg', 'webp'];
+    }
+    if (fname.includes('pdf') || flabel.includes('pdf')) {
+      return ['pdf'];
+    }
+    if (fname.includes('notice') || fname.includes('circular') || fname.includes('document')) {
+      return ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
+    }
+    return ['jpg', 'jpeg', 'png', 'webp'];
+  }
+
+  get resolvedMaxSizeMB(): number {
+    if (this.maxSizeMB && this.maxSizeMB > 0) return this.maxSizeMB;
+    if (this.field?.maxSizeMB && this.field.maxSizeMB > 0) return this.field.maxSizeMB;
+    return 2;
+  }
+
+  get guidanceText(): string {
+    const exts = this.resolvedAllowedExtensions.map(e => e.toUpperCase()).join(', ');
+    const size = `${this.resolvedMaxSizeMB} MB`;
+    let text = `Allowed formats: ${exts} | Max size: ${size}`;
+    if (this.requiredWidth && this.requiredHeight) {
+      text += ` | Required dimensions: ${this.requiredWidth}x${this.requiredHeight}px`;
+    }
+    return text;
+  }
 
   filePreviewUrl: string | null = null;
 
@@ -414,8 +469,9 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
     this.removeError('serverError');
     this.removeError('validationMessage');
 
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-    const maxSizeBytes = 2 * 1024 * 1024; // 2 MB (server upload limit)
+    const allowedExtensions = this.resolvedAllowedExtensions;
+    const maxSizeBytes = this.resolvedMaxSizeMB * 1024 * 1024;
+    const allowedFormatted = allowedExtensions.map(e => e.toUpperCase()).join(', ');
     const blockedExtensions = ['exe', 'bat', 'cmd', 'com', 'msi', 'js', 'vbs', 'ps1', 'sh', 'php', 'jsp', 'asp', 'aspx', 'jar'];
 
     if (this.multiple) {
@@ -436,7 +492,7 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         if (!allowedExtensions.includes(ext)) {
-          this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: JPG, JPEG, PNG, WEBP.`;
+          this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: ${allowedFormatted}.`;
           this.control?.setErrors({ validationMessage: this.fileErrorMessage });
           this.control?.markAsDirty();
           this.control?.markAsTouched();
@@ -447,7 +503,7 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         if (file.size > maxSizeBytes) {
-          this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of 2 MB. Please select an image under 2 MB.`;
+          this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of ${this.resolvedMaxSizeMB} MB. Please select a file under ${this.resolvedMaxSizeMB} MB.`;
           this.control?.setErrors({ validationMessage: this.fileErrorMessage });
           this.control?.markAsDirty();
           this.control?.markAsTouched();
@@ -490,7 +546,7 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (!allowedExtensions.includes(ext)) {
-      this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: JPG, JPEG, PNG, WEBP.`;
+      this.fileErrorMessage = `Invalid format for "${file.name}". Allowed formats: ${allowedFormatted}.`;
       this.control?.setErrors({ validationMessage: this.fileErrorMessage });
       this.control?.markAsDirty();
       this.control?.markAsTouched();
@@ -501,7 +557,7 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (file.size > maxSizeBytes) {
-      this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of 2 MB. Please select an image under 2 MB.`;
+      this.fileErrorMessage = `File "${file.name}" exceeds the maximum allowed size of ${this.resolvedMaxSizeMB} MB. Please select a file under ${this.resolvedMaxSizeMB} MB.`;
       this.control?.setErrors({ validationMessage: this.fileErrorMessage });
       this.control?.markAsDirty();
       this.control?.markAsTouched();

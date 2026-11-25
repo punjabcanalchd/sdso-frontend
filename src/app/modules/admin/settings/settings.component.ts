@@ -7,6 +7,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { settingSchema } from './setting.schema';
 import { DynamicFormComponent } from '../../../shared/components/dynamic-form/dynamic-form.component';
 import { ApiService } from '../../../core/services/api.service';
+import { SiteSettingsService } from '../../../core/services/site-settings.service';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { FormField } from '../../../core/models/form-schema.model';
@@ -37,6 +38,7 @@ export class SettingsComponent implements OnInit {
     private toast: ToastService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
+    private siteSettings: SiteSettingsService,
   ) {}
 
 
@@ -158,6 +160,7 @@ export class SettingsComponent implements OnInit {
           if (response.data) {
             this.generalSettings = { ...this.generalSettings, ...response.data };
           }
+          this.siteSettings.loadSettings();
         } else {
           this.toast.error(response?.message || `Failed to update ${label.toLowerCase()} settings.`);
         }

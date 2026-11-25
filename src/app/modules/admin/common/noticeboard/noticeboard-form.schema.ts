@@ -81,6 +81,9 @@ export const noticeboardSchema: FormSchema = {
       name: 'notice_file',
       label: 'Upload Notice',
       className: 'col-md-6',
+      accept: '.pdf,.doc,.docx,.jpg,.jpeg,.png',
+      allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'],
+      maxSizeMB: 10,
       validators: [
         CustomValidators.fileMaxSizeMB(10),
         CustomValidators.fileTypes(['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png']),

@@ -79,6 +79,8 @@ export interface FormField {
   copyKey?: string;
   requiredWidth?: number;
   requiredHeight?: number;
+  allowedExtensions?: string[];
+  maxSizeMB?: number;
   // syncKey?: string;  
   inputClass?: string;
   validationMessages?: {

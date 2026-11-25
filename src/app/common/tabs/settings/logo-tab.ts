@@ -10,6 +10,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
     {
       type: 'file',
@@ -18,6 +25,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
     {
       type: 'file',
@@ -26,6 +40,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
     {
       type: 'file',
@@ -34,6 +55,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
 
     // Logo headings
@@ -103,6 +131,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
     {
       type: 'file',
@@ -111,6 +146,13 @@ export const logoFields: FormField[] = [
       required: false,
       className: 'col-md-6',
       tab: 'logosection',
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
 
     // Chief Minister headings

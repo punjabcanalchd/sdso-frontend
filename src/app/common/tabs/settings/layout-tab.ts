@@ -56,11 +56,13 @@ export const layoutFields: FormField[] = [
     },
 
     {
-      type: 'text',
+      type: 'number',
       name: 'home_page_slider_timing',
       label: 'Home Page Slider Timing',
       infoTooltip:'Time should be in milliseconds',
       placeholder: '5000',
+      min: 500,
+      max: 60000,
       tab: 'layout',
       className: 'col-md-4',
       required: false
@@ -192,7 +194,14 @@ export const layoutFields: FormField[] = [
       infoTooltip:'Default website banner will be shown when admin does not select any Image for the page',
       tab: 'layout',
       className: 'col-md-4',
-      required: false
+      required: false,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
 
     {
@@ -202,7 +211,14 @@ export const layoutFields: FormField[] = [
       infoTooltip:'Default search banner will be shown when admin does not select any Image for the Search page',
       tab: 'layout',
       className: 'col-md-4',
-      required: false
+      required: false,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
 
     {
@@ -212,7 +228,14 @@ export const layoutFields: FormField[] = [
       infoTooltip:'Punjab map',
       tab: 'layout',
       className: 'col-md-4',
-      required: false
+      required: false,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     }
 
   ];

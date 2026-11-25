@@ -23,12 +23,10 @@ import {
 } from '@angular/platform-browser/animations/async';
 
 import {
-  provideTranslateService
+  provideTranslateService,
+  provideTranslateLoader
 } from '@ngx-translate/core';
-
-import {
-  provideTranslateHttpLoader
-} from '@ngx-translate/http-loader';
+import { DynamicTranslateLoader } from './core/services/dynamic-translate-loader.service';
 
 
 export function initializeApp(
@@ -58,10 +56,7 @@ export const appConfig: ApplicationConfig = {
     ),
 
     provideTranslateService({
-      loader: provideTranslateHttpLoader({
-        prefix: '/assets/i18n/',
-        suffix: '.json'
-      }),
+      loader: provideTranslateLoader(DynamicTranslateLoader),
       fallbackLang: 'en'
     }),
 

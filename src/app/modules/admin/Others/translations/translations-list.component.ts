@@ -4,6 +4,7 @@ import { DocumentListComponent, TableColumn } from '../../../../shared/component
 import { ModalFormComponent } from '../../../../shared/components/modal-form/modal-form.component';
 import { ApiService } from '../../../../core/services/api.service';
 import { ToastService } from '../../../../shared/services/toast.service';
+import { LanguageService } from '../../../../core/services/language.service';
 import { translationSchema } from './translation-form.schema';
 
 @Component({
@@ -19,6 +20,7 @@ export class TranslationsListComponent implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
+  private languageService = inject(LanguageService);
 
   data: any[] = [];
   pagination: any = {};
@@ -269,6 +271,7 @@ export class TranslationsListComponent implements OnInit {
         const msg = this.isEditMode ? 'Translation updated successfully.' : 'Translation created successfully.';
         this.toast.show('success', res.message || msg, 3000);
         this.translationModal.close();
+        this.languageService.refreshTranslations();
         this.loadTranslations();
       },
       error: (err) => {

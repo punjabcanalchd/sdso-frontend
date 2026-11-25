@@ -292,11 +292,13 @@
       <app-file-upload
       *ngSwitchCase="'file'" 
       [control]="getControl(field.name)"
+      [field]="field"
       [label]="field.label"
       [multiple]="field.multiple || false"
       [isEditMode]="isEditMode"
       [requiredWidth]="field.requiredWidth"
-      [requiredHeight]="field.requiredHeight" >
+      [requiredHeight]="field.requiredHeight"
+      [accept]="field.accept">
     </app-file-upload>
 
 

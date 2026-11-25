@@ -120,6 +120,8 @@ export const mediaCategorySchema: FormSchema = {
       placeholder: 'Choose Files',
       className: 'col-md-6',
       required: true,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+      maxSizeMB: 2,
       validators: [
         CustomValidators.fileMaxSizeMB(2),
         CustomValidators.fileTypes(['jpg', 'jpeg', 'png', 'webp']),

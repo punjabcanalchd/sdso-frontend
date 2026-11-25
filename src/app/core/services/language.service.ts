@@ -53,6 +53,11 @@ export class LanguageService {
     this.setLanguage(lang);
   }
 
+  refreshTranslations(): void {
+    const current = this.getCurrentLang();
+    this.translate.reloadLang(current).subscribe();
+  }
+
   getCurrentLang(): string {
     return this.currentLangSubject.value;
   }

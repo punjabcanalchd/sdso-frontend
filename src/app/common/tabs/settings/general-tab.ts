@@ -59,8 +59,14 @@ export const generalFields: FormField[] = [
       label: 'Site icon',
       className: 'col-md-4',
       tab: 'general',
-      infoTooltip:'This is a Fevicon Icon',
-    //   accept: '.ico,.png,.jpg,.jpeg,.webp'
+      infoTooltip: 'This is a Favicon Icon',
+      allowedExtensions: ['ico', 'png', 'jpg', 'jpeg', 'webp'],
+      maxSizeMB: 2,
+      validators: [
+        CustomValidators.fileMaxSizeMB(2),
+        CustomValidators.fileTypes(['ico', 'png', 'jpg', 'jpeg', 'webp']),
+        CustomValidators.suspiciousFileUpload()
+      ]
     },
     {
       type: 'select',
