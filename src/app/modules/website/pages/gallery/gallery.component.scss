@@ -1,28 +1,54 @@
-.gallery-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+// Title dual-accent line
+.title-accent {
+  width: 140px;
+  height: 4px;
+  background: linear-gradient(to right, #ffc107 45%, #003366 45%);
+}
+
+// Album Card Interaction
+.album-card {
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+
+    .album-img {
+      transform: scale(1.05);
+    }
+
+    .album-label {
+      opacity: 1;
+    }
   }
 
   &:focus-visible {
-    outline: 2px solid #0d6efd;
+    outline: 2px solid #003366;
     outline-offset: 2px;
   }
 }
 
+.album-img {
+  transition: transform 0.3s ease;
+}
+
+.album-label {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+// Lightbox Modal
 .gallery-modal-backdrop {
   z-index: 1055;
 }
 
 .gallery-viewer {
-  min-height: 280px;
   max-height: 70vh;
-}
 
-.gallery-viewer-img {
-  max-height: 70vh;
-  object-fit: contain;
+  img {
+    max-height: 70vh;
+    object-fit: contain;
+  }
 }

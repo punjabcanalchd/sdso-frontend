@@ -91,13 +91,13 @@ export class GalleryComponent implements OnInit, OnDestroy {
             date: album.date || '',
             images: album.images.length > 0
               ? album.images.map(img => ({
-                  url: img.url,
-                  alt: img.alt || album.title,
-                }))
+                url: img.url,
+                alt: img.alt || album.title,
+              }))
               : [{
-                  url: album.coverUrl || this.fallbackImage,
-                  alt: album.title,
-                }]
+                url: album.coverUrl || this.fallbackImage,
+                alt: album.title,
+              }]
           }));
         }
         this.cdr.markForCheck();

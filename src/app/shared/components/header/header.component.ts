@@ -1,6 +1,7 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 
 import { AuthService } from '../../../core/auth/auth.service';
@@ -10,7 +11,7 @@ import { SiteSettingsService } from '../../../core/services/site-settings.servic
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, AsyncPipe, CommonModule, NavbarComponent],
+  imports: [RouterLink, AsyncPipe, CommonModule, NavbarComponent, TranslateModule, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

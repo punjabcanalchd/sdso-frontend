@@ -1,41 +1,23 @@
-<nav class="navbar navbar-expand-lg  fw-bold " role="navigation" aria-label="Main navigation">
+<nav class="navbar navbar-expand-lg fw-bold p-0" role="navigation" aria-label="Main navigation">
 
-  <div class="container-fluid p-0 mx-xl-3  mx-lg-2 flex-wrap">
+  <div class="container-fluid p-0 mx-xl-3 mx-lg-2 flex-wrap">
 
     <button
       type="button"
-      class="navbar-toggler border-white text-white ms-3 my-2"
+      class="navbar-toggler border-primary text-primary my-1 ms-auto"
       (click)="toggleMenu()"
       [attr.aria-expanded]="isMenuOpen"
       aria-controls="main-nav-menu"
       aria-label="Toggle navigation menu">
-      <i class="bi bi-list fs-4" aria-hidden="true"></i>
+      <i class="bi bi-list fs-3" aria-hidden="true"></i>
     </button>
-
-    <div class="d-flex d-lg-none flex-row justify-content-end gap-2 mt-3 mb-3 mb-lg-0 px-3">
-        @if ((isAuthenticated$ | async) === false) {
-          
-          <a routerLink="/auth/login" class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="closeMenu()">
-            Login
-          </a>
-       
-        } @else {
-          
-          <button class="btn btn-outline-light rounded-3 px-4 py-2 fw-medium w-100" (click)="navigateDashboard() ">
-            Dashboard
-          </button>
-          <button class="btn bg-primary btn-outline-light text-danger rounded-3 px-4 py-2 fw-medium w-100" (click)="logout()">
-            Logout
-          </button>
-        }
-      </div>
 
     <div 
       id="main-nav-menu" 
-      class="collapse navbar-collapse" 
+      class="collapse navbar-collapse w-100" 
       [class.show]="isMenuOpen">
       
-      <ul class="navbar-nav px-3 px-lg-0 me-auto mb-0 align-items-stretch " role="menubar">
+      <ul class="navbar-nav px-3 px-lg-0 me-auto mb-0 align-items-stretch" role="menubar">
         
         @for (item of navItems; track item.label) {
           <li class="nav-item dropdown" role="none">
@@ -143,6 +125,22 @@
 
           </li>
         }
+
+        <!-- Mobile Auth Actions (visible only when mobile menu is toggled) -->
+        <li class="nav-item d-lg-none mt-3 pt-3 border-top px-3 pb-3" role="none">
+          @if ((isAuthenticated$ | async) === false) {
+            <a routerLink="/auth/login" class="btn btn-primary rounded-2 px-4 py-2 fw-medium w-100 mb-2" (click)="closeMenu()">
+              {{ 'Header.Login' | translate }}
+            </a>
+          } @else {
+            <button type="button" class="btn btn-primary rounded-2 px-4 py-2 fw-medium w-100 mb-2" (click)="navigateDashboard(); closeMenu()">
+              <i class="bi bi-speedometer2 me-1" aria-hidden="true"></i> {{ 'Header.Dashboard' | translate }}
+            </button>
+            <button type="button" class="btn btn-outline-danger rounded-2 px-4 py-2 fw-medium w-100" (click)="logout()">
+              <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> {{ 'Header.Logout' | translate }}
+            </button>
+          }
+        </li>
 
       </ul>
     </div>

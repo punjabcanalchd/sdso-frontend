@@ -120,7 +120,7 @@ export class FileUploadComponent implements OnInit, OnChanges, OnDestroy {
 
   private toast = inject(ToastService);
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   private dialogOpened = false;
   private controlSubscription?: Subscription;

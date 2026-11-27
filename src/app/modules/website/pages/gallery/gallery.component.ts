@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { BreadcrumbComponent, BreadcrumbItem } from '../../../../shared/components/breadcrumb/breadcrumb';
 import {
@@ -21,7 +21,7 @@ import { LanguageService } from '../../../../core/services/language.service';
 @Component({
   selector: 'app-gallery-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, BreadcrumbComponent],
+  imports: [CommonModule, BreadcrumbComponent],
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.scss'],
 })
@@ -58,14 +58,7 @@ export class GalleryPageComponent implements OnInit, OnDestroy {
   }
 
   get filteredAlbums(): GalleryAlbum[] {
-    if (this.selectedCategoryId === 'all') {
-      return this.albums;
-    }
-
-    return this.albums.filter(album =>
-      String(album.id) === String(this.selectedCategoryId) ||
-      (album.public_id && String(album.public_id) === String(this.selectedCategoryId))
-    );
+    return this.albums;
   }
 
   get activePhoto(): GalleryPhoto {
@@ -100,20 +93,12 @@ export class GalleryPageComponent implements OnInit, OnDestroy {
   loadGallery(): void {
     this.isLoading = true;
 
-    this.galleryService.getGalleryData(this.selectedCategoryId).subscribe({
+    this.galleryService.getGalleryData('all').subscribe({
       next: (res) => {
         this.isLoading = false;
         if (res?.success && res.data) {
           this.categories = res.data.categories || [];
           this.albums = res.data.albums || [];
-
-          // Verify if requested category exists in loaded categories
-          if (this.selectedCategoryId !== 'all') {
-            const exists = this.categories.some(c => String(c.id) === String(this.selectedCategoryId));
-            if (!exists && this.albums.length === 0) {
-              this.selectedCategoryId = 'all';
-            }
-          }
         }
         this.cdr.markForCheck();
       },

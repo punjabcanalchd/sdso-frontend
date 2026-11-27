@@ -6,41 +6,13 @@
 
     <!-- Page Title & Header -->
     <div class="row align-items-center mb-4 mt-2">
-      <div class="col-12 text-center">
-        <h1 class="h2 fw-bold text-dark text-uppercase mb-2">
+      <div class="col-12">
+        <h1 class="h3 fw-bold text-dark text-uppercase mb-2">
           {{ isPb ? 'ਫੋਟੋ ਗੈਲਰੀ' : 'Photo Gallery' }}
         </h1>
-        <p class="text-secondary mb-0">
-          {{ isPb ? 'ਰਾਜ ਡੈਮ ਸੁਰੱਖਿਆ ਸੰਗਠਨ (SDSO) ਦੀਆਂ ਗਤੀਵਿਧੀਆਂ ਅਤੇ ਸਮਾਗਮਾਂ ਦੀਆਂ ਝਲਕੀਆਂ' : 'Visual glimpses, events, and activities of State Dam Safety Organization' }}
-        </p>
-        <div class="d-flex justify-content-center mt-3">
-          <div class="border-bottom border-primary border-3 w-25"></div>
-        </div>
+        <div class="title-accent mb-4"></div>
       </div>
     </div>
-
-    <!-- Category Filter Tabs -->
-    @if (categories.length > 1) {
-    <div class="d-flex flex-wrap justify-content-center gap-2 mb-4" role="tablist" aria-label="Gallery category filters">
-      @for (cat of categories; track cat.id) {
-      <button
-        type="button"
-        class="btn btn-sm rounded-pill px-3 py-2 text-nowrap"
-        [class.btn-primary]="selectedCategoryId === cat.id"
-        [class.btn-outline-secondary]="selectedCategoryId !== cat.id"
-        role="tab"
-        [attr.aria-selected]="selectedCategoryId === cat.id"
-        (click)="selectCategory(cat.id)">
-        {{ cat.name }}
-        @if (cat.count !== undefined && cat.count > 0) {
-        <span class="badge rounded-pill ms-1" [class.text-bg-light]="selectedCategoryId === cat.id" [class.text-bg-secondary]="selectedCategoryId !== cat.id">
-          {{ cat.count }}
-        </span>
-        }
-      </button>
-      }
-    </div>
-    }
 
     <!-- Loading State -->
     @if (isLoading) {
@@ -54,61 +26,41 @@
     </div>
     }
 
-    <!-- Albums Grid -->
+    <!-- Albums Grid (3-column layout) -->
     @if (!isLoading && filteredAlbums.length > 0) {
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
       @for (album of filteredAlbums; track album.id) {
       <div class="col">
-        <div
-          class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden gallery-card"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="'View album ' + album.title"
-          (click)="openLightbox(album)"
-          (keydown.enter)="openLightbox(album)"
+        <div class="card border-0 rounded-0 shadow-sm overflow-hidden h-100 bg-white album-card" role="button"
+          tabindex="0" [attr.aria-label]="(isPb ? 'ਐਲਬਮ ਵੇਖੋ ' : 'View album ') + album.title"
+          (click)="openLightbox(album)" (keydown.enter)="openLightbox(album)"
           (keydown.space)="openLightbox(album); $event.preventDefault()">
 
-          <!-- Thumbnail -->
-          <div class="ratio ratio-4x3 bg-secondary-subtle overflow-hidden position-relative">
-            <img
-              [src]="album.coverUrl"
-              [alt]="album.title"
-              class="object-fit-cover w-100 h-100"
-              loading="lazy"
-              (error)="onImageError($event)">
+          <!-- Cover Image & Overlays -->
+          <div class="position-relative overflow-hidden bg-light">
+            <div class="ratio ratio-4x3">
+              <img [src]="album.coverUrl || fallbackImage" [alt]="album.title"
+                class="object-fit-cover w-100 h-100 album-img" loading="lazy" (error)="onImageError($event)">
+            </div>
 
-            <span class="position-absolute top-0 end-0 m-2 badge bg-dark bg-opacity-75 text-white">
-              <i class="bi bi-images me-1" aria-hidden="true"></i>
-              {{ album.media_count }} {{ album.media_count === 1 ? (isPb ? 'ਫੋਟੋ' : 'Photo') : (isPb ? 'ਫੋਟੋਆਂ' : 'Photos') }}
-            </span>
-          </div>
+            <!-- Center Circular Icon + Hover Label -->
+            <div class="position-absolute top-50 start-50 translate-middle text-center pe-none">
+              <div
+                class="rounded-circle bg-dark bg-opacity-75 text-white d-inline-flex align-items-center justify-content-center p-3 lh-1">
+                <i class="bi bi-images fs-5" aria-hidden="true"></i>
+              </div>
+              <div class="text-white small fw-bold text-uppercase mt-1 album-label">
+                {{ isPb ? 'ਵੇਖੋ' : 'VIEW GALLERY' }}
+              </div>
+            </div>
 
-          <!-- Card Content -->
-          <div class="card-body d-flex flex-column text-start p-3">
-            <h2 class="h6 card-title fw-bold text-dark text-uppercase mb-1 text-truncate">
-              {{ album.title }}
-            </h2>
-
-            @if (album.date) {
-            <small class="text-muted mb-2 d-flex align-items-center">
-              <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
-              {{ album.date }}
-            </small>
-            }
-
-            @if (stripHtml(album.description)) {
-            <p class="card-text text-secondary small text-truncate mb-3">
-              {{ stripHtml(album.description) }}
-            </p>
-            }
-
-            <button
-              type="button"
-              class="btn btn-outline-primary btn-sm mt-auto w-100 fw-medium d-flex align-items-center justify-content-center gap-1"
-              (click)="openLightbox(album); $event.stopPropagation()">
-              <i class="bi bi-arrows-fullscreen" aria-hidden="true"></i>
-              {{ isPb ? 'ਵੇਖੋ' : 'View Album' }}
-            </button>
+            <!-- Bottom Title Banner Overlay -->
+            <div
+              class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-90 text-white text-center py-2 px-3">
+              <h2 class="h6 fw-bold text-uppercase text-truncate mb-0">
+                {{ album.title }}
+              </h2>
+            </div>
           </div>
 
         </div>
@@ -125,7 +77,7 @@
         {{ isPb ? 'ਕੋਈ ਫੋਟੋਆਂ ਉਪਲਬਧ ਨਹੀਂ ਹਨ' : 'No Photos Available' }}
       </h3>
       <p class="text-secondary mb-0">
-        {{ isPb ? 'ਇਸ ਸ਼੍ਰੇਣੀ ਵਿੱਚ ਕੋਈ ਫੋਟੋ ਗੈਲਰੀ ਆਈਟਮ ਨਹੀਂ ਮਿਲੀ।' : 'No gallery items found for this selection.' }}
+        {{ isPb ? 'ਕੋਈ ਫੋਟੋ ਗੈਲਰੀ ਆਈਟਮ ਨਹੀਂ ਮਿਲੀ।' : 'No gallery items found.' }}
       </p>
     </div>
     }
@@ -137,14 +89,9 @@
 @if (selectedAlbum && selectedAlbum.images.length > 0) {
 <div
   class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex align-items-center justify-content-center p-3 gallery-modal-backdrop"
-  role="dialog"
-  aria-modal="true"
-  [attr.aria-label]="selectedAlbum.title + ' Lightbox'"
-  (click)="closeLightbox()">
+  role="dialog" aria-modal="true" [attr.aria-label]="selectedAlbum.title + ' Lightbox'" (click)="closeLightbox()">
 
-  <div
-    class="modal-dialog modal-lg w-100 m-0"
-    (click)="$event.stopPropagation()">
+  <div class="modal-dialog modal-lg w-100 m-0" (click)="$event.stopPropagation()">
 
     <div class="modal-content bg-dark text-white rounded-3 shadow-lg overflow-hidden border-0">
 
@@ -157,36 +104,27 @@
           </h2>
         </div>
 
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          aria-label="Close photo gallery"
+        <button type="button" class="btn-close btn-close-white" aria-label="Close photo gallery"
           (click)="closeLightbox()">
         </button>
       </div>
 
       <!-- Body / Image Viewer -->
-      <div class="modal-body p-0 position-relative bg-black d-flex align-items-center justify-content-center gallery-viewer">
-        <img
-          [src]="activePhoto.url"
-          [alt]="activePhoto.alt || selectedAlbum.title"
-          class="img-fluid gallery-viewer-img"
+      <div
+        class="modal-body p-0 position-relative bg-black d-flex align-items-center justify-content-center gallery-viewer">
+        <img [src]="activePhoto.url" [alt]="activePhoto.alt || selectedAlbum.title" class="img-fluid"
           (error)="onImageError($event)">
 
         @if (selectedAlbum.images.length > 1) {
-        <button
-          type="button"
+        <button type="button"
           class="btn btn-dark btn-sm rounded-circle position-absolute top-50 start-0 ms-3 translate-middle-y z-3 p-2 bg-opacity-75 border-secondary"
-          aria-label="Previous photo"
-          (click)="prevPhoto($event)">
+          aria-label="Previous photo" (click)="prevPhoto($event)">
           <i class="bi bi-chevron-left fs-4" aria-hidden="true"></i>
         </button>
 
-        <button
-          type="button"
+        <button type="button"
           class="btn btn-dark btn-sm rounded-circle position-absolute top-50 end-0 me-3 translate-middle-y z-3 p-2 bg-opacity-75 border-secondary"
-          aria-label="Next photo"
-          (click)="nextPhoto($event)">
+          aria-label="Next photo" (click)="nextPhoto($event)">
           <i class="bi bi-chevron-right fs-4" aria-hidden="true"></i>
         </button>
         }

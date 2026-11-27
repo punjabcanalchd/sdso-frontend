@@ -134,89 +134,88 @@
   </div>
 
   <!-- Mobile -->
-  <div class="d-md-none py-2">
+  <div class="d-md-none">
 
-    <div class="d-flex justify-content-between align-items-center">
+    <!-- 1. Accessibility bar on top (Full width, clean alignment) -->
+    <div class="d-flex justify-content-between align-items-center px-2 py-1 accessibility_bk border-bottom">
 
-      <h2 class="h6 fw-bold text-dark mb-0">
-        {{ (headline$ | async) || ('Header.HeadLine' | translate) }}
-      </h2>
+      <!-- Language Switcher -->
+      <div class="btn-group btn-group-sm" role="group" aria-label="Language selection">
+        <button
+          *ngFor="let lang of languages"
+          type="button"
+          class="btn btn-sm px-2 py-1"
+          [class.btn-primary]="currentLanguage === lang.code"
+          [class.btn-outline-secondary]="currentLanguage !== lang.code"
+          (click)="onLanguageChange(lang.code)">
+          {{ lang.nativeLabel || lang.label }}
+        </button>
+      </div>
 
+      <!-- Accessibility Actions: Search, A-, A+, Sitemap -->
       <div class="d-flex align-items-center gap-1">
+        <button
+          type="button"
+          class="btn btn-link text-secondary p-1"
+          aria-label="Search"
+          (click)="toggleSearch()">
+          <i class="bi bi-search"></i>
+        </button>
 
-        <!-- Mobile Language Switcher -->
-        <div class="btn-group btn-group-sm me-1" role="group" aria-label="Language selection">
+        <div class="btn-group btn-group-sm">
           <button
-            *ngFor="let lang of languages"
             type="button"
-            class="btn btn-sm px-2"
-            [class.btn-primary]="currentLanguage === lang.code"
-            [class.btn-outline-secondary]="currentLanguage !== lang.code"
-            (click)="onLanguageChange(lang.code)">
-            {{ lang.nativeLabel || lang.label }}
+            class="btn btn-outline-secondary btn-sm px-2 py-1"
+            (click)="decreaseFontSize()"
+            [disabled]="currentFontSize===90"
+            aria-label="Decrease font size">
+            A-
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm px-2 py-1"
+            (click)="increaseFontSize()"
+            [disabled]="currentFontSize===130"
+            aria-label="Increase font size">
+            A+
           </button>
         </div>
 
-        <button
-          class="btn btn-link text-secondary p-1"
-          (click)="toggleSearch()">
-
-          <i class="bi bi-search"></i>
-
-        </button>
-
-        <button
-          class="btn btn-outline-secondary btn-sm"
-          (click)="decreaseFontSize()">
-
-          A-
-
-        </button>
-
-        <button
-          class="btn btn-outline-secondary btn-sm"
-          (click)="increaseFontSize()">
-
-          A+
-
-        </button>
-
         <a
           href="/sitemap"
-          class="btn btn-link text-secondary p-1">
-
+          class="btn btn-link text-secondary p-1"
+          aria-label="Sitemap">
           <i class="bi bi-diagram-3"></i>
-
         </a>
-
       </div>
 
     </div>
 
-    @if (isSearchOpen) {
-    <div class="mt-2">
+    <!-- 2. The title then (Full width, centered, legible) -->
+    <div class="text-center py-2 px-2 bg-white">
+      <h2 class="h6 fw-bold text-dark mb-0 lh-base">
+        {{ (headline$ | async) || ('Header.HeadLine' | translate) }}
+      </h2>
+    </div>
 
+    <!-- Search input if toggled -->
+    @if (isSearchOpen) {
+    <div class="p-2 bg-white border-top">
       <form
         class="d-flex gap-2"
         (ngSubmit)="onSearch($event)">
-
         <input
           class="form-control form-control-sm"
           type="search"
           [(ngModel)]="searchQuery"
           name="searchQuery"
           placeholder="Search...">
-
         <button
           class="btn btn-outline-success btn-sm"
           type="submit">
-
           <i class="bi bi-arrow-right"></i>
-
         </button>
-
       </form>
-
     </div>
     }
 
